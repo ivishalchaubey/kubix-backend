@@ -91,10 +91,6 @@ class AuthService {
       // Check password using the user model's method
       //  check password using bcrypt
       const isPasswordMatch = await bcrypt.compare(password, user.password);
-      console.log(isPasswordMatch);
-      console.log(password);
-      console.log(user.password);
-      console.log("isPasswordMatch<><><><><><><><>");
       if (!isPasswordMatch) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,

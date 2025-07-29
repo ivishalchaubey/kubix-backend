@@ -2,10 +2,10 @@ import * as expressModule from "express";
 import { Request, Response, NextFunction } from "express";
 import cors from "cors";
 
-import { config } from "./config/env.js";
-import routes from "./modules/index.js";
-import globalErrorHandler from "./middlewares/errorHandler.js";
-import logger from "./utils/logger.js";
+import { config } from "./app/config/env.js";
+import routes from "./app/modules/index.js";
+import globalErrorHandler from "./app/middlewares/errorHandler.js";
+import logger from "./app/utils/logger.js";
 
 const express = (expressModule as any).default;
 const app = express();
