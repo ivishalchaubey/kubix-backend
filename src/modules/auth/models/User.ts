@@ -1,19 +1,21 @@
 import mongoose, { Schema } from "mongoose";
 import { IUser, IUserMethods, IUserModel } from "../../../types/global.js";
 import { UserRole } from "../../../constants/enums.js";
+import jwt from "jsonwebtoken";
+import config from "../../../config/env.js";
+import bcrypt from "bcryptjs";
 
-// Simple password hashing function (for development - replace with bcrypt in production)
+// Password hashing function using bcrypt
 const hashPassword = async (password: string): Promise<string> => {
-  // TODO: Replace with bcrypt when dependency is available
-  return `hashed_${password}_salt`;
+  const saltRounds = config.bcrypt.saltRounds;
+  return await bcrypt.hash(password, saltRounds);
 };
 
 const comparePassword = async (
   password: string,
   hashedPassword: string
 ): Promise<boolean> => {
-  // TODO: Replace with bcrypt when dependency is available
-  return hashedPassword === `hashed_${password}_salt`;
+  return await bcrypt.compare(password, hashedPassword);
 };
 
 // User schema
@@ -43,7 +45,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     role: {
       type: String,
       enum: Object.values(UserRole),
-      default: UserRole.STUDENT,
+      default: UserRole.User,
     },
     isEmailVerified: {
       type: Boolean,
@@ -133,16 +135,20 @@ userSchema.methods.isPasswordMatch = async function (
 };
 
 userSchema.methods.generateAuthTokens = async function () {
-  // TODO: Implement JWT token generation when jsonwebtoken is available
+  const user = this as IUser & IUserMethods;
+  const accessToken = jwt.sign(
+    { sub: user._id, role: user.role },
+    config.jwt.secret as string,
+    { expiresIn: '7d' }
+  );
+  const refreshToken = jwt.sign(
+    { sub: user._id, role: user.role },
+    config.jwt.refreshSecret as string,
+    { expiresIn: '30d' }
+  );
   return {
-    access: {
-      token: "mock-access-token",
-      expires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
-    },
-    refresh: {
-      token: "mock-refresh-token",
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-    },
+    access: { token: accessToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+    refresh: { token: refreshToken, expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
   };
 };
 

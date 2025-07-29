@@ -200,6 +200,17 @@ class AuthRepository {
     );
   }
 
+  async updateAccessToken(
+    userId: string,
+    accessToken: string
+  ): Promise<IUser | null> {
+    return await User.findByIdAndUpdate(
+      userId,
+      { accessToken },
+      { new: true }
+    );
+  }
+
   /**
    * Clear user's refresh token
    */

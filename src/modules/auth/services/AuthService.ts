@@ -1,6 +1,9 @@
 import crypto from "crypto";
 import AuthRepository from "../repositories/AuthRepository.js";
 import { IUser, IUserMethods, TokenResponse } from "../../../types/global.js";
+import jwt from "jsonwebtoken";
+import { config } from "../../../config/env.js";
+import bcrypt from "bcryptjs";
 import {
   UserRole,
   HttpStatus,
@@ -37,17 +40,29 @@ class AuthService {
       );
 
       // Generate auth tokens
-      const tokens = await (user as IUser & IUserMethods).generateAuthTokens();
-
+      const accessToken = jwt.sign(
+        { userId: user?._id, role: "user" },
+        config.jwt.secret as string,
+      );
+      const refreshToken = jwt.sign(
+        { userId: user._id, role: "user" },
+        config.jwt.refreshSecret as string
+        );
+      
       // Store refresh token
       await this.authRepository.updateRefreshToken(
         user._id,
-        tokens.refresh.token
+        refreshToken
+      );
+
+      await this.authRepository.updateAccessToken(
+        user._id,
+        accessToken
       );
 
       logger.info(`User registered: ${user.email}`);
 
-      return { user, tokens };
+      return { user, tokens: { access: { token: accessToken, expires: new Date(Date.now() + 15 * 60 * 1000) }, refresh: { token: refreshToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } } };
     } catch (error) {
       logger.error("Registration failed:", error);
       throw error;
@@ -73,10 +88,13 @@ class AuthService {
         );
       }
 
-      // Check password
-      const isPasswordMatch = await (
-        user as IUser & IUserMethods
-      ).isPasswordMatch(password);
+      // Check password using the user model's method
+      //  check password using bcrypt
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      console.log(isPasswordMatch);
+      console.log(password);
+      console.log(user.password);
+      console.log("isPasswordMatch<><><><><><><><>");
       if (!isPasswordMatch) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
@@ -85,13 +103,27 @@ class AuthService {
       }
 
       // Generate auth tokens
-      const tokens = await (user as IUser & IUserMethods).generateAuthTokens();
-
+      // const tokens = await (user as IUser & IUserMethods).generateAuthTokens();
+      const accessToken = jwt.sign(
+        { userId: user?._id, role: "user" },
+        config.jwt.secret as string,
+      );
+      const refreshToken = jwt.sign(
+        { userId: user._id, role: "user" },
+        config.jwt.refreshSecret as string
+        );
+      
       // Store refresh token
       await this.authRepository.updateRefreshToken(
         user._id,
-        tokens.refresh.token
+        refreshToken
       );
+
+      await this.authRepository.updateAccessToken(
+        user._id,
+        accessToken
+      );
+
 
       // Remove password from user object
       const userWithoutPassword = await this.authRepository.findUserById(
@@ -100,7 +132,7 @@ class AuthService {
 
       logger.info(`User logged in: ${user.email}`);
 
-      return { user: userWithoutPassword!, tokens };
+      return { user: userWithoutPassword!, tokens: { access: { token: accessToken, expires: new Date(Date.now() + 15 * 60 * 1000) }, refresh: { token: refreshToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } } };
     } catch (error) {
       logger.error("Login failed:", error);
       throw error;
@@ -303,10 +335,8 @@ class AuthService {
         );
       }
 
-      // Verify current password
-      const isCurrentPasswordValid = await (
-        user as IUser & IUserMethods
-      ).isPasswordMatch(currentPassword);
+      // Verify current password using the user model's method
+      const isCurrentPasswordValid = await (user as IUser & IUserMethods).isPasswordMatch(currentPassword);
       if (!isCurrentPasswordValid) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,

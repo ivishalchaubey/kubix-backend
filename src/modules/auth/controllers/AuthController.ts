@@ -4,6 +4,7 @@ import { AuthRequest } from "../../../types/global.js";
 import { API_MESSAGES } from "../../../constants/enums.js";
 import ResponseUtil from "../../../utils/response.js";
 import logger from "../../../utils/logger.js";
+import bcrypt from "bcryptjs";
 
 class AuthController {
   private authService: AuthService;
@@ -65,6 +66,7 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
+        console.log("req.user<><><><><><><><> checking for logout");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -167,6 +169,7 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
+        console.log("req.user<><><><><><><><> checking for getProfile");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -189,6 +192,7 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
+        console.log("req.user<><><><><><><><> checking for updateProfile");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -222,6 +226,7 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
+        console.log("req.user<><><><><><><><> checking for changePassword");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }

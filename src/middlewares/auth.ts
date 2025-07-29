@@ -21,6 +21,7 @@ class AuthMiddleware {
       if (authHeader && authHeader.startsWith("Bearer ")) {
         token = authHeader.substring(7);
       } else {
+        console.log("authHeader<><><><><><><><> checking for authenticate");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -92,6 +93,7 @@ class AuthMiddleware {
   static authorize = (...roles: UserRole[]) => {
     return (req: AuthRequest, res: Response, next: NextFunction): void => {
       if (!req.user) {
+        console.log("req.user<><><><><><><><> checking for authorize");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -114,6 +116,7 @@ class AuthMiddleware {
     next: NextFunction
   ): void => {
     if (!req.user) {
+      console.log("req.user<><><><><><><><> checking for isAuthenticated");
       ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
       return;
     }
@@ -145,7 +148,7 @@ class AuthMiddleware {
   ): void => {
     if (
       !req.user ||
-      ![UserRole.COUNSELOR, UserRole.ADMIN].includes(req.user.role)
+      ![UserRole.User, UserRole.ADMIN].includes(req.user.role)
     ) {
       ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
       return;
@@ -159,6 +162,7 @@ class AuthMiddleware {
   static isOwnerOrAdmin = (userIdParam = "userId") => {
     return (req: AuthRequest, res: Response, next: NextFunction): void => {
       if (!req.user) {
+        console.log("req.user<><><><><><><><> checking for isOwnerOrAdmin");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }

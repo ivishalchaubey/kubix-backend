@@ -18,9 +18,9 @@ export const config = {
     url: process.env.MONGO_URI!,
   },
   jwt: {
-    secret: process.env.JWT_SECRET!,
+    secret: "jwt_kubix_backend",
     accessExpirationMinutes: process.env.JWT_EXPIRE || "7d",
-    refreshSecret: process.env.JWT_REFRESH_SECRET!,
+    refreshSecret: "jwt_kubix_backend_refresh",
     refreshExpirationDays: process.env.JWT_REFRESH_EXPIRE || "30d",
   },
   bcrypt: {
