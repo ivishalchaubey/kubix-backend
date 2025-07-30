@@ -150,6 +150,8 @@ class AuthController {
   ): Promise<void> => {
     try {
       const { token } = req.params;
+      console.log("token<><><><><><><><> checking for verifyEmail", token);
+      console.log("req.user<><><><><><><><> checking for verifyEmail", req.user);
 
       await this.authService.verifyEmail(token);
 

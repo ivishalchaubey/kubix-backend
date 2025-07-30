@@ -47,6 +47,9 @@ export const API_MESSAGES = {
     INTERNAL_SERVER_ERROR: "Internal server error",
     UNAUTHORIZED: "Unauthorized access",
     FORBIDDEN: "Forbidden access",
+    RESOURCE_: "Resource not found",
+    INVALID_ROLE: "Invalid user role",
+    EMAIL_NOT_VERIFIED: "Email not verified",
     NOT_FOUND: "Resource not found",
   },
 } as const;

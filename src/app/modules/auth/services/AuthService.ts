@@ -29,6 +29,21 @@ class AuthService {
     role?: UserRole;
   }): Promise<{ user: IUser; tokens: TokenResponse }> {
     try {
+      // Check if user already exists and role is not admin
+      const existingUser = await this.authRepository.findUserByEmail(userData.email);
+      if (existingUser) { 
+        throw new AppError(
+          API_MESSAGES.ERROR.EMAIL_ALREADY_EXISTS,
+          HttpStatus.CONFLICT
+        );
+      }
+      //  check if role is admin 
+      if (userData.role && userData.role === UserRole.ADMIN) {
+        throw new AppError(
+          API_MESSAGES.ERROR.INVALID_ROLE,
+          HttpStatus.FORBIDDEN
+        );
+      }
       // Create user
       const user = await this.authRepository.createUser(userData);
 
@@ -101,11 +116,11 @@ class AuthService {
       // Generate auth tokens
       // const tokens = await (user as IUser & IUserMethods).generateAuthTokens();
       const accessToken = jwt.sign(
-        { userId: user?._id, role: "user" },
+        { userId: user?._id, role: "user", email: user.email, name: user.name },
         config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
-        { userId: user._id, role: "user" },
+        { userId: user._id, role: "user" , email: user.email , name: user.name},
         config.jwt.refreshSecret as string
         );
       

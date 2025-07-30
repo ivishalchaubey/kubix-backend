@@ -2,7 +2,8 @@ import { Response, NextFunction } from "express";
 import { AuthRequest } from "../types/global.js";
 import { UserRole, API_MESSAGES } from "../constants/enums.js";
 import ResponseUtil from "../utils/response.js";
-
+import jwt from "jsonwebtoken";
+import config from "../config/env.js";
 class AuthMiddleware {
   /**
    * Authenticate user using JWT token
@@ -16,34 +17,32 @@ class AuthMiddleware {
     try {
       // Get token from header
       const authHeader = req.headers.authorization;
-      let token: string;
+      console.log("authHeader<><><><><><><><> checking for authenticate", authHeader);
+      
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+      return;
+        }
 
-      if (authHeader && authHeader.startsWith("Bearer ")) {
-        token = authHeader.substring(7);
-      } else {
-        console.log("authHeader<><><><><><><><> checking for authenticate");
-        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
-        return;
-      }
+      let token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      // decode token
+          const decoded = jwt.verify(token, config.jwt.secret) as any;
 
+console.log("decoded<><><><><><><><> checking for authenticate", decoded);
       // TODO: Implement JWT verification
       // For now, mock authentication
-      if (token === "valid-token") {
         req.user = {
-          _id: "mock-user-id",
-          name: "Mock User",
-          email: "mock@example.com",
-          password: "",
-          role: UserRole.STUDENT,
-          isEmailVerified: true,
+          _id: decoded.userId,
+          name: decoded.name,
+          email: decoded.email,
+          password: "", // Password should not be included in the request
+          isEmailVerified: true, // Assuming email is verified for authenticated users
+          role: decoded.role,
           createdAt: new Date(),
           updatedAt: new Date(),
         };
         next();
-      } else {
-        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
-        return;
-      }
+      
     } catch (error) {
       next(error);
     }
@@ -65,21 +64,21 @@ class AuthMiddleware {
       }
 
       const token = authHeader.substring(7);
+      console.log("authHeader<><><><><><><><> checking for optionalAuth", authHeader);
+      const decoded = jwt.verify(token, config.jwt.secret) as any;
 
       // TODO: Implement JWT verification
-      if (token === "valid-token") {
         req.user = {
-          _id: "mock-user-id",
-          name: "Mock User",
-          email: "mock@example.com",
-          password: "",
-          role: UserRole.STUDENT,
-          isEmailVerified: true,
+          _id:decoded.userId,
+          name: decoded.name,
+          email: decoded.email,
+          password: "", // Password should not be included in the request
+          isEmailVerified: true, // Assuming email is verified for optional auth
+          role: decoded.role,
           createdAt: new Date(),
           updatedAt: new Date(),
         };
-      }
-
+     
       next();
     } catch (error) {
       // In optional auth, we ignore token errors and continue
