@@ -17,6 +17,19 @@ app.use((req, _res, next) => {
     logger.info(`${req.method} ${req.path} - ${req.ip}`);
     next();
 });
+app.get("/", (req, res) => {
+    res.json({
+        success: true,
+        message: "Counselling Launchpad Backend API",
+        version: "1.0.0",
+        endpoints: {
+            health: "/api/v1/health",
+            auth: "/api/v1/auth",
+            admin: "/api/v1/admin"
+        },
+        timestamp: new Date().toISOString(),
+    });
+});
 app.use("/api/v1", routes);
 app.use("/api/v1/admin", adminRouter);
 app.all("*", (req, res) => {

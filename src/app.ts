@@ -33,11 +33,25 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
   next();
 });
 
+// Root route
+app.get("/", (req: Request, res: Response) => {
+  res.json({
+    success: true,
+    message: "Counselling Launchpad Backend API",
+    version: "1.0.0",
+    endpoints: {
+      health: "/api/v1/health",
+      auth: "/api/v1/auth",
+      admin: "/api/v1/admin"
+    },
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // API routes
 app.use("/api/v1", routes);
 
 app.use("/api/v1/admin", adminRouter);
-
 
 // Handle undefined routes
 app.all("*", (req: Request, res: Response) => {
