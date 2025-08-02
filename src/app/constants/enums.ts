@@ -41,6 +41,8 @@ export const API_MESSAGES = {
     CATEGORY_CREATED: "Category created successfully",
     CATEGORY_UPDATED: "Category updated successfully",
     CATEGORY_DELETED: "Category deleted successfully",
+    CATEGORIES_FETCHED: "Categories fetched successfully",
+    CATEGORY_FETCHED: "Category fetched successfully",
   },
   ERROR: {
     USER_NOT_FOUND: "User not found",
@@ -56,6 +58,9 @@ export const API_MESSAGES = {
     INVALID_ROLE: "Invalid user role",
     EMAIL_NOT_VERIFIED: "Email not verified",
     NOT_FOUND: "Resource not found",
+  },
+  ADMIN_ERROR: {
+    CATEGORY_NOT_FOUND: "Category not found",
   },
 } as const;
 
