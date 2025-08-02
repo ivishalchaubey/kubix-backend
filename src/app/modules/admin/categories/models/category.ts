@@ -3,11 +3,11 @@ import mongoose, { Schema, Document } from "mongoose";
 // Correct TypeScript interface
 export interface ICategory extends Document {
   description: string;
-  degree: string;
-  branch: string;
-  course: string;
-  courseStream: string;
-  subject: string;
+  degree: string;  // engineering, arts, science
+  branch: string; // circuit branch (e.g., computer, electronics, electrical) and non-circuit branch (e.g., civil, mechanical, chemical)
+  course: string; // computer science, electronics, electrical, civil, mechanical, chemical
+  courseStream: string; // frontend, backend, database, operating system, data structure, algorithm, drawing engineering, etc.
+  subject: string; // data structure, algorithm, operating system, etc.
 }
 
 // Define schema
@@ -30,7 +30,6 @@ const categorySchema = new Schema<ICategory>(
     },
     courseStream: {
       type: String,
-      required: [true, "Course stream is required"],
       trim: true,
     },
     subject: {

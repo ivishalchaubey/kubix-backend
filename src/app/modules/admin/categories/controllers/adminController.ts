@@ -1,13 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import ResponseUtil from "../../../../utils/response.js";
-import { API_MESSAGES } from '../../../../constants/enums';
-import AdminService from '../services/adminService';
+import { API_MESSAGES } from '../../../../constants/enums.js';
+import AdminService from '../services/adminService.js';
 class AdminController {
     public adminService: AdminService;
     constructor() {
         this.adminService = new AdminService();
-        // this.adminService = new AdminService();
-        // Initialize any necessary properties or services here
     }
 
     async createCategory(req: Request, res: Response, next: NextFunction): Promise<any> {
