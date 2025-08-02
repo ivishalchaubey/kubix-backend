@@ -10,7 +10,7 @@ class AdminController {
         // Initialize any necessary properties or services here
     }
 
-    async createCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
+    async createCategory(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {   
             const { description , degree , branch, course , courseStream , subject } = req.body;
 

@@ -1,31 +1,32 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose";
 
-// Password hashing function using bcrypt
-
-
-// User schema
-interface ICategory {
-  description: String;
-  degree: String; // engineering, arts, science
-  branch: String; // circuit branch ie(computer , electronics, electrical) and non-circuit branch (civil, mechanical, chemical)
-  course: String; // computer science, electronics, electrical, civil, mechanical, chemical
-  courseStream : String; // frontend, backend, database, operating system, data structure, algorithm , drawing engineering, etc
-  subject: String; // data structure, algorithm, operating system, etc
+// Correct TypeScript interface
+export interface ICategory extends Document {
+  description: string;
+  degree: string;
+  branch: string;
+  course: string;
+  courseStream: string;
+  subject: string;
 }
-const userSchema = new Schema<ICategory>(
+
+// Define schema
+const categorySchema = new Schema<ICategory>(
   {
     degree: {
       type: String,
-      required: [true, ""],
-      trim: true 
+      required: [true, "Degree is required"],
+      trim: true,
     },
     branch: {
-      type: String, 
+      type: String,
+      trim: true,
     },
     course: {
       type: String,
       unique: true,
       lowercase: true,
+      trim: true,
     },
     courseStream: {
       type: String,
@@ -35,11 +36,12 @@ const userSchema = new Schema<ICategory>(
     subject: {
       type: String,
       required: [true, "Subject is required"],
-      minlength: [8, "Password must be at least 8 characters long"],
-      select: false, // Don't include password in queries by default
+      minlength: [3, "Subject must be at least 3 characters long"],
+      trim: true,
     },
     description: {
       type: String,
+      trim: true,
     },
   },
   {
@@ -47,10 +49,6 @@ const userSchema = new Schema<ICategory>(
   }
 );
 
-// Only keep the unique index from the schema field definition above
-// Removed duplicate indexes that were causing the warning
-
-// Create and export the User model
-const category = mongoose.model<ICategory>("category", userSchema);
-
-export default category;
+// Create and export model
+const CategoryModel = mongoose.model<ICategory>("Category", categorySchema);
+export default CategoryModel;

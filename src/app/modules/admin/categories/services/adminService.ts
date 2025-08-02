@@ -1,14 +1,8 @@
 
 import { Router } from "express";
 import category from "../models/category";
-interface IAdminService {
-  getCategories(): Promise<any>;
-    createCategory(categoryData: any): Promise<any>;
-    updateCategory(categoryId: string, categoryData: any): Promise<any>;
-    deleteCategory(categoryId: string): Promise<any>;
-}
 
-interface ICategory {
+export interface ICategory {
   description: string;  
     degree: string; // engineering, arts, science
     branch: string; // circuit branch ie(computer , electronics, electrical) and non-circuit branch (civil, mechanical, chemical)
@@ -17,17 +11,27 @@ interface ICategory {
     subject: string; // data structure, algorithm, operating system, etc
 }
 
+interface IAdminService {
+  getCategories(): Promise<any>;
+    createCategory(categoryData: any): void;
+    updateCategory(categoryId: string, categoryData: any): Promise<any>;
+    deleteCategory(categoryId: string): Promise<any>;
+}
+
 class AdminService {
   // Define the service methods here
   async getCategories() {
     // Logic to get categories
   }
 
-  async createCategory(categoryData : ICategory) {
+  async createCategory(categoryData : any) {
+    const newCategory = new category(categoryData);
+    await newCategory.save();
+    return newCategory;
     // Logic to create a new category
   }
 
-  async updateCategory(categoryId : string, categoryData : ICategory) {
+  async updateCategory(categoryId : string, categoryData : any) {
     // Logic to update an existing category
   }
 
