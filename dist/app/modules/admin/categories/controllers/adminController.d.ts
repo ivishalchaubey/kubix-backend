@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import AdminService from '../services/adminService';
+import AdminService from '../services/adminService.js';
 declare class AdminController {
     adminService: AdminService;
     constructor();

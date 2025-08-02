@@ -8,7 +8,7 @@ export interface ICategory {
 }
 declare class AdminService {
     getCategories(): Promise<void>;
-    createCategory(categoryData: any): Promise<import("mongoose").Document<unknown, {}, import("../models/category").ICategory, {}> & import("../models/category").ICategory & Required<{
+    createCategory(categoryData: any): Promise<import("mongoose").Document<unknown, {}, import("../models/category.js").ICategory, {}> & import("../models/category.js").ICategory & Required<{
         _id: unknown;
     }> & {
         __v: number;

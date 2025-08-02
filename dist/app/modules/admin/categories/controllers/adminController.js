@@ -1,6 +1,6 @@
 import ResponseUtil from "../../../../utils/response.js";
-import { API_MESSAGES } from '../../../../constants/enums';
-import AdminService from '../services/adminService';
+import { API_MESSAGES } from '../../../../constants/enums.js';
+import AdminService from '../services/adminService.js';
 class AdminController {
     adminService;
     constructor() {

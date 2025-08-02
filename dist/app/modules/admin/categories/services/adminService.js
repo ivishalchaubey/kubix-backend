@@ -1,4 +1,4 @@
-import category from "../models/category";
+import category from "../models/category.js";
 class AdminService {
     async getCategories() {
     }

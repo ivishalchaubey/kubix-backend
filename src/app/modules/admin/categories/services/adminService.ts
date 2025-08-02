@@ -1,21 +1,20 @@
-
 import { Router } from "express";
-import category from "../models/category";
+import category from "../models/category.js";
 
 export interface ICategory {
-  description: string;  
-    degree: string; // engineering, arts, science
-    branch: string; // circuit branch ie(computer , electronics, electrical) and non-circuit branch (civil, mechanical, chemical)
-    course: string; // computer science, electronics, electrical, civil, mechanical, chemical
-    courseStream: string; // frontend, backend, database, operating system, data structure, algorithm , drawing engineering, etc
-    subject: string; // data structure, algorithm, operating system, etc
+  description: string;
+  degree: string; // engineering, arts, science
+  branch: string; // circuit branch ie(computer , electronics, electrical) and non-circuit branch (civil, mechanical, chemical)
+  course: string; // computer science, electronics, electrical, civil, mechanical, chemical
+  courseStream: string; // frontend, backend, database, operating system, data structure, algorithm , drawing engineering, etc
+  subject: string; // data structure, algorithm, operating system, etc
 }
 
 interface IAdminService {
   getCategories(): Promise<any>;
-    createCategory(categoryData: any): void;
-    updateCategory(categoryId: string, categoryData: any): Promise<any>;
-    deleteCategory(categoryId: string): Promise<any>;
+  createCategory(categoryData: any): void;
+  updateCategory(categoryId: string, categoryData: any): Promise<any>;
+  deleteCategory(categoryId: string): Promise<any>;
 }
 
 class AdminService {
@@ -24,18 +23,18 @@ class AdminService {
     // Logic to get categories
   }
 
-  async createCategory(categoryData : any) {
+  async createCategory(categoryData: any) {
     const newCategory = new category(categoryData);
     await newCategory.save();
     return newCategory;
     // Logic to create a new category
   }
 
-  async updateCategory(categoryId : string, categoryData : any) {
+  async updateCategory(categoryId: string, categoryData: any) {
     // Logic to update an existing category
   }
 
-  async deleteCategory(categoryId : string) {
+  async deleteCategory(categoryId: string) {
     // Logic to delete a category
   }
 }
