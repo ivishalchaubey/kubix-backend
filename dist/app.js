@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
         endpoints: {
             health: "/api/v1/health",
             auth: "/api/v1/auth",
-            admin: "/api/v1/admin"
+            admin: "/api/v1/admin",
         },
         timestamp: new Date().toISOString(),
     });

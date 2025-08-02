@@ -17,7 +17,6 @@ const categorySchema = new Schema({
     },
     courseStream: {
         type: String,
-        required: [true, "Course stream is required"],
         trim: true,
     },
     subject: {

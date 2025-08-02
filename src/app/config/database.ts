@@ -21,7 +21,12 @@ class Database {
     }
 
     try {
-      const conn = await mongoose.connect(config.mongoose.url);
+      const conn = await mongoose.connect(config.mongoose.url, {
+        maxPoolSize: 10,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 45000,
+        bufferCommands: false,
+      });
 
       this.isConnected = true;
       logger.info(`✅ MongoDB connected: ${conn.connection.host}`);
