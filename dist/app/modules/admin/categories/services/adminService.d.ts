@@ -7,7 +7,11 @@ export interface ICategory {
     subject: string;
 }
 declare class AdminService {
-    getCategories(): Promise<void>;
+    getCategories(): Promise<(import("mongoose").Document<unknown, {}, import("../models/category.js").ICategory, {}> & import("../models/category.js").ICategory & Required<{
+        _id: unknown;
+    }> & {
+        __v: number;
+    })[]>;
     createCategory(categoryData: any): Promise<import("mongoose").Document<unknown, {}, import("../models/category.js").ICategory, {}> & import("../models/category.js").ICategory & Required<{
         _id: unknown;
     }> & {
@@ -15,6 +19,11 @@ declare class AdminService {
     }>;
     updateCategory(categoryId: string, categoryData: any): Promise<void>;
     deleteCategory(categoryId: string): Promise<void>;
+    getCategoryById(categoryId: string): Promise<import("mongoose").Document<unknown, {}, import("../models/category.js").ICategory, {}> & import("../models/category.js").ICategory & Required<{
+        _id: unknown;
+    }> & {
+        __v: number;
+    }>;
 }
 export default AdminService;
 //# sourceMappingURL=adminService.d.ts.map

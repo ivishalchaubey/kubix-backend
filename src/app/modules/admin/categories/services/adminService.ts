@@ -25,11 +25,21 @@ class AdminService {
     return categories;
   }
 
-  async createCategory(categoryData: any) {
-    console.log("Creating category with data:", categoryData);
-    const newCategory = new category(categoryData);
-    await newCategory.save();
-    return newCategory;
+  async createCategory(categoryData: any[]) {
+    let parentId = "";
+    for (const data of categoryData) {
+      if (data.order == 1) {
+        const newCategory = new category(data);
+        const newData = await newCategory.save();
+        parentId = newData._id.toString();
+      } else if (data.order > 1) {
+        data.parentId = parentId;
+        const newCategory = new category(data);
+        const newData = await newCategory.save();
+        parentId = newData._id.toString();
+      }
+    }
+    return { message: "Category created successfully" };
     // Logic to create a new category
   }
 
@@ -48,7 +58,7 @@ class AdminService {
   async deleteCategory(categoryId: string) {
     // Logic to delete a category
   }
-  async getCategoryById(categoryId : string) {
+  async getCategoryById(categoryId: string) {
     const categoryData = await category.findById(categoryId);
     if (!categoryData) {
       throw new Error("Category not found");
@@ -56,7 +66,6 @@ class AdminService {
     return categoryData;
     // Logic to get a category by ID
   }
-
 }
 
 export default AdminService;

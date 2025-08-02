@@ -1,6 +1,8 @@
 import category from "../models/category.js";
 class AdminService {
     async getCategories() {
+        const categories = await category.find({});
+        return categories;
     }
     async createCategory(categoryData) {
         console.log("Creating category with data:", categoryData);
@@ -15,6 +17,13 @@ class AdminService {
         }
     }
     async deleteCategory(categoryId) {
+    }
+    async getCategoryById(categoryId) {
+        const categoryData = await category.findById(categoryId);
+        if (!categoryData) {
+            throw new Error("Category not found");
+        }
+        return categoryData;
     }
 }
 export default AdminService;

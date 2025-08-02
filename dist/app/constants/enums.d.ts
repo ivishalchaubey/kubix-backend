@@ -36,6 +36,8 @@ export declare const API_MESSAGES: {
         readonly CATEGORY_CREATED: "Category created successfully";
         readonly CATEGORY_UPDATED: "Category updated successfully";
         readonly CATEGORY_DELETED: "Category deleted successfully";
+        readonly CATEGORIES_FETCHED: "Categories fetched successfully";
+        readonly CATEGORY_FETCHED: "Category fetched successfully";
     };
     readonly ERROR: {
         readonly USER_NOT_FOUND: "User not found";
@@ -51,6 +53,9 @@ export declare const API_MESSAGES: {
         readonly INVALID_ROLE: "Invalid user role";
         readonly EMAIL_NOT_VERIFIED: "Email not verified";
         readonly NOT_FOUND: "Resource not found";
+    };
+    readonly ADMIN_ERROR: {
+        readonly CATEGORY_NOT_FOUND: "Category not found";
     };
 };
 export declare const VALIDATION_RULES: {
