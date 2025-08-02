@@ -34,6 +34,48 @@ class AdminController {
         }
     }
 
+    async deleteCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const categoryId = req.params.id;
+
+            await this.adminService.deleteCategory(categoryId);
+
+            ResponseUtil.success(res, null, API_MESSAGES.ADMIN_SUCCESS.CATEGORY_DELETED);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getCategories(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const categories = await this.adminService.getCategories();
+            console.log("Fetched categories:", categories);
+            ResponseUtil.success(res, categories, API_MESSAGES.ADMIN_SUCCESS.CATEGORIES_FETCHED);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getCategoryById(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {   
+            const categoryId = req.params.id;
+
+            const category = await this.adminService.getCategoryById(categoryId);
+
+            if (!category) {
+                 ResponseUtil.notFound(res, API_MESSAGES.ADMIN_ERROR.CATEGORY_NOT_FOUND);
+            }
+
+            ResponseUtil.success(res, category, API_MESSAGES.ADMIN_SUCCESS.CATEGORY_FETCHED);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // You can add more methods here as needed, such as for getting categories by specific criteria
+
+
+
   // Add your methods here
 }
 

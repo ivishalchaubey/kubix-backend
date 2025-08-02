@@ -21,6 +21,8 @@ class AdminService {
   // Define the service methods here
   async getCategories() {
     // Logic to get categories
+    const categories = await category.find({});
+    return categories;
   }
 
   async createCategory(categoryData: any) {
@@ -46,6 +48,15 @@ class AdminService {
   async deleteCategory(categoryId: string) {
     // Logic to delete a category
   }
+  async getCategoryById(categoryId : string) {
+    const categoryData = await category.findById(categoryId);
+    if (!categoryData) {
+      throw new Error("Category not found");
+    }
+    return categoryData;
+    // Logic to get a category by ID
+  }
+
 }
 
 export default AdminService;
