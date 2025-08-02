@@ -10,7 +10,7 @@ export const config = {
     env: process.env.NODE_ENV || "development",
     port: parseInt(process.env.PORT || "5000"),
     mongoose: {
-        url: process.env.MONGO_URI,
+        url: process.env.MONGO_URI.trim(),
     },
     jwt: {
         secret: "jwt_kubix_backend",
