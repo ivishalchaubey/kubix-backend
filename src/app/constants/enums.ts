@@ -37,6 +37,11 @@ export const API_MESSAGES = {
     PASSWORD_RESET_SUCCESS: "Password reset successful",
     EMAIL_VERIFIED: "Email verified successfully",
   },
+  ADMIN_SUCCESS:{
+    CATEGORY_CREATED: "Category created successfully",
+    CATEGORY_UPDATED: "Category updated successfully",
+    CATEGORY_DELETED: "Category deleted successfully",
+  },
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",
