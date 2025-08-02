@@ -22,6 +22,8 @@ class AdminService {
   // Define the service methods here
   async getCategories() {
     // Logic to get categories
+    const categories = await category.find({});
+    return categories;
   }
 
   async createCategory(categoryData : any) {
@@ -55,7 +57,7 @@ class AdminService {
     return categoryData;
     // Logic to get a category by ID
   }
-  
+
 }
 
 export default AdminService;
