@@ -3,7 +3,7 @@ import ResponseUtil from "../../../../utils/response.js";
 import { API_MESSAGES } from '../../../../constants/enums';
 import AdminService from '../services/adminService';
 class AdminController {
-    private adminService: AdminService;
+    public adminService: AdminService;
     constructor() {
         this.adminService = new AdminService();
         // this.adminService = new AdminService();
@@ -22,5 +22,21 @@ class AdminController {
         }
     }
 
+
+    async updateCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const categoryId = req.params.id;
+            const categoryData = req.body;
+
+            const result = await this.adminService.updateCategory(categoryId, categoryData);
+
+            ResponseUtil.success(res, result, API_MESSAGES.ADMIN_SUCCESS.CATEGORY_UPDATED);
+        } catch (error) {
+            next(error);
+        }
+    }
+
   // Add your methods here
 }
+
+export default AdminController;

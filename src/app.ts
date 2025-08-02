@@ -4,6 +4,7 @@ import cors from "cors";
 
 import { config } from "./app/config/env.js";
 import routes from "./app/modules/index.js";
+import adminRouter from "./app/modules/admin/categories/routes/adminRoutes.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -33,6 +34,9 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 
 // API routes
 app.use("/api/v1", routes);
+
+app.use("/api/v1/admin", adminRouter);
+
 
 // Handle undefined routes
 app.all("*", (req: Request, res: Response) => {
