@@ -1,4 +1,4 @@
 // Vercel serverless function handler
-const app = require('../dist/app.js');
+const app = require("../dist/app.js");
 
-module.exports = app; 
+module.exports = app;

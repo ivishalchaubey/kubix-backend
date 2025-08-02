@@ -6,8 +6,6 @@ class AdminController {
     public adminService: AdminService;
     constructor() {
         this.adminService = new AdminService();
-        // this.adminService = new AdminService();
-        // Initialize any necessary properties or services here
     }
 
     async createCategory(req: Request, res: Response, next: NextFunction): Promise<any> {

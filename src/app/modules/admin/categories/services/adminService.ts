@@ -24,6 +24,7 @@ class AdminService {
   }
 
   async createCategory(categoryData: any) {
+    console.log("Creating category with data:", categoryData);
     const newCategory = new category(categoryData);
     await newCategory.save();
     return newCategory;
@@ -31,6 +32,14 @@ class AdminService {
   }
 
   async updateCategory(categoryId: string, categoryData: any) {
+    const updatedCategory = await category.findByIdAndUpdate(
+      categoryId,
+      categoryData,
+      { new: true }
+    );
+    if (!updatedCategory) {
+      throw new Error("Category not found");
+    }
     // Logic to update an existing category
   }
 
