@@ -1,46 +1,31 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document, ObjectId } from "mongoose";
 
 // Correct TypeScript interface
 export interface ICategory extends Document {
+  _id: string; // Optional ID for the category
   description: string;
-  degree: string;  // engineering, arts, science
-  branch: string; // circuit branch (e.g., computer, electronics, electrical) and non-circuit branch (e.g., civil, mechanical, chemical)
-  course: string; // computer science, electronics, electrical, civil, mechanical, chemical
-  courseStream: string; // frontend, backend, database, operating system, data structure, algorithm, drawing engineering, etc.
-  subject: string; // data structure, algorithm, operating system, etc.
+  order: number; // Order of the category
+  title: string;
+  parentId : ObjectId // Title of the category
 }
 
 // Define schema
 const categorySchema = new Schema<ICategory>(
   {
-    degree: {
-      type: String,
-      required: [true, "Degree is required"],
-      trim: true,
-    },
-    branch: {
+    title: {
       type: String,
       trim: true,
     },
-    course: {
-      type: String,
-      unique: true,
-      lowercase: true,
-      trim: true,
-    },
-    courseStream: {
-      type: String,
-      trim: true,
-    },
-    subject: {
-      type: String,
-      required: [true, "Subject is required"],
-      minlength: [3, "Subject must be at least 3 characters long"],
+    parentId: {
+      type: mongoose.Types.ObjectId,
       trim: true,
     },
     description: {
       type: String,
       trim: true,
+    },
+    order: {
+      type: Number,
     },
   },
   {
