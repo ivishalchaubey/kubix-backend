@@ -93,6 +93,31 @@ class AuthService {
   /**
    * Login user
    */
+
+
+  async sendOtp(email: string ): Promise<IUser> {
+    try {
+      // Check if user exists
+      const user = await this.authRepository.findUserByEmail(email);
+      console.log(email , "email in sendOtp service");
+      console.log(user , "user in sendOtp service");
+      if (!user) {
+        throw new AppError(
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      // Generate OTP
+      const otp = crypto.randomInt(100000, 999999).toString();
+      return await this.authRepository.setOtp(email, otp);
+
+    }
+    catch (error) {
+      logger.error("Send OTP failed:", error);
+      throw error;
+    }
+  };
   async login(credentials: {
     email: string;
     password: string;
@@ -157,6 +182,65 @@ class AuthService {
       throw error;
     }
   }
+
+
+  verifyOtp = async (email: string, otp: string): Promise<{ user: IUser; tokens: TokenResponse }> => {
+    try {
+      // Check if user exists
+      const user = await this.authRepository.findUserByEmail(email);
+      if (!user) {
+        throw new AppError(
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      // Verify OTP
+      console.log(user.otp , otp , "user otp and otp in verifyOtp service");
+      if (user.otp !== otp) {
+        throw new AppError(
+          API_MESSAGES.ERROR.INVALID_OTP,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      // Clear OTP after verification
+      await this.authRepository.clearOtp(email);
+
+      logger.info(`OTP verified for user: ${email}`);
+      // add  jwt token generation here
+      const accessToken = jwt.sign(
+        { userId: user._id, role: "user", email: user.email, name: user.firstName + " " + user.lastName },
+        config.jwt.secret as string,
+      );
+      const refreshToken = jwt.sign(
+        { userId: user._id, role: "user", email: user.email, name: user.firstName + " " + user.lastName },
+        config.jwt.refreshSecret as string
+      );
+      // Store refresh token  
+      await this.authRepository.updateRefreshToken(
+        user._id,
+        refreshToken
+      );
+      await this.authRepository.updateAccessToken(
+        user._id,
+        accessToken
+      );
+
+      // sent token and user data in response
+
+        const userWithoutPassword = await this.authRepository.findUserById(
+        user._id
+      );
+
+      logger.info(`User logged in: ${user.email}`);
+
+      return { user: userWithoutPassword!, tokens: { access: { token: accessToken, expires: new Date(Date.now() + 15 * 60 * 1000) }, refresh: { token: refreshToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } } };
+    } catch (error) {
+      logger.error("Verify OTP failed:", error);
+      throw error;
+    }
+  };
 
   /**
    * Logout user
@@ -256,10 +340,10 @@ class AuthService {
   /**
    * Verify email
    */
-  async verifyEmail(token: string): Promise<void> {
+  async verifyEmail(email: string): Promise<void> {
     try {
-      const user = await this.authRepository.findUserByEmailVerificationToken(
-        token
+      const user = await this.authRepository.findUserByEmail(
+        email, true
       );
       if (!user) {
         throw new AppError(

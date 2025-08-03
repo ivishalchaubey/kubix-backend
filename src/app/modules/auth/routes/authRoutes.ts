@@ -20,8 +20,9 @@ router.post(
   authController.resetPassword
 );
 router.post("/refresh-tokens", authController.refreshTokens);
-router.post("/verify-email/:token", AuthMiddleware.authenticate,  authController.verifyEmail);
-
+router.post("/verify-email", AuthMiddleware.authenticate,  authController.verifyEmail);
+router.post("/send-otp", authController.sendOtp);
+router.post("/verify-otp", authController.verifyOtp);
 // Protected routes (authentication required)
 // router.use(AuthMiddleware.authenticate); // Apply authentication to all routes below
 

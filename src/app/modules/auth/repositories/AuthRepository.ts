@@ -42,11 +42,16 @@ class AuthRepository {
    */
   async findUserByEmail(
     email: string,
-    includePassword = false
+    includePassword = false,
+    includeOtp = false
   ): Promise<IUser | null> {
     const query = User.findOne({ email });
     if (includePassword) {
       query.select("+password");
+    }
+    if (includeOtp) {
+      const user = await User.findOne({ email }).select("+otp");
+      return user;
     }
     return await query.exec();
   }
@@ -103,6 +108,29 @@ class AuthRepository {
   }
 
   /**
+   * send otp
+   */
+  async setOtp(
+    email: string,
+    otp: string
+  ): Promise<IUser | any> {  
+    if (!email) {
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+     await User.findOneAndUpdate(
+      {email: email},
+      { otp },
+      { new: true, runValidators: true }
+    );
+      console.log("OTP set successfully for user:", email);
+    return await User.findOne({email: email});
+  }
+
+  /**
    * Delete user by ID
    */
   async deleteUserById(userId: string): Promise<IUser | null> {
@@ -115,6 +143,23 @@ class AuthRepository {
 
     return await User.findByIdAndDelete(userId);
   }
+
+
+  async clearOtp(
+    userId: string  
+  ): Promise<IUser | null> {
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
+    }
+    return await User.findByIdAndUpdate
+      (userId,
+        { otp: undefined },
+        { new: true, runValidators: true }
+      );
+  };
 
   /**
    * Find user by email verification token

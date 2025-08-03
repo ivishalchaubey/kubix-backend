@@ -58,6 +58,8 @@ export const API_MESSAGES = {
     INVALID_ROLE: "Invalid user role",
     EMAIL_NOT_VERIFIED: "Email not verified",
     NOT_FOUND: "Resource not found",
+    UNPROCESSABLE_ENTITY: "Unprocessable entity",
+    INVALID_OTP: "Invalid OTP",
   },
   ADMIN_ERROR: {
     CATEGORY_NOT_FOUND: "Category not found",

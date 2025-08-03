@@ -42,6 +42,9 @@ class AuthController {
       next(error);
     }
   };
+  // send otp
+
+  
 
   /**
    * Login user
@@ -155,11 +158,14 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { token } = req.params;
-      console.log("token<><><><><><><><> checking for verifyEmail", token);
       console.log("req.user<><><><><><><><> checking for verifyEmail", req.user);
+      if (!req.user) {
+        console.log("req.user<><><><><><><><> checking for verifyEmail");
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
 
-      await this.authService.verifyEmail(token);
+      await this.authService.verifyEmail(req.user.email);
 
       ResponseUtil.success(res, null, API_MESSAGES.SUCCESS.EMAIL_VERIFIED);
     } catch (error) {
@@ -167,6 +173,51 @@ class AuthController {
     }
   };
 
+  sendOtp = async (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { email } = req.body;
+
+      // Generate OTP
+      // Save OTP to user
+      const user = await this.authService.sendOtp(email);
+
+      if (!user) {
+        ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+        return;
+      }
+
+      ResponseUtil.success(res, null, "OTP sent successfully");
+    } catch (error) {
+      next(error);
+    }
+  };
+
+
+  verifyOtp = async (
+    req: Request, 
+    res: Response, 
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { email, otp } = req.body;
+
+      // Verify OTP
+      const user = await this.authService.verifyOtp(email, otp);
+
+      if (!user) {
+        ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+        return;
+      }
+
+      ResponseUtil.success(res, null, "OTP verified successfully");
+    } catch (error) {
+      next(error);
+    }
+  };
   /**
    * Get user profile
    */

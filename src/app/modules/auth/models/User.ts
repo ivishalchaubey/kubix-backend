@@ -43,6 +43,10 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       trim: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
     },
+    otp: {
+      type: String,
+      select: false, // Don't include OTP in queries by default
+    },
     dob: {
       type: String,
       required: [true, "Date of birth is required"],

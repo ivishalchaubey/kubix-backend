@@ -10,6 +10,7 @@ export interface IUser {
   lastName: string;
   dob: string; // Assuming ISO date string
   countryCode: string;
+  otp: string;
   phoneNumber: string;
   board: string;
   stream: string;
