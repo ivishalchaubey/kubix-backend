@@ -52,9 +52,9 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email, password } = req.body;
+      const { email, password , role } = req.body;
 
-      const result = await this.authService.login({ email, password });
+      const result = await this.authService.login({ email, password , role });
 
       ResponseUtil.success(res, result, API_MESSAGES.SUCCESS.LOGIN_SUCCESS);
     } catch (error) {
