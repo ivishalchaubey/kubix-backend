@@ -10,6 +10,8 @@ export interface IUser {
   lastName: string;
   dob: string; // Assuming ISO date string
   countryCode: string;
+  otp: string;
+  otpExpires: Date; // Optional, used for OTP expiration
   phoneNumber: string;
   board: string;
   stream: string;

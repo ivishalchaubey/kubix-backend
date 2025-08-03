@@ -36,11 +36,12 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
           firstName: decoded.firstName,
           lastName: decoded.lastName,
           dob: decoded.dob,
+          otp: decoded.otp,
+          otpExpires: decoded.otpExpires,
           countryCode: decoded.countryCode,
           phoneNumber: decoded.phoneNumber,
           board: decoded.board,
           stream: decoded.stream,
-
           email: decoded.email,
           password: "", // Password should not be included in the request
           isEmailVerified: true, // Assuming email is verified for authenticated users
@@ -77,9 +78,11 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
       // TODO: Implement JWT verification
         req.user = {
           _id:decoded.userId,
+          otpExpires: decoded.otpExpires,
           firstName: decoded.firstName,
           lastName: decoded.lastName,
           dob: decoded.dob,
+          otp: decoded.otp,
           countryCode: decoded.countryCode,
           phoneNumber: decoded.phoneNumber,
           board: decoded.board,

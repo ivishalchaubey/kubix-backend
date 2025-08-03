@@ -43,6 +43,10 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       trim: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
     },
+    otp: {
+      type: String,
+      select: false, // Don't include OTP in queries by default
+    },
     dob: {
       type: String,
       required: [true, "Date of birth is required"],
@@ -110,6 +114,11 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters long"],
       select: false, // Don't include password in queries by default
+    },
+    otpExpires: {
+      type: Date,
+      select: false, // Don't include OTP expiration in queries by default
+      default: Date.now,
     },
     role: {
       type: String,
