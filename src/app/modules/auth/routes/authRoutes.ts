@@ -23,7 +23,7 @@ router.post("/refresh-tokens", authController.refreshTokens);
 router.post("/verify-email/:token", AuthMiddleware.authenticate,  authController.verifyEmail);
 
 // Protected routes (authentication required)
-router.use(AuthMiddleware.authenticate); // Apply authentication to all routes below
+// router.use(AuthMiddleware.authenticate); // Apply authentication to all routes below
 
 router.post("/logout", authController.logout);
 router.get("/profile", authController.getProfile);

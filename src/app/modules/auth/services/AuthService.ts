@@ -103,6 +103,7 @@ class AuthService {
 
       // Find user with password
       const user = await this.authRepository.findUserByEmailAndRole(email,role , true);
+      console.log(email , role , "email and role in login service");
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
