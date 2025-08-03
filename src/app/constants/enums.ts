@@ -60,6 +60,7 @@ export const API_MESSAGES = {
     NOT_FOUND: "Resource not found",
     UNPROCESSABLE_ENTITY: "Unprocessable entity",
     INVALID_OTP: "Invalid OTP",
+    OTP_EXPIRED: "OTP has expired",
   },
   ADMIN_ERROR: {
     CATEGORY_NOT_FOUND: "Category not found",

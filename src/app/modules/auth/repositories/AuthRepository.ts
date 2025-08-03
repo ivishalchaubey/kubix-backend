@@ -43,7 +43,7 @@ class AuthRepository {
   async findUserByEmail(
     email: string,
     includePassword = false,
-    includeOtp = false
+    includeOtp = true
   ): Promise<IUser | null> {
     const query = User.findOne({ email });
     if (includePassword) {
@@ -123,7 +123,7 @@ class AuthRepository {
 
      await User.findOneAndUpdate(
       {email: email},
-      { otp },
+      { otp , otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
       { new: true, runValidators: true }
     );
       console.log("OTP set successfully for user:", email);
@@ -146,19 +146,15 @@ class AuthRepository {
 
 
   async clearOtp(
-    userId: string  
+    email: string  
   ): Promise<IUser | null> {
-    if (!Types.ObjectId.isValid(userId)) {
-      throw new AppError(
-        API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
-      );
-    }
-    return await User.findByIdAndUpdate
-      (userId,
-        { otp: undefined },
+    let data = await User.findOneAndUpdate
+      ({email : email},
+        { otp: "" },
         { new: true, runValidators: true }
       );
+
+      return data;
   };
 
   /**

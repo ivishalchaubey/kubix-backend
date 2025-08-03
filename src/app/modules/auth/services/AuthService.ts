@@ -196,8 +196,8 @@ class AuthService {
       }
 
       // Verify OTP
-      console.log(user.otp , otp , "user otp and otp in verifyOtp service");
-      if (user.otp !== otp) {
+      console.log(user.otp , otp , "user otp and otp in verifyOtp service for " , email);
+      if (user.otp != otp && user.otpExpires && user.otpExpires < new Date()) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_OTP,
           HttpStatus.BAD_REQUEST
@@ -205,6 +205,7 @@ class AuthService {
       }
 
       // Clear OTP after verification
+
       await this.authRepository.clearOtp(email);
 
       logger.info(`OTP verified for user: ${email}`);

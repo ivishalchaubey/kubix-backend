@@ -82,6 +82,11 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       minlength: [8, "Password must be at least 8 characters long"],
       select: false, // Don't include password in queries by default
     },
+    otpExpires: {
+      type: Date,
+      select: false, // Don't include OTP expiration in queries by default
+      default: Date.now,
+    },
     role: {
       type: String,
       enum: Object.values(UserRole),

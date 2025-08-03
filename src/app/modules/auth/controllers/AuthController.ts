@@ -213,7 +213,7 @@ class AuthController {
         return;
       }
 
-      ResponseUtil.success(res, null, "OTP verified successfully");
+      ResponseUtil.success(res, user, "OTP verified successfully");
     } catch (error) {
       next(error);
     }
