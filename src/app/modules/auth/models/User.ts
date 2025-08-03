@@ -21,12 +21,19 @@ const comparePassword = async (
 // User schema
 const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
   {
-    name: {
+    firstName: {
       type: String,
       required: [true, "Name is required"],
       trim: true,
       minlength: [2, "Name must be at least 2 characters long"],
       maxlength: [50, "Name cannot exceed 50 characters"],
+    },
+    lastName: {
+      type: String,
+      required: [true, "Last name is required"],
+      trim: true,
+      minlength: [2, "Last name must be at least 2 characters long"],
+      maxlength: [50, "Last name cannot exceed 50 characters"],
     },
     email: {
       type: String,
@@ -35,6 +42,35 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       lowercase: true,
       trim: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
+    },
+    dob: {
+      type: String,
+      required: [true, "Date of birth is required"],
+      match: [/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"],
+    },
+    countryCode: {
+      type: String,
+      required: [true, "Country code is required"],
+      trim: true,
+      match: [/^\+\d{1,3}$/, "Country code must start with '+' followed by digits"],
+    },
+    phoneNumber: {
+      type: String,
+      required: [true, "Phone number is required"],
+      trim: true,
+      match: [/^\d{10}$/, "Phone number must be 10 digits long"],
+    },
+    board: {
+      type: String,
+      required: [true, "Board is required"],
+      trim: true,
+      enum: ["CBSE", "ICSE", "State", "IB", "Other"], // Example boards
+    },
+    stream: {
+      type: String,
+      required: [true, "Stream is required"],
+      trim: true,
+      enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
     },
     password: {
       type: String,

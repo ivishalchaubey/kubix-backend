@@ -33,7 +33,14 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
       // For now, mock authentication
         req.user = {
           _id: decoded.userId,
-          name: decoded.name,
+          firstName: decoded.firstName,
+          lastName: decoded.lastName,
+          dob: decoded.dob,
+          countryCode: decoded.countryCode,
+          phoneNumber: decoded.phoneNumber,
+          board: decoded.board,
+          stream: decoded.stream,
+
           email: decoded.email,
           password: "", // Password should not be included in the request
           isEmailVerified: true, // Assuming email is verified for authenticated users
@@ -70,7 +77,13 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
       // TODO: Implement JWT verification
         req.user = {
           _id:decoded.userId,
-          name: decoded.name,
+          firstName: decoded.firstName,
+          lastName: decoded.lastName,
+          dob: decoded.dob,
+          countryCode: decoded.countryCode,
+          phoneNumber: decoded.phoneNumber,
+          board: decoded.board,
+          stream: decoded.stream,
           email: decoded.email,
           password: "", // Password should not be included in the request
           isEmailVerified: true, // Assuming email is verified for optional auth

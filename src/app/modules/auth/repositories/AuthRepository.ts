@@ -13,10 +13,16 @@ class AuthRepository {
    * Create a new user
    */
   async createUser(userData: {
-    name: string;
+    firstName: string;
+    lastName: string;
     email: string;
+    dob: string;
+    countryCode: string;
+    phoneNumber: string;
+    board: string;
+    stream: string;
     password: string;
-    role?: UserRole;
+    role: UserRole;
   }): Promise<IUser> {
     // Check if email is already taken
     const isEmailTaken = await User.isEmailTaken(userData.email);
