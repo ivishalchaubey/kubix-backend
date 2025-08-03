@@ -145,6 +145,27 @@ class AuthRepository {
   }
 
 
+  async setPhoneOtp(
+    phone: string,
+    otp: string
+  ): Promise<IUser | any> {
+    if (!phone) {
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    await User.findOneAndUpdate(
+      { phoneNumber: phone },
+      { otp , otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
+      { new: true, runValidators: true }
+    );
+    console.log("Phone OTP set successfully for user:", phone);
+    return await User.findOne({ phoneNumber: phone });
+  }
+
+
   async clearOtp(
     email: string  
   ): Promise<IUser | null> {
@@ -157,7 +178,26 @@ class AuthRepository {
       return data;
   };
 
+  async findUserByPhone(
+    phone: string,): Promise<IUser | null> {
+    return await User.findOne({ phoneNumber: phone });
+  }; 
+
+    async clearPhoneOtp(
+    phone: string  
+  ): Promise<IUser | null> {
+    let data = await User.findOneAndUpdate
+      ({phoneNumber : phone},
+        { otp: "" },
+        { new: true, runValidators: true }
+      );
+
+      return data;
+  };
+
   /**
+   * 
+   * 
    * Find user by email verification token
    */
   async findUserByEmailVerificationToken(token: string): Promise<IUser | null> {
