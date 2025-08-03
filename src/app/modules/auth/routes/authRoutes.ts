@@ -8,7 +8,7 @@ const authController = new AuthController();
 
 // Public routes (no authentication required)
 router.post("/register", authValidation.register, authController.register);
-router.post("/login",  authController.login);
+router.post("/login", authController.login);
 router.post(
   "/forgot-password",
   authValidation.forgotPassword,
@@ -20,7 +20,11 @@ router.post(
   authController.resetPassword
 );
 router.post("/refresh-tokens", authController.refreshTokens);
-router.post("/verify-email/:token", AuthMiddleware.authenticate,  authController.verifyEmail);
+router.post(
+  "/verify-email/:token",
+  AuthMiddleware.authenticate,
+  authController.verifyEmail
+);
 
 // Protected routes (authentication required)
 router.use(AuthMiddleware.authenticate); // Apply authentication to all routes below

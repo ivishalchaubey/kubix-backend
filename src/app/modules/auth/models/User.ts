@@ -46,13 +46,19 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     dob: {
       type: String,
       required: [true, "Date of birth is required"],
-      match: [/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"],
+      match: [
+        /^\d{4}-\d{2}-\d{2}$/,
+        "Date of birth must be in YYYY-MM-DD format",
+      ],
     },
     countryCode: {
       type: String,
       required: [true, "Country code is required"],
       trim: true,
-      match: [/^\+\d{1,3}$/, "Country code must start with '+' followed by digits"],
+      match: [
+        /^\+\d{1,3}$/,
+        "Country code must start with '+' followed by digits",
+      ],
     },
     phoneNumber: {
       type: String,
@@ -64,13 +70,40 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       type: String,
       required: [true, "Board is required"],
       trim: true,
-      enum: ["CBSE", "ICSE", "State", "IB", "Other"], // Example boards
+      enum: ["CBSE", "ICSE", "STATE", "IB", "OTHER"], // Example boards
     },
     stream: {
       type: String,
       required: [true, "Stream is required"],
       trim: true,
-      enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
+      enum: [
+        "science",
+        "commerce",
+        "arts",
+        "engineering_technology",
+        "medical_health_sciences",
+        "law",
+        "management",
+        "computer_it",
+        "design_fine_arts",
+        "education_teaching",
+        "hotel_hospitality",
+        "mass_comm_journalism",
+        "architecture",
+        "agriculture_forestry",
+        "pharmacy",
+        "paramedical",
+        "performing_arts",
+        "social_work",
+        "aviation",
+        "marine_shipping",
+        "environmental_sciences",
+        "defense_military",
+        "fashion_technology",
+        "food_technology",
+        "veterinary_sciences",
+        "languages_literature",
+      ],
     },
     password: {
       type: String,
@@ -175,16 +208,22 @@ userSchema.methods.generateAuthTokens = async function () {
   const accessToken = jwt.sign(
     { sub: user._id, role: user.role },
     config.jwt.secret as string,
-    { expiresIn: '7d' }
+    { expiresIn: "7d" }
   );
   const refreshToken = jwt.sign(
     { sub: user._id, role: user.role },
     config.jwt.refreshSecret as string,
-    { expiresIn: '30d' }
+    { expiresIn: "30d" }
   );
   return {
-    access: { token: accessToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
-    refresh: { token: refreshToken, expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
+    access: {
+      token: accessToken,
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    },
+    refresh: {
+      token: refreshToken,
+      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    },
   };
 };
 
