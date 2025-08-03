@@ -51,6 +51,18 @@ class AuthRepository {
     return await query.exec();
   }
 
+  async findUserByEmailAndRole(
+    email: string,
+    role: UserRole,
+    includePassword = false
+  ): Promise<IUser | null> {
+    const query = User.findOne({email : email , role :role });
+    if (includePassword) {
+      query.select("+password");
+    }
+    return await query.exec();
+  }
+
   /**
    * Find user by ID
    */

@@ -96,12 +96,14 @@ class AuthService {
   async login(credentials: {
     email: string;
     password: string;
+    role: UserRole;
   }): Promise<{ user: IUser; tokens: TokenResponse }> {
     try {
-      const { email, password } = credentials;
+      const { email, password , role } = credentials;
 
       // Find user with password
-      const user = await this.authRepository.findUserByEmail(email, true);
+      const user = await this.authRepository.findUserByEmailAndRole(email,role , true);
+      console.log(email , role , "email and role in login service");
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
