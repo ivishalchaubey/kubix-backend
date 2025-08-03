@@ -5,8 +5,14 @@ import { UserRole, TokenType, HttpStatus } from "../constants/enums.js";
 // User related types
 export interface IUser {
   _id: string;
-  name: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  dob: string; // Assuming ISO date string
+  countryCode: string;
+  phoneNumber: string;
+  board: string;
+  stream: string;
   password: string;
   role: UserRole;
   isEmailVerified: boolean;

@@ -22,10 +22,16 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { name, email, password, role } = req.body;
+      const { firstName, lastName ,  email, password, role ,dob , countryCode , phoneNumber , board , stream} = req.body;
 
       const result = await this.authService.register({
-        name,
+        firstName,
+        lastName,
+        dob,
+        countryCode,
+        phoneNumber,
+        board,
+        stream,
         email,
         password,
         role,
@@ -203,8 +209,9 @@ class AuthController {
       const updatedUser = await this.authService.updateUserProfile(
         req.user._id,
         {
-          name,
-          email,
+          firstName: name,
+          lastName: req.user.lastName, // Assuming lastName is not being updated
+          email: email || req.user.email
         }
       );
 

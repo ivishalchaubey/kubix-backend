@@ -23,10 +23,16 @@ class AuthService {
    * Register a new user
    */
   async register(userData: {
-    name: string;
+    firstName: string;
+    lastName: string;
+    dob: string;
+    countryCode: string;
+    phoneNumber: string;
+    board: string;
+    stream : string;
     email: string;
     password: string;
-    role?: UserRole;
+    role: UserRole;
   }): Promise<{ user: IUser; tokens: TokenResponse }> {
     try {
       // Check if user already exists and role is not admin
@@ -116,11 +122,11 @@ class AuthService {
       // Generate auth tokens
       // const tokens = await (user as IUser & IUserMethods).generateAuthTokens();
       const accessToken = jwt.sign(
-        { userId: user?._id, role: "user", email: user.email, name: user.name },
+        { userId: user?._id, role: "user", email: user.email, name: user.firstName + " " + user.lastName },
         config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
-        { userId: user._id, role: "user" , email: user.email , name: user.name},
+        { userId: user._id, role: "user" , email: user.email , name: user.firstName + " " + user.lastName},
         config.jwt.refreshSecret as string
         );
       
@@ -294,7 +300,7 @@ class AuthService {
    */
   async updateUserProfile(
     userId: string,
-    updateData: { name?: string; email?: string }
+    updateData: { firstName?: string; lastName ?:string ; email?: string }
   ): Promise<IUser> {
     try {
       // Check if new email is already taken

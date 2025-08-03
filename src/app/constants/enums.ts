@@ -1,8 +1,8 @@
 // Enums
-export enum UserRole {
+export enum   UserRole {
   ADMIN = "admin",
   User = "user",
-  STUDENT = "student",
+  UNIVERSITY = "university",
 }
 
 export enum TokenType {

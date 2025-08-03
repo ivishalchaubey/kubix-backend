@@ -149,7 +149,12 @@ class Validator {
 // Common validation schemas
 export const authValidation = {
   register: Validator.validate({
-    name: [
+    firstName: [
+      { required: true, type: "string" },
+      { minLength: VALIDATION_RULES.NAME.MIN_LENGTH },
+      { maxLength: VALIDATION_RULES.NAME.MAX_LENGTH },
+    ],
+    lastName: [
       { required: true, type: "string" },
       { minLength: VALIDATION_RULES.NAME.MIN_LENGTH },
       { maxLength: VALIDATION_RULES.NAME.MAX_LENGTH },
@@ -164,7 +169,13 @@ export const authValidation = {
       { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },
       { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
     ],
-  }),
+    dob: [{ required: true, type: "string" }], // Assuming dob is a string in ISO format
+    countryCode: [{ required: true, type: "string" }],
+    role: [{ required: true, type: "string" }], // Assuming role is a string
+    phoneNumber: [{ required: true, type: "string" }],
+    board: [{ required: true, type: "string" }],
+    stream: [{ required: true, type: "string" }],
+   }),
 
   login: Validator.validate({
     email: [{ required: true, type: "email" }],
