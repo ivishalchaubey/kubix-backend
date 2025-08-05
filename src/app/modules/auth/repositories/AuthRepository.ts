@@ -180,7 +180,7 @@ class AuthRepository {
 
   async findUserByPhone(
     phone: string,): Promise<IUser | null> {
-  let userData = await User.findOne({ phoneNumber: phone }).select('otp firstName lastName _id otpExpires dob ').lean();
+  let userData = await User.findOne({ phoneNumber: phone }).select('otp firstName lastName _id otpExpires dob email ').lean();
 return userData;  
 }; 
 
