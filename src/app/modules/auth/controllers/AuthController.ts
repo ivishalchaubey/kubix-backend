@@ -125,9 +125,11 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email } = req.body;
+      console.log("req.user<><><><><><><><> checking for forgotPassword", req.user);
+      const { email , password } = req.body;
 
-      await this.authService.forgotPassword(email);
+
+      await this.authService.forgotPassword(email , password);
 
       ResponseUtil.success(res, null, API_MESSAGES.SUCCESS.PASSWORD_RESET_SENT);
     } catch (error) {

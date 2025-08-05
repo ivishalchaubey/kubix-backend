@@ -22,6 +22,9 @@ class AuthService {
   /**
    * Register a new user
    */
+
+
+  
   async register(userData: {
     firstName: string;
     lastName: string;
@@ -295,11 +298,11 @@ class AuthService {
       logger.info(`OTP verified for user: ${phone}`);
       // add  jwt token generation here
       const accessToken = jwt.sign(
-        { userId: user._id, role: "user", email: user.email, name: user.firstName + " " + user.lastName },
+        { userId: user._id, role: "user", email: user.email, firstName: user.firstName , lastName :user.lastName },
         config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
-        { userId: user._id, role: "user", email: user.email, name: user.firstName + " " + user.lastName },
+        { userId: user._id, role: "user", email: user.email, firstName: user.firstName , lastName :user.lastName },
         config.jwt.refreshSecret as string
       );
       // Store refresh token  
@@ -372,7 +375,7 @@ class AuthService {
   /**
    * Forgot password - send reset token
    */
-  async forgotPassword(email: string): Promise<void> {
+  async forgotPassword(email: string , password : string ): Promise<void> {
     try {
       const user = await this.authRepository.findUserByEmail(email);
       if (!user) {
@@ -389,8 +392,17 @@ class AuthService {
         resetToken,
         resetExpires
       );
+     
+       const hashPassword = async (password: string): Promise<string> => {
+        const saltRounds = config.bcrypt.saltRounds;
+        return await bcrypt.hash(password, saltRounds);
+      };
+      
+      // Hash the new password
+      let hashedpassword = await hashPassword(password);
+      await this.authRepository.updateUserPassword(user._id, password);
 
-      // TODO: Send email with reset token
+
       logger.info(`Password reset token generated for: ${email}`);
     } catch (error) {
       logger.error("Forgot password failed:", error);
