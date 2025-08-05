@@ -26,20 +26,21 @@ class AdminService {
   }
 
   async createCategory(categoryData: any[]) {
-      let parentId = "";    
-    for (const data of categoryData) {
-      if (data.order == 1) {
-        const newCategory = new category(data);
-        const newData = await newCategory.save();
-        parentId = newData._id.toString();
-      } else if (data.order > 1) {
-        data.parentId = parentId;
-        const newCategory = new category(data);
-        const newData = await newCategory.save();
-        parentId = newData._id.toString();
-      }
-    }
-    return { message: "Category created successfully" };
+    let orderToIdMap : any = {}; // Keep track of the latest _id for each order
+for (const data of categoryData) {
+  if (data.order > 1) {
+    // Set parentId to the _id of the last item with order = current order - 1
+    const parentOrder = data.order - 1;
+    data.parentId = orderToIdMap[parentOrder];
+  }
+
+  const newCategory = new category(data);
+  const savedCategory = await newCategory.save();
+
+  // Store _id for this order to be used as parentId for next order
+  orderToIdMap[data.order] = savedCategory._id.toString();
+}
+return { message: "Category created successfully" };
     // Logic to create a new category
   }
 

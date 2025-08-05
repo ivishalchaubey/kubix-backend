@@ -120,9 +120,9 @@ class AuthController {
       const { email , password } = req.body;
 
 
-      await this.authService.forgotPassword(email , password);
+      let result = await this.authService.forgotPassword(email , password);
 
-      ResponseUtil.success(res, null, API_MESSAGES.SUCCESS.PASSWORD_RESET_SENT);
+      ResponseUtil.success(res, result, API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS);
     } catch (error) {
       next(error);
     }
