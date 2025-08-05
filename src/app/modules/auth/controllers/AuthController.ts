@@ -22,7 +22,18 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { firstName, lastName ,  email, password, role ,dob , countryCode , phoneNumber , board , stream} = req.body;
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        dob,
+        countryCode,
+        phoneNumber,
+        board,
+        stream,
+      } = req.body;
 
       const result = await this.authService.register({
         firstName,
@@ -44,8 +55,6 @@ class AuthController {
   };
   // send otp
 
-  
-
   /**
    * Login user
    */
@@ -55,9 +64,9 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email, password , role } = req.body;
+      const { email, password, role } = req.body;
 
-      const result = await this.authService.login({ email, password , role });
+      const result = await this.authService.login({ email, password, role });
 
       ResponseUtil.success(res, result, API_MESSAGES.SUCCESS.LOGIN_SUCCESS);
     } catch (error) {
@@ -158,7 +167,10 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      console.log("req.user<><><><><><><><> checking for verifyEmail", req.user);
+      console.log(
+        "req.user<><><><><><><><> checking for verifyEmail",
+        req.user
+      );
       if (!req.user) {
         console.log("req.user<><><><><><><><> checking for verifyEmail");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
@@ -174,33 +186,32 @@ class AuthController {
   };
 
   sendOtp = async (
-    req: Request, 
-    res: Response, 
+    req: Request,
+    res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email , phone , type } = req.body;
+      const { email, phone, type } = req.body;
 
       // Generate OTP
       // Save OTP to user
-      if(type == 'email'){
+      if (type == "email") {
         const user = await this.authService.sendOtp(email);
-  
+
         if (!user) {
           ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
           return;
         }
-  
+
         ResponseUtil.success(res, null, "OTP sent successfully");
-      }
-      else if(type == 'phone'){
+      } else if (type == "phone") {
         const user = await this.authService.sendPhoneOtp(phone);
-  
+
         if (!user) {
           ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
           return;
         }
-  
+
         ResponseUtil.success(res, null, "Phone OTP sent successfully");
       }
       const user = await this.authService.sendOtp(email);
@@ -216,33 +227,32 @@ class AuthController {
     }
   };
 
-
   verifyOtp = async (
-    req: Request, 
-    res: Response, 
+    req: Request,
+    res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email, otp , type , phone } = req.body;
+      const { email, otp, type, phone } = req.body;
 
       // Verify OTP
-      if(type == 'email'){
-      const user = await this.authService.verifyOtp(email, otp);
+      if (type == "email") {
+        const user = await this.authService.verifyOtp(email, otp);
 
-      if (!user) {
-        ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-        return;
-      }
+        if (!user) {
+          ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+          return;
+        }
 
-      ResponseUtil.success(res, user, "OTP verified successfully");}
-      else if(type == 'phone'){
+        ResponseUtil.success(res, user, "OTP verified successfully");
+      } else if (type == "phone") {
         const user = await this.authService.verifyPhoneOtp(phone, otp);
 
         if (!user) {
           ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
           return;
         }
-  
+
         ResponseUtil.success(res, user, "Phone OTP verified successfully");
       }
     } catch (error) {
@@ -293,7 +303,7 @@ class AuthController {
         {
           firstName: name,
           lastName: req.user.lastName, // Assuming lastName is not being updated
-          email: email || req.user.email
+          email: email || req.user.email,
         }
       );
 
