@@ -180,8 +180,9 @@ class AuthRepository {
 
   async findUserByPhone(
     phone: string,): Promise<IUser | null> {
-    return await User.findOne({ phoneNumber: phone });
-  }; 
+  let userData = await User.findOne({ phoneNumber: phone }).select('otp').lean();
+return userData;  
+}; 
 
     async clearPhoneOtp(
     phone: string  

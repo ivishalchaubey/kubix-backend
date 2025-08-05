@@ -268,7 +268,7 @@ class AuthService {
   };
 
 
-    verifyPhoneOtp = async ([phone]: string, otp: string): Promise<{ user: IUser; tokens: TokenResponse }> => {
+    verifyPhoneOtp = async (phone: string, otp: string): Promise<{ user: IUser; tokens: TokenResponse }> => {
     try {
       // Check if user exists
       const user = await this.authRepository.findUserByPhone(phone);
