@@ -375,12 +375,15 @@ class AuthService {
   /**
    * Forgot password - send reset token
    */
-  async forgotPassword(email: string , password : string ): Promise<void> {
+  async forgotPassword(email: string , password : string ): Promise<IUser> {
     try {
       const user = await this.authRepository.findUserByEmail(email);
       if (!user) {
         // Don't reveal if email exists
-        return;
+        throw new AppError(
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND
+        );
       }
 
       // Generate password reset token
@@ -404,6 +407,7 @@ class AuthService {
 
 
       logger.info(`Password reset token generated for: ${email}`);
+      return user;
     } catch (error) {
       logger.error("Forgot password failed:", error);
       throw error;
