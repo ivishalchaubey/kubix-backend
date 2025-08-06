@@ -33,7 +33,7 @@ router.post(
 );
 router.post("/send-otp", authController.sendOtp);
 router.post("/verify-otp", authController.verifyOtp);
-router.post("/forgotPassword",AuthMiddleware.authenticate, authController.forgotPassword);
+router.post("/forgotPassword", authController.forgotPassword);
 // Protected routes (authentication required)
 // router.use(AuthMiddleware.authenticate); // Apply authentication to all routes below
 
