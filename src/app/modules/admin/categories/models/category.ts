@@ -5,6 +5,8 @@ export interface ICategory extends Document {
   _id: ObjectId; // Optional ID for the category
   order: number; // Order of the category
   name: string;
+  description: string;
+  image: string;
   parentId : ObjectId // Title of the category
 }
 
@@ -13,6 +15,8 @@ const categorySchema = new Schema<ICategory>(
   {
     name: { type: String, required: true },
     parentId: { type: mongoose.Schema.Types.ObjectId, default: null , ref : "Category" },
+    description: { type: String, required: false , default : "" },
+    image: { type: String, required: false , default : "" },
     order: { type: Number } // 1 = Stream, 2 = Field, etc.
 },
   {
