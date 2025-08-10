@@ -2,17 +2,20 @@ import { Request, Response, NextFunction } from 'express';
 import ResponseUtil from "../../../../utils/response.js";
 import { API_MESSAGES } from '../../../../constants/enums.js';
 import AdminService from '../services/adminService.js';
+import AdminRepositories from '../repositories/adminRepositories.js';
 class AdminController {
     public adminService: AdminService;
+    public adminRepositories: AdminRepositories;
     constructor() {
         this.adminService = new AdminService();
+        this.adminRepositories = new AdminRepositories();
     }
 
     async createCategory(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {   
             const { description , degree , branch, course , courseStream , subject } = req.body;
 
-            const result = await this.adminService.createCategory(req.body);
+            const result = await this.adminRepositories.saveCareerOptionsTree(req.body, null, 1);
 
             ResponseUtil.created(res, result, API_MESSAGES.ADMIN_SUCCESS.CATEGORY_CREATED);
         } catch (error) {
@@ -71,12 +74,6 @@ class AdminController {
             next(error);
         }
     }
-
-    // You can add more methods here as needed, such as for getting categories by specific criteria
-
-
-
-  // Add your methods here
 }
 
 export default AdminController;

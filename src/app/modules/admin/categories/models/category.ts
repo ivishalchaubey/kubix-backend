@@ -2,32 +2,19 @@ import mongoose, { Schema, Document, ObjectId } from "mongoose";
 
 // Correct TypeScript interface
 export interface ICategory extends Document {
-  _id: string; // Optional ID for the category
-  description: string;
+  _id: ObjectId; // Optional ID for the category
   order: number; // Order of the category
-  title: string;
+  name: string;
   parentId : ObjectId // Title of the category
 }
 
 // Define schema
 const categorySchema = new Schema<ICategory>(
   {
-    title: {
-      type: String,
-      trim: true,
-    },
-    parentId: {
-      type: mongoose.Types.ObjectId,
-      trim: true,
-    },
-    description: {
-      type: String,
-      trim: true,
-    },
-    order: {
-      type: Number,
-    },
-  },
+    name: { type: String, required: true },
+    parentId: { type: mongoose.Schema.Types.ObjectId, default: null , ref : "Category" },
+    order: { type: Number } // 1 = Stream, 2 = Field, etc.
+},
   {
     timestamps: true,
   }
