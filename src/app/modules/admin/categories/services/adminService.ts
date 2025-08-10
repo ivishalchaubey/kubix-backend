@@ -58,6 +58,8 @@ class AdminService {
   }
 
   async deleteCategory(categoryId: string) {
+
+    // here we have delete categoryId delete all the 
     // Logic to delete a category
   }
   async getCategoryById(categoryId: string) {

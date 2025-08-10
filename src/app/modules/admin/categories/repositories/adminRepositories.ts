@@ -6,35 +6,31 @@ import ICategory from "../models/category.js";
 
 interface ICategory {
   name: string;
-  parentId: mongoose.Types.ObjectId;
+  parentId: mongoose.Types.ObjectId | null;
+  description : string;
   order: number;
-  createdAt: Date;
-  updatedAt: Date;
+  image: string;
+
+
 }
 
 class AdminRepositories {
   
   constructor() {
   }
-  async saveCareerOptionsTree(treeData: any, parentId: ObjectId | null, order: number = 1) {
-    for (const node of treeData) {
-      const { name, children = [] } = node;
+  async saveCareerOptionsTree(treeData : ICategory) {
+      const { name , image , description , parentId, order } = treeData;
 
-      // Save current node
       const newNode = new CategoryModel({
         name,
         parentId,
+        description,
+        image,
         order
       });
 
       const savedNode = await newNode.save();
 
-      // Recurse if children exist
-      if (children.length > 0) {
-        await this.saveCareerOptionsTree(children, savedNode._id, order + 1);
-      }
-
-    }
   }
 
 async getAllCategories(): Promise<ICategory[]> {
