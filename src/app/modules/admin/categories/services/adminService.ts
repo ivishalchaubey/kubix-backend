@@ -1,6 +1,7 @@
 import { Router } from "express";
 import category from "../models/category.js";
-
+import AdminRepositories from "../repositories/adminRepositories.js";
+import { promises } from "dns";
 export interface ICategory {
   description: string;
   degree: string; // engineering, arts, science
@@ -18,18 +19,21 @@ interface IAdminService {
 }
 
 class AdminService {
+  private adminRepositories: AdminRepositories;
+  constructor() {
+    this.adminRepositories = new AdminRepositories();
+  }
   // Define the service methods here
-  async getCategories() {
+  async getCategories(): Promise<any> {
     // Logic to get categories
-    const categories = await category.find({});
+    const categories = await this.adminRepositories.getAllCategories();
     return categories;
   }
 
   async createCategory(categoryData: any[]) {
-    let orderToIdMap: any = {}; // Keep track of the latest _id for each order
+    let orderToIdMap: any = {};
     for (const data of categoryData) {
       if (data.order > 1) {
-        // Set parentId to the _id of the last item with order = current order - 1
         const parentOrder = data.order - 1;
         data.parentId = orderToIdMap[parentOrder];
       }
@@ -37,11 +41,9 @@ class AdminService {
       const newCategory = new category(data);
       const savedCategory = await newCategory.save();
 
-      // Store _id for this order to be used as parentId for next order
       orderToIdMap[data.order] = savedCategory._id.toString();
     }
     return { message: "Category created successfully" };
-    // Logic to create a new category
   }
 
   async updateCategory(categoryId: string, categoryData: any) {
@@ -53,7 +55,6 @@ class AdminService {
     if (!updatedCategory) {
       throw new Error("Category not found");
     }
-    // Logic to update an existing category
   }
 
   async deleteCategory(categoryId: string) {
