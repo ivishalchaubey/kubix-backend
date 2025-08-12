@@ -2,17 +2,7 @@ import { Document, model, ObjectId, Schema } from "mongoose";
 import CategoryModel from "../models/category.js";
 import ResponseUtil from "../../../../utils/response.js";
 import mongoose from "mongoose";
-import ICategory from "../models/category.js";
-
-interface ICategory {
-  name: string;
-  parentId: mongoose.Types.ObjectId | null;
-  description : string;
-  order: number;
-  image: string;
-
-
-}
+import {ICategory} from "../models/category.js";
 
 class AdminRepositories {
   
@@ -117,6 +107,20 @@ async getAllCategories(): Promise<ICategory[]> {
 ]);
 
   return categories;
+}
+
+async getAllChildrenByParentId(parentId: string): Promise<ICategory[]> {
+  let x =  await CategoryModel.aggregate([{$match:{parentId: new mongoose.Types.ObjectId(parentId)}}]);
+  return x;
+}
+
+// add delete function  
+async deleteCategory(categoryId: string): Promise<void> {
+  const deletedCategory = await CategoryModel.findByIdAndDelete(categoryId);
+  if (!deletedCategory) {
+    throw new Error("Category not found");
+  }
+  return;
 }
 
 }
