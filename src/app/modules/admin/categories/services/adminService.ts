@@ -62,6 +62,15 @@ return { message: "Category created successfully" };
   async deleteCategory(categoryId: string) {
 
     // here we have delete categoryId delete all the 
+    // get all the children from this 
+    let children = await this.adminRepositories.getAllChildrenByParentId(categoryId);
+    if (children.length > 0) {
+      for (const child of children) {
+        await this.adminRepositories.deleteCategory(child._id.toString());
+      }
+    }
+    
+
     // Logic to delete a category
   }
   async getCategoryById(categoryId: string) {
