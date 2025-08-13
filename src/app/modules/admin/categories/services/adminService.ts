@@ -69,6 +69,7 @@ return { message: "Category created successfully" };
         await this.adminRepositories.deleteCategory(child._id.toString());
       }
     }
+    await this.adminRepositories.deleteCategory(categoryId);
     
 
     // Logic to delete a category
