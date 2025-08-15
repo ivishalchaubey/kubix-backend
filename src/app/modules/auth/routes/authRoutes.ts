@@ -28,7 +28,7 @@ router.post("/forgotPassword", authController.forgotPassword);
 // router.use(AuthMiddleware.authenticate); // Apply authentication to all routes below
 
 router.post("/logout", authController.logout);
-router.get("/profile", authController.getProfile);
+router.get("/profile",AuthMiddleware.authenticate, authController.getProfile);
 router.patch("/profile", authController.updateProfile);
 router.patch("/change-password", authController.changePassword);
 

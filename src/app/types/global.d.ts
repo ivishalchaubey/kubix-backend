@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { Model } from "mongoose";
 import { UserRole, TokenType, HttpStatus } from "../constants/enums.js";
-
+import { ObjectId } from "mongodb";   
 // User related types
 export interface IUser {
   _id: string;
@@ -13,6 +13,7 @@ export interface IUser {
   otp: string;
   otpExpires: Date; // Optional, used for OTP expiration
   phoneNumber: string;
+  categoryIds: ObjectId[];
   board: string;
   stream: string;
   password: string;
@@ -24,6 +25,15 @@ export interface IUser {
   refreshToken?: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IUserReq {
+  _id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  role: UserRole;
 }
 
 export interface IUserMethods {
@@ -55,7 +65,7 @@ export interface TokenResponse {
 }
 
 export interface AuthRequest extends Request {
-  user?: IUser;
+  user?: IUserReq;
 }
 
 // API Response types
@@ -109,7 +119,7 @@ export { UserRole, TokenType, HttpStatus };
 declare global {
   namespace Express {
     interface Request {
-      user?: IUser;
+      user?: IUserReq;
     }
   }
 }

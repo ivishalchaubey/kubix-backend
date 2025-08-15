@@ -80,6 +80,51 @@ class AuthRepository {
     }
 
     const query = User.findById(userId);
+
+    const pipeline = [
+      {
+        $match : { _id: new Types.ObjectId(userId) },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryIds",
+          foreignField: "_id",
+          as: "categories",
+        },
+      },
+      {
+        $unwind: {
+          path: "$categories",
+          preserveNullAndEmptyArrays: true, // Keep users without categories
+        },
+      },
+      {
+        $lookup: {
+          from :"courses",
+          localfeild: "categories.courseIds",
+          foreignField: "_id",
+          as: "courses",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          dob: 1,
+          countryCode: 1,
+          phoneNumber: 1,
+          board: 1,
+          stream: 1,
+          role: 1,
+          isEmailVerified: 1,
+          categories: 1, // Include categories
+        },
+      },
+    ];
+
     if (includePassword) {
       query.select("+password");
     }

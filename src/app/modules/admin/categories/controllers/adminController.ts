@@ -15,10 +15,8 @@ class AdminController {
         try {   
             const { description , degree , branch, course , courseStream , subject } = req.body;
             
-
-            const result = await this.adminRepositories.saveCareerOptionsTree(req.body);
-
-            ResponseUtil.created(res, result, API_MESSAGES.ADMIN_SUCCESS.CATEGORY_CREATED);
+             const result = await this.adminRepositories.saveCareerOptionsTree(req.body, null, 1);
+            ResponseUtil.created(res, {}, API_MESSAGES.ADMIN_SUCCESS.CATEGORY_CREATED);
         } catch (error) {
             next(error);
         }

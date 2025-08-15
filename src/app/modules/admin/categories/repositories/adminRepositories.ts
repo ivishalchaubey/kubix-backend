@@ -8,11 +8,54 @@ class AdminRepositories {
   
   constructor() {
   }
-  async saveCareerOptionsTree(treeData : ICategory) {
-      const { name , image , description , parentId, order , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = treeData;
+  // async saveCareerOptionsTree(treeData : ICategory) {
+      // const { name , image , description , parentId, order , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = treeData;
 
+      // const newNode = new CategoryModel({
+      //   name,
+      //   parentId,
+      //   description,
+      //   image,
+      //   order,
+      //   isLeafNode,
+      //   a_day_in_life,
+      //   core_skills,
+      //   educational_path,
+      //   salary_range,
+      //   future_outlook
+      // });
+
+      // const savedNode = await newNode.save();
+
+
+  //     for (const node of treeData) {
+  //     const { name, children = [] } = node;
+
+  //     // Save current node
+  //     const newNode = new CategoryModel({
+  //       name,
+  //       parentId,
+  //       order
+  //     });
+
+  //     const savedNode = await newNode.save();
+
+  //     // Recurse if children exist
+  //     if (children.length > 0) {
+  //       await this.saveCareerOptionsTree(children, savedNode._id, order + 1);
+  //     }
+
+  //   }
+
+  // }
+
+  async saveCareerOptionsTree(treeData: any, parentId: ObjectId | null, order: number = 1) {
+    for (const node of treeData) {
+      const { name, children = [], image , description , parentId, order , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = node;
+
+      // Save current node
       const newNode = new CategoryModel({
-        name,
+         name,
         parentId,
         description,
         image,
@@ -27,7 +70,14 @@ class AdminRepositories {
 
       const savedNode = await newNode.save();
 
+      // Recurse if children exist
+      if (children.length > 0) {
+        await this.saveCareerOptionsTree(children, savedNode._id, order + 1);
+      }
+
+    }
   }
+
 
 async getAllCategories(): Promise<ICategory[]> {
   const categories = await CategoryModel.aggregate([

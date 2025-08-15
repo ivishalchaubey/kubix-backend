@@ -31,19 +31,10 @@ class AuthMiddleware {
           _id: decoded.userId,
           firstName: decoded.firstName,
           lastName: decoded.lastName,
-          dob: decoded.dob,
-          otp: decoded.otp,
-          otpExpires: decoded.otpExpires,
-          countryCode: decoded.countryCode,
-          phoneNumber: decoded.phoneNumber,
-          board: decoded.board,
-          stream: decoded.stream,
           email: decoded.email,
-          password: "", // Password should not be included in the request
-          isEmailVerified: true, // Assuming email is verified for authenticated users
           role: decoded.role,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          phoneNumber: decoded.phoneNumber,
+          
         };
         next();
       
@@ -72,22 +63,12 @@ class AuthMiddleware {
 
       // TODO: Implement JWT verification
         req.user = {
-          _id:decoded.userId,
-          otpExpires: decoded.otpExpires,
+           _id: decoded.userId,
           firstName: decoded.firstName,
           lastName: decoded.lastName,
-          dob: decoded.dob,
-          otp: decoded.otp,
-          countryCode: decoded.countryCode,
-          phoneNumber: decoded.phoneNumber,
-          board: decoded.board,
-          stream: decoded.stream,
           email: decoded.email,
-          password: "", // Password should not be included in the request
-          isEmailVerified: true, // Assuming email is verified for optional auth
           role: decoded.role,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          phoneNumber: decoded.phoneNumber,
         };
      
       next();
