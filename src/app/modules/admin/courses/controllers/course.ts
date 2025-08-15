@@ -9,7 +9,7 @@ class CourseController {
     }
     async createCourse(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { name, description, categoryId , Image,duration , amount , university  , currency,chapters } = req.body;
+            const { name, description, categoryId, Image, duration, amount, university, currency, chapters } = req.body;
 
             // Assuming there's a service method to handle course creation
             const result = await this.courseService.createCourse(req.body);
@@ -47,9 +47,15 @@ class CourseController {
 
     async getCourses(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
+            let categoryId = req.query.categoryId;
             const courses = await this.courseService.getCourses();
-            console.log("Fetched courses:", courses);
-            ResponseUtil.success(res, courses, API_MESSAGES.COURSE.COURSES_FETCHED);
+            if (categoryId) {
+                const coursesByCategory = await this.courseService.getCoursesByCategory(categoryId as string);
+                ResponseUtil.success(res, coursesByCategory, API_MESSAGES.COURSE.COURSES_FETCHED);
+            }
+            else {
+                console.log("Fetched courses:", courses);
+            } ResponseUtil.success(res, courses, API_MESSAGES.COURSE.COURSES_FETCHED);
         } catch (error) {
             next(error);
         }

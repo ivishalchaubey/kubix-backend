@@ -30,6 +30,11 @@ class CourseService {
   async getCourses(): Promise<any[]> {
     return await Course.find();
   }
+
+  // function to get the courses based on categoryId
+  async getCoursesByCategory(categoryId: string): Promise<any[]> {
+    return await Course.find({ categoryId: categoryId }).lean();
+  }
 }
 
 export default CourseService;
