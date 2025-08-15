@@ -44,6 +44,17 @@ export const API_MESSAGES = {
     CATEGORIES_FETCHED: "Categories fetched successfully",
     CATEGORY_FETCHED: "Category fetched successfully",
   },
+  USER_ERROR: {
+    USER_NOT_FOUND: "User not found",
+    INVALID_CREDENTIALS: "Invalid email or password",
+    EMAIL_ALREADY_EXISTS: "Email already exists",
+  },
+  COURSE:{
+    COURSE_CREATED: "Course created successfully",
+    COURSE_UPDATED: "Course updated successfully",
+    COURSE_DELETED: "Course deleted successfully",
+    COURSES_FETCHED: "Courses fetched successfully",
+  },
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",
