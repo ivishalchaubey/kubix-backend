@@ -49,9 +49,6 @@ class Logger {
   }
 
   debug(message: string, ...args: unknown[]): void {
-    if (!this.isProduction) {
-      console.log(this.formatMessage(LOG_LEVELS.DEBUG, message, ...args));
-    }
   }
 }
 

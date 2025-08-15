@@ -53,9 +53,7 @@ class CourseController {
                 const coursesByCategory = await this.courseService.getCoursesByCategory(categoryId as string);
                 ResponseUtil.success(res, coursesByCategory, API_MESSAGES.COURSE.COURSES_FETCHED);
             }
-            else {
-                console.log("Fetched courses:", courses);
-            } ResponseUtil.success(res, courses, API_MESSAGES.COURSE.COURSES_FETCHED);
+         ResponseUtil.success(res, courses, API_MESSAGES.COURSE.COURSES_FETCHED);
         } catch (error) {
             next(error);
         }

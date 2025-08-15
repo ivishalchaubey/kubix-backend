@@ -102,8 +102,6 @@ class AuthService {
     try {
       // Check if user exists
       const user = await this.authRepository.findUserByEmail(email);
-      console.log(email , "email in sendOtp service");
-      console.log(user , "user in sendOtp service");
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
@@ -128,8 +126,6 @@ class AuthService {
     try { 
       // Check if user exists
       const user = await this.authRepository.findUserByPhone(phone);
-      console.log(phone , "phone in sendPhoneOtp service");
-      console.log(user , "user in sendPhoneOtp service");
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
@@ -155,7 +151,6 @@ class AuthService {
 
       // Find user with password
       const user = await this.authRepository.findUserByEmailAndRole(email,role , true);
-      console.log(email , role , "email and role in login service");
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
@@ -223,7 +218,6 @@ class AuthService {
       }
 
       // Verify OTP
-      console.log(user.otp , otp , "user otp and otp in verifyOtp service for " , email);
       if (user.otp != otp && user.otpExpires && user.otpExpires < new Date()) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_OTP,
@@ -283,7 +277,6 @@ class AuthService {
       }
 
       // Verify OTP
-      console.log(user.otp , otp , "user otp and otp in verifyOtp service for " , phone);
       if (user.otp != "123456" && user.otpExpires && user.otpExpires < new Date()) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_OTP,

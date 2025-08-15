@@ -84,7 +84,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for logout");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -125,13 +124,15 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      console.log("req.user<><><><><><><><> checking for forgotPassword", req.user);
-      const { email , password } = req.body;
+      const { email, password } = req.body;
 
+      let result = await this.authService.forgotPassword(email, password);
 
-      let result = await this.authService.forgotPassword(email , password);
-
-      ResponseUtil.success(res, result, API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS);
+      ResponseUtil.success(
+        res,
+        result,
+        API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS
+      );
     } catch (error) {
       next(error);
     }
@@ -174,7 +175,6 @@ class AuthController {
         req.user
       );
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for verifyEmail");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -271,7 +271,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for getProfile");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -294,7 +293,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for updateProfile");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -329,7 +327,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for changePassword");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
