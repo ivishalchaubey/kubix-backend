@@ -17,7 +17,6 @@ class AuthMiddleware {
     try {
       // Get token from header
       const authHeader = req.headers.authorization;
-      console.log("authHeader<><><><><><><><> checking for authenticate", authHeader);
       
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
          ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
@@ -28,9 +27,6 @@ class AuthMiddleware {
       // decode token
           const decoded = jwt.verify(token, config.jwt.secret) as any;
 
-console.log("decoded<><><><><><><><> checking for authenticate", decoded);
-      // TODO: Implement JWT verification
-      // For now, mock authentication
         req.user = {
           _id: decoded.userId,
           firstName: decoded.firstName,
@@ -72,7 +68,6 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
       }
 
       const token = authHeader.substring(7);
-      console.log("authHeader<><><><><><><><> checking for optionalAuth", authHeader);
       const decoded = jwt.verify(token, config.jwt.secret) as any;
 
       // TODO: Implement JWT verification
@@ -108,7 +103,6 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
   static authorize = (...roles: UserRole[]) => {
     return (req: AuthRequest, res: Response, next: NextFunction): void => {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for authorize");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -131,7 +125,6 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
     next: NextFunction
   ): void => {
     if (!req.user) {
-      console.log("req.user<><><><><><><><> checking for isAuthenticated");
       ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
       return;
     }
@@ -177,7 +170,6 @@ console.log("decoded<><><><><><><><> checking for authenticate", decoded);
   static isOwnerOrAdmin = (userIdParam = "userId") => {
     return (req: AuthRequest, res: Response, next: NextFunction): void => {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for isOwnerOrAdmin");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }

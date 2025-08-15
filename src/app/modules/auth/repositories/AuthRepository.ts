@@ -126,7 +126,6 @@ class AuthRepository {
       { otp , otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
       { new: true, runValidators: true }
     );
-      console.log("OTP set successfully for user:", email);
     return await User.findOne({email: email});
   }
 
@@ -161,7 +160,6 @@ class AuthRepository {
       { otp , otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
       { new: true, runValidators: true }
     );
-    console.log("Phone OTP set successfully for user:", phone);
     return await User.findOne({ phoneNumber: phone });
   }
 

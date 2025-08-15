@@ -75,7 +75,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for logout");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -116,7 +115,6 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      console.log("req.user<><><><><><><><> checking for forgotPassword", req.user);
       const { email , password } = req.body;
 
 
@@ -160,9 +158,7 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      console.log("req.user<><><><><><><><> checking for verifyEmail", req.user);
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for verifyEmail");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -261,7 +257,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for getProfile");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -284,7 +279,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for updateProfile");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
@@ -319,7 +313,6 @@ class AuthController {
   ): Promise<void> => {
     try {
       if (!req.user) {
-        console.log("req.user<><><><><><><><> checking for changePassword");
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }

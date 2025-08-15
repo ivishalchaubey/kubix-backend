@@ -53,7 +53,6 @@ class AdminController {
     async getCategories(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const categories = await this.adminService.getCategories();
-            console.log("Fetched categories:", categories);
             ResponseUtil.success(res, categories, API_MESSAGES.ADMIN_SUCCESS.CATEGORIES_FETCHED);
         } catch (error) {
             next(error);
