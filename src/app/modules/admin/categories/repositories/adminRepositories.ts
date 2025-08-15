@@ -71,7 +71,7 @@ class AdminRepositories {
       const savedNode = await newNode.save();
 
       // Recurse if children exist
-      if (children.length > 0) {
+      if (children && children.length > 0) {
         await this.saveCareerOptionsTree(children, savedNode._id, order + 1);
       }
 
