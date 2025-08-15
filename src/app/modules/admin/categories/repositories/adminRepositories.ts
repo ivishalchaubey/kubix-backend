@@ -9,14 +9,20 @@ class AdminRepositories {
   constructor() {
   }
   async saveCareerOptionsTree(treeData : ICategory) {
-      const { name , image , description , parentId, order } = treeData;
+      const { name , image , description , parentId, order , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = treeData;
 
       const newNode = new CategoryModel({
         name,
         parentId,
         description,
         image,
-        order
+        order,
+        isLeafNode,
+        a_day_in_life,
+        core_skills,
+        educational_path,
+        salary_range,
+        future_outlook
       });
 
       const savedNode = await newNode.save();
