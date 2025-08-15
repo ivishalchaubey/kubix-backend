@@ -3,7 +3,8 @@ import mongoose,{ Schema, model, Document , ObjectId } from "mongoose";
 // 1️⃣ Define the TypeScript interface
 export interface ICourse extends Document {
   name: string;
-  categoryId: ObjectId;
+  categoryId: ObjectId[];
+  parentCategoryId: ObjectId[];
   description: string;
   image: string;
   duration: string;
@@ -17,7 +18,8 @@ export interface ICourse extends Document {
 const CourseSchema = new Schema<ICourse>(
   {
     name: { type: String, required: true },
-    categoryId: { type: mongoose.Schema.Types.ObjectId, required: true },
+    categoryId: { type: [mongoose.Schema.Types.ObjectId], required: true },
+    parentCategoryId: { type: [mongoose.Schema.Types.ObjectId], required: true },
     description: { type: String, default: "" },
     image: { type: String, default: "" },
     duration: { type: String, default: "" },
