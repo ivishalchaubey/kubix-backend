@@ -1,6 +1,6 @@
 import { Router , Request , Response , NextFunction } from "express";
 import CourseController from "../controllers/course.js";
-import asyncHandler from "../../../../utils/asyncHandler.js";
+import asyncHandler from "../../../utils/asyncHandler.js";
 const courseRouter = Router();
 
 const courseController = new CourseController();

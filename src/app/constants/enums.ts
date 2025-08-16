@@ -44,6 +44,12 @@ export const API_MESSAGES = {
     CATEGORIES_FETCHED: "Categories fetched successfully",
     CATEGORY_FETCHED: "Category fetched successfully",
   },
+  USER: {
+    User_CREATED: "User created successfully",
+    User_UPDATED: "User updated successfully",
+    User_DELETED: "User deleted successfully",
+    UserS_FETCHED: "Users fetched successfully",
+  },
   USER_ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",

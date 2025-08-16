@@ -23,6 +23,7 @@ export interface IUser {
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   refreshToken?: string;
+  accessToken?: string;
   createdAt: Date;
   updatedAt: Date;
 }

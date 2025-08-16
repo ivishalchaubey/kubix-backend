@@ -5,6 +5,7 @@ import { API_MESSAGES } from "../../../constants/enums.js";
 import ResponseUtil from "../../../utils/response.js";
 import logger from "../../../utils/logger.js";
 import bcrypt from "bcryptjs";
+import CategoryModel from "../../admin/categories/models/category.js";
 
 class AuthController {
   private authService: AuthService;
@@ -22,7 +23,7 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { firstName, lastName ,  email, password, role ,dob , countryCode , phoneNumber , board , stream} = req.body;
+      const { firstName, lastName, email, password, role, dob, countryCode, phoneNumber, board, stream } = req.body;
 
       const result = await this.authService.register({
         firstName,
@@ -44,7 +45,7 @@ class AuthController {
   };
   // send otp
 
-  
+
 
   /**
    * Login user
@@ -55,9 +56,9 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email, password , role } = req.body;
+      const { email, password, role } = req.body;
 
-      const result = await this.authService.login({ email, password , role });
+      const result = await this.authService.login({ email, password, role });
 
       ResponseUtil.success(res, result, API_MESSAGES.SUCCESS.LOGIN_SUCCESS);
     } catch (error) {
@@ -115,10 +116,10 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email , password } = req.body;
+      const { email, password } = req.body;
 
 
-      let result = await this.authService.forgotPassword(email , password);
+      let result = await this.authService.forgotPassword(email, password);
 
       ResponseUtil.success(res, result, API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS);
     } catch (error) {
@@ -172,33 +173,33 @@ class AuthController {
   };
 
   sendOtp = async (
-    req: Request, 
-    res: Response, 
+    req: Request,
+    res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email , phone , type } = req.body;
+      const { email, phone, type } = req.body;
 
       // Generate OTP
       // Save OTP to user
-      if(type == 'email'){
+      if (type == 'email') {
         const user = await this.authService.sendOtp(email);
-  
+
         if (!user) {
           ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
           return;
         }
-  
+
         ResponseUtil.success(res, null, "OTP sent successfully");
       }
-      else if(type == 'phone'){
+      else if (type == 'phone') {
         const user = await this.authService.sendPhoneOtp(phone);
-  
+
         if (!user) {
           ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
           return;
         }
-  
+
         ResponseUtil.success(res, null, "Phone OTP sent successfully");
       }
       const user = await this.authService.sendOtp(email);
@@ -216,31 +217,32 @@ class AuthController {
 
 
   verifyOtp = async (
-    req: Request, 
-    res: Response, 
+    req: Request,
+    res: Response,
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { email, otp , type , phone } = req.body;
+      const { email, otp, type, phone } = req.body;
 
       // Verify OTP
-      if(type == 'email'){
-      const user = await this.authService.verifyOtp(email, otp);
+      if (type == 'email') {
+        const user = await this.authService.verifyOtp(email, otp);
 
-      if (!user) {
-        ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-        return;
+        if (!user) {
+          ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+          return;
+        }
+
+        ResponseUtil.success(res, user, "OTP verified successfully");
       }
-
-      ResponseUtil.success(res, user, "OTP verified successfully");}
-      else if(type == 'phone'){
+      else if (type == 'phone') {
         const user = await this.authService.verifyPhoneOtp(phone, otp);
 
         if (!user) {
           ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
           return;
         }
-  
+
         ResponseUtil.success(res, user, "Phone OTP verified successfully");
       }
     } catch (error) {
@@ -283,15 +285,19 @@ class AuthController {
         return;
       }
 
-      const { name, email } = req.body;
-      const updatedUser = await this.authService.updateUserProfile(
-        req.user._id,
-        {
-          firstName: name,
-          lastName: req.user.lastName, // Assuming lastName is not being updated
-          email: email || req.user.email
-        }
-      );
+
+     const {categoryIds , name , email , } = req.body;
+let updateData: any = {};
+      if (name) updateData.name = name;
+      if (email) updateData.email = email;
+
+      
+      if (categoryIds && Array.isArray(categoryIds) && categoryIds.length > 0) {
+        updateData.categoryIds = categoryIds; // overwrite existing
+      }
+
+      const updatedUser = await this.authService.updateUserProfile(req.user._id, updateData);
+
 
       ResponseUtil.success(
         res,

@@ -115,8 +115,10 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     refreshToken: {
       type: String,
-      select: false,
-    },
+         },
+    accessToken: {
+      type: String,
+    }
   },
   {
     timestamps: true,
@@ -124,6 +126,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       transform: function (doc, ret: any) {
         delete ret.password;
         delete ret.refreshToken;
+        delete ret.accessToken;
         delete ret.emailVerificationToken;
         delete ret.passwordResetToken;
         delete ret.passwordResetExpires;
@@ -135,6 +138,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       transform: function (doc, ret: any) {
         delete ret.password;
         delete ret.refreshToken;
+        delete ret.accessToken;
         delete ret.emailVerificationToken;
         delete ret.passwordResetToken;
         delete ret.passwordResetExpires;
@@ -184,23 +188,6 @@ userSchema.methods.isPasswordMatch = async function (
   return comparePassword(password, this.password);
 };
 
-userSchema.methods.generateAuthTokens = async function () {
-  const user = this as IUser & IUserMethods;
-  const accessToken = jwt.sign(
-    { sub: user._id, role: user.role },
-    config.jwt.secret as string,
-    { expiresIn: '7d' }
-  );
-  const refreshToken = jwt.sign(
-    { sub: user._id, role: user.role },
-    config.jwt.refreshSecret as string,
-    { expiresIn: '30d' }
-  );
-  return {
-    access: { token: accessToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
-    refresh: { token: refreshToken, expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
-  };
-};
 
 // Static methods
 userSchema.statics.isEmailTaken = async function (

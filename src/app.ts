@@ -5,7 +5,8 @@ import cors from "cors";
 import { config } from "./app/config/env.js";
 import routes from "./app/modules/index.js";
 import adminRouter from "./app/modules/admin/categories/routes/adminRoutes.js";
-import courseRouter from "./app/modules/admin/courses/routes/course.js";
+import courseRouter from "./app/modules/courses/routes/course.js";
+import userRouter from "./app/modules/user/routes/user.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -38,6 +39,7 @@ app.use("/api/v1", routes);
 
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/courses", courseRouter);
+app.use("/api/v1/users", userRouter);
 
 
 

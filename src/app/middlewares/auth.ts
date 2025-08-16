@@ -29,7 +29,7 @@ class AuthMiddleware {
 
         req.user = {
           _id: decoded.userId,
-          firstName: decoded.firstName,
+          firstName: decoded.firstName ,
           lastName: decoded.lastName,
           email: decoded.email,
           role: decoded.role,

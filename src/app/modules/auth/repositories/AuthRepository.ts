@@ -74,7 +74,7 @@ class AuthRepository {
   async findUserById(
     userId: string,
     includePassword = false
-  ): Promise<IUser | null> {
+  ): Promise<any | null> {
     if (!Types.ObjectId.isValid(userId)) {
       return null;
     }
@@ -102,7 +102,7 @@ class AuthRepository {
       {
         $lookup: {
           from :"courses",
-          localfeild: "categories.courseIds",
+          localField: "categories.courseIds",
           foreignField: "_id",
           as: "courses",
         },
@@ -120,6 +120,7 @@ class AuthRepository {
           stream: 1,
           role: 1,
           isEmailVerified: 1,
+          courses:1,
           categories: 1, // Include categories
         },
       },
@@ -128,7 +129,8 @@ class AuthRepository {
     if (includePassword) {
       query.select("+password");
     }
-    return await query.exec();
+    return await User.aggregate(pipeline);
+
   }
 
   /**
@@ -346,12 +348,14 @@ return userData;
   async updateAccessToken(
     userId: string,
     accessToken: string
-  ): Promise<IUser | null> {
-    return await User.findByIdAndUpdate(
+  ): Promise<any | null> {
+    let x=  await User.findByIdAndUpdate(
       userId,
       { accessToken },
       { new: true }
     );
+
+    return x;
   }
 
   /**

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import ResponseUtil from "../../../../utils/response.js";
-import { API_MESSAGES } from '../../../../constants/enums.js';
-import CourseService from '../services/courses.js';
+import ResponseUtil from "../../../utils/response.js";
+import { API_MESSAGES } from '../../../constants/enums.js';
+import CourseService from '../services/course.js';
 class CourseController {
     public courseService: CourseService;
     constructor() {
