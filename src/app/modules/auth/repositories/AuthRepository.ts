@@ -81,50 +81,75 @@ class AuthRepository {
 
     const query = User.findById(userId);
 
-    const pipeline = [
-      {
-        $match : { _id: new Types.ObjectId(userId) },
-      },
-      {
-        $lookup: {
-          from: "categories",
-          localField: "categoryIds",
-          foreignField: "_id",
-          as: "categories",
+   const pipeline = [
+  {
+    $match: { _id: new Types.ObjectId(userId) },
+  },
+  {
+    $lookup: {
+      from: "categories",
+      localField: "categoryIds",
+      foreignField: "_id",
+      as: "categories",
+    },
+  },
+  {
+    $unwind: {
+      path: "$categories",
+      preserveNullAndEmptyArrays: true,
+    },
+  },
+  {
+    $lookup: {
+      from: "courses",
+      let: { arraycategoryId: "$categories._id" },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $in: ["$$arraycategoryId", "$categoryId"], // check if categoryId exists in course.categoryId array
+            },
+          },
         },
-      },
-      {
-        $unwind: {
-          path: "$categories",
-          preserveNullAndEmptyArrays: true, // Keep users without categories
-        },
-      },
-      {
-        $lookup: {
-          from :"courses",
-          localField: "categories.courseIds",
-          foreignField: "_id",
-          as: "courses",
-        },
-      },
-      {
-        $project: {
-          _id: 1,
-          firstName: 1,
-          lastName: 1,
-          email: 1,
-          dob: 1,
-          countryCode: 1,
-          phoneNumber: 1,
-          board: 1,
-          stream: 1,
-          role: 1,
-          isEmailVerified: 1,
-          courses:1,
-          categories: 1, // Include categories
-        },
-      },
-    ];
+      ],
+      as: "categories.courses",
+    },
+  },
+  //  grouping categories to avoid duplicates
+  {
+    $group: {
+      _id: "$_id",
+      firstName: { $first: "$firstName" },
+      lastName: { $first: "$lastName" },
+      email: { $first: "$email" },
+      dob: { $first: "$dob" },
+      countryCode: { $first: "$countryCode" },
+      phoneNumber: { $first: "$phoneNumber" },
+      board: { $first: "$board" },
+      stream: { $first: "$stream" },
+      role: { $first: "$role" },
+      isEmailVerified: { $first: "$isEmailVerified" },
+      categories: { $push: "$categories" }, // push categories into an array
+    },
+  },
+  {
+    $project: {
+      _id: 1,
+      firstName: 1,
+      lastName: 1,
+      email: 1,
+      dob: 1,
+      countryCode: 1,
+      phoneNumber: 1,
+      board: 1,
+      stream: 1,
+      role: 1,
+      isEmailVerified: 1,
+      courses: 1,
+      categories: 1,
+    },
+  },
+];
 
     if (includePassword) {
       query.select("+password");
