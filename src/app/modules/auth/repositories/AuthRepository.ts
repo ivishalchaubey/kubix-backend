@@ -94,45 +94,6 @@ class AuthRepository {
     },
   },
   {
-    $unwind: {
-      path: "$categories",
-      preserveNullAndEmptyArrays: true,
-    },
-  },
-  {
-    $lookup: {
-      from: "courses",
-      let: { arraycategoryId: "$categories._id" },
-      pipeline: [
-        {
-          $match: {
-            $expr: {
-              $in: ["$$arraycategoryId", "$categoryId"], // check if categoryId exists in course.categoryId array
-            },
-          },
-        },
-      ],
-      as: "categories.courses",
-    },
-  },
-  //  grouping categories to avoid duplicates
-  {
-    $group: {
-      _id: "$_id",
-      firstName: { $first: "$firstName" },
-      lastName: { $first: "$lastName" },
-      email: { $first: "$email" },
-      dob: { $first: "$dob" },
-      countryCode: { $first: "$countryCode" },
-      phoneNumber: { $first: "$phoneNumber" },
-      board: { $first: "$board" },
-      stream: { $first: "$stream" },
-      role: { $first: "$role" },
-      isEmailVerified: { $first: "$isEmailVerified" },
-      categories: { $push: "$categories" }, // push categories into an array
-    },
-  },
-  {
     $project: {
       _id: 1,
       firstName: 1,
@@ -154,7 +115,8 @@ class AuthRepository {
     if (includePassword) {
       query.select("+password");
     }
-    return await User.aggregate(pipeline);
+    let x = await User.aggregate(pipeline);
+    return x[0];
 
   }
 
