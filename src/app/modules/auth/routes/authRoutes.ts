@@ -30,6 +30,7 @@ router.post("/forgotPassword", authController.forgotPassword);
 router.post("/logout", authController.logout);
 router.get("/profile",AuthMiddleware.authenticate, authController.getProfile);
 router.patch("/profile", AuthMiddleware.authenticate,authController.updateProfile);
+router.get("/user/courses",AuthMiddleware.authenticate, authController.getUserCourses);
 router.patch("/change-password", authController.changePassword);
 
 export default router;

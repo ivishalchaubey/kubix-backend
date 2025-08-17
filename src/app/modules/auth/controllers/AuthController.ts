@@ -335,6 +335,26 @@ let updateData: any = {};
       next(error);
     }
   };
+
+  getUserCourses = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      if (!req.user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      const userId = req.user._id;
+      const courses = await this.authService.getUserCourses(userId);
+
+      ResponseUtil.success(res, { courses }, "User courses retrieved successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default AuthController;

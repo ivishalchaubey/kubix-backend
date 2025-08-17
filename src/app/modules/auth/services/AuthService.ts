@@ -577,6 +577,27 @@ class AuthService {
     }
   }
 
+  // get user courses
+  async getUserCourses(userId: string): Promise<any> {
+    try {
+      const user = await this.authRepository.findUserById(userId);
+      if (!user) {
+        throw new AppError(
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      // Assuming user.courses is an array of course IDs
+      const courses = await this.authRepository.getUserCourses(userId);
+
+      logger.info(`User courses retrieved for user: ${userId}`);
+      return  courses ;
+    } catch (error) {
+      logger.error("Get user courses failed:", error);
+      throw error;
+    }
+  }
   /**
    * Generate random token
    */

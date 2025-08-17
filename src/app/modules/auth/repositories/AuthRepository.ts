@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import User from "../models/User.js";
 import { IUser } from "../../../types/global.js";
+import CourseService from "../../courses/services/course.js";
 import {
   UserRole,
   HttpStatus,
@@ -9,6 +10,10 @@ import {
 import { AppError } from "../../../middlewares/errorHandler.js";
 
 class AuthRepository {
+  private courseService: CourseService;
+  constructor() {
+    this.courseService = new CourseService();
+  }
   /**
    * Create a new user
    */
@@ -61,11 +66,44 @@ class AuthRepository {
     role: UserRole,
     includePassword = false
   ): Promise<IUser | null> {
-    const query = User.findOne({email : email , role :role });
+    const query = User.findOne({ email: email, role: role });
     if (includePassword) {
       query.select("+password");
     }
     return await query.exec();
+  }
+
+  getUserCourses = async (
+    userId: string
+  ): Promise<any | null> => {
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    const user = await User.findById(userId).lean();
+
+    if (!user) {
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    // ✅ Use Promise.all for async loops
+    const coursesArrays = await Promise.all(
+      user.categoryIds.map((categoryId: Types.ObjectId) =>
+        this.courseService.getCoursesByCategory(categoryId.toString())
+      )
+    );
+
+    // Flatten the array of arrays
+    const courses = coursesArrays.flat();
+
+    // You can attach courses to user object if you want
+    return  courses;
   }
 
   /**
@@ -81,36 +119,36 @@ class AuthRepository {
 
     const query = User.findById(userId);
 
-   const pipeline = [
-  {
-    $match: { _id: new Types.ObjectId(userId) },
-  },
-  {
-    $lookup: {
-      from: "categories",
-      localField: "categoryIds",
-      foreignField: "_id",
-      as: "categories",
-    },
-  },
-  {
-    $project: {
-      _id: 1,
-      firstName: 1,
-      lastName: 1,
-      email: 1,
-      dob: 1,
-      countryCode: 1,
-      phoneNumber: 1,
-      board: 1,
-      stream: 1,
-      role: 1,
-      isEmailVerified: 1,
-      courses: 1,
-      categories: 1,
-    },
-  },
-];
+    const pipeline = [
+      {
+        $match: { _id: new Types.ObjectId(userId) },
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "categoryIds",
+          foreignField: "_id",
+          as: "categories",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          dob: 1,
+          countryCode: 1,
+          phoneNumber: 1,
+          board: 1,
+          stream: 1,
+          role: 1,
+          isEmailVerified: 1,
+          courses: 1,
+          categories: 1,
+        },
+      },
+    ];
 
     if (includePassword) {
       query.select("+password");
@@ -147,7 +185,7 @@ class AuthRepository {
   async setOtp(
     email: string,
     otp: string
-  ): Promise<IUser | any> {  
+  ): Promise<IUser | any> {
     if (!email) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
@@ -155,12 +193,12 @@ class AuthRepository {
       );
     }
 
-     await User.findOneAndUpdate(
-      {email: email},
-      { otp , otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
+    await User.findOneAndUpdate(
+      { email: email },
+      { otp, otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
       { new: true, runValidators: true }
     );
-    return await User.findOne({email: email});
+    return await User.findOne({ email: email });
   }
 
   /**
@@ -191,7 +229,7 @@ class AuthRepository {
 
     await User.findOneAndUpdate(
       { phoneNumber: phone },
-      { otp , otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
+      { otp, otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
       { new: true, runValidators: true }
     );
     return await User.findOne({ phoneNumber: phone });
@@ -199,33 +237,33 @@ class AuthRepository {
 
 
   async clearOtp(
-    email: string  
+    email: string
   ): Promise<IUser | null> {
     let data = await User.findOneAndUpdate
-      ({email : email},
+      ({ email: email },
         { otp: "" },
         { new: true, runValidators: true }
       );
 
-      return data;
+    return data;
   };
 
   async findUserByPhone(
     phone: string,): Promise<IUser | null> {
-  let userData = await User.findOne({ phoneNumber: phone }).select('otp firstName lastName _id otpExpires dob email ').lean();
-return userData;  
-}; 
+    let userData = await User.findOne({ phoneNumber: phone }).select('otp firstName lastName _id otpExpires dob email ').lean();
+    return userData;
+  };
 
-    async clearPhoneOtp(
-    phone: string  
+  async clearPhoneOtp(
+    phone: string
   ): Promise<IUser | null> {
     let data = await User.findOneAndUpdate
-      ({phoneNumber : phone},
+      ({ phoneNumber: phone },
         { otp: "" },
         { new: true, runValidators: true }
       );
 
-      return data;
+    return data;
   };
 
   /**
@@ -336,7 +374,7 @@ return userData;
     userId: string,
     accessToken: string
   ): Promise<any | null> {
-    let x=  await User.findByIdAndUpdate(
+    let x = await User.findByIdAndUpdate(
       userId,
       { accessToken },
       { new: true }
