@@ -58,6 +58,26 @@ class CourseController {
             next(error);
         }
     }
+
+    getUserCourses = async (
+        req: Request,
+        res: Response,
+        next: NextFunction
+      ): Promise<void> => {
+        try {
+          if (!req.user) {
+            ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+            return;
+          }
+    
+          const userId = req.user._id;
+          const courses = await this.courseService.getUserCourses(userId);
+    
+          ResponseUtil.success(res, { courses }, "User courses retrieved successfully");
+        } catch (error) {
+          next(error);
+        }
+      }
 }
 
 export default CourseController;
