@@ -36,6 +36,7 @@ export const API_MESSAGES = {
     PASSWORD_RESET_SENT: "Password reset email sent",
     PASSWORD_RESET_SUCCESS: "Password reset successful",
     EMAIL_VERIFIED: "Email verified successfully",
+    AWS_FILE_UPLOADED: "File uploaded successfully",
   },
   ADMIN_SUCCESS:{
     CATEGORY_CREATED: "Category created successfully",
@@ -66,6 +67,7 @@ export const API_MESSAGES = {
     INVALID_CREDENTIALS: "Invalid email or password",
     EMAIL_ALREADY_EXISTS: "Email already exists",
     INVALID_TOKEN: "Invalid or expired token",
+    FILE_NOT_PROVIDED: "File not provided",
     ACCESS_DENIED: "Access denied",
     VALIDATION_ERROR: "Validation error",
     INTERNAL_SERVER_ERROR: "Internal server error",
