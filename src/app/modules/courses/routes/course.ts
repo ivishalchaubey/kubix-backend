@@ -5,10 +5,10 @@ const courseRouter = Router();
 import AuthMiddleware from "../../../middlewares/auth.js";
 const courseController = new CourseController();
 
-courseRouter.post("/", courseController.createCourse);
-courseRouter.put("/:id", courseController.updateCourse);
-courseRouter.delete("/:id", courseController.deleteCourse);
-courseRouter.get("/", courseController.getCourses);
+courseRouter.post("/", courseController.createCourse.bind(courseController));
+courseRouter.put("/:id", courseController.updateCourse.bind(courseController));
+courseRouter.delete("/:id", courseController.deleteCourse.bind(courseController));
+courseRouter.get("/", courseController.getCourses.bind(courseController));
 
 courseRouter.get("/user/courses",AuthMiddleware.authenticate, courseController.getUserCourses);
 
