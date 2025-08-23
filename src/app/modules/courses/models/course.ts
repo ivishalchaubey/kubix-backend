@@ -23,7 +23,7 @@ const CourseSchema = new Schema<ICourse>(
     description: { type: String, default: "" },
     image: { type: String, default: "" },
     duration: { type: String, default: "" },
-    UniversityId: { type: mongoose.Schema.Types.ObjectId, default: null },
+    UniversityId: { type: mongoose.Schema.Types.ObjectId, default: null , ref: "User" },
     amount: { type: Number, default: 0 },
     currency: { type: String, default: "INR" },
     chapters: { type: Number, default: 0 },

@@ -31,10 +31,10 @@ class CourseRepository {
     );
   }
 
-  // ✅ Use Promise.all properly
+  // ✅ Use Promise.all properly with correct populate
   const coursesArrays = await Promise.all(
     user.categoryIds.map((categoryId: Types.ObjectId) => 
-      Course.find({ categoryId }) // no await here
+      Course.find({ categoryId }).populate("UniversityId") // populate UniversityId field with name
     )
   );
 

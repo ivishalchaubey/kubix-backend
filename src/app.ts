@@ -20,7 +20,7 @@ app.set("trust proxy", 1);
 // Security middlewares
 app.use(
   cors({
-    origin: config.frontendUrl,
+    origin: '*',
     credentials: true,
   })
 );
