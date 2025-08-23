@@ -14,6 +14,7 @@ export interface IUser {
   otpExpires: Date; // Optional, used for OTP expiration
   phoneNumber: string;
   categoryIds: ObjectId[];
+  likedCourses: ObjectId[];
   board: string;
   stream: string;
   password: string;

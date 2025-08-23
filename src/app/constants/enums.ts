@@ -50,6 +50,8 @@ export const API_MESSAGES = {
     User_UPDATED: "User updated successfully",
     User_DELETED: "User deleted successfully",
     UserS_FETCHED: "Users fetched successfully",
+    COURSE_LIKED: "Course liked successfully",
+    LIKED_COURSES_FETCHED: "Liked courses fetched successfully",
   },
   USER_ERROR: {
     USER_NOT_FOUND: "User not found",
@@ -65,6 +67,7 @@ export const API_MESSAGES = {
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",
+    INVALID_INPUT: "Invalid input data",
     EMAIL_ALREADY_EXISTS: "Email already exists",
     INVALID_TOKEN: "Invalid or expired token",
     FILE_NOT_PROVIDED: "File not provided",

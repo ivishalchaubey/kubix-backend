@@ -6,6 +6,9 @@ const userRouter = Router();
 
 const userController = new UserController();
 
-userRouter.put("/:id", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.updateUser(req, res, next)));
+userRouter.put("/", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.updateUser(req, res, next)));
 userRouter.get("/",AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.getUsers(req, res, next)));
+
+userRouter.get("/likedCourses", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.likedCourses(req, res, next)));
+
 export default userRouter;

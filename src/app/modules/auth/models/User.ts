@@ -57,6 +57,11 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       required: [true, "Date of birth is required"],
       match: [/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"],
     },
+    likedCourses: {
+      type: [Schema.Types.ObjectId],
+      ref: "Course",
+      default: [],
+    },
     countryCode: {
       type: String,
       required: [true, "Country code is required"],
