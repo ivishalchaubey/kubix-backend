@@ -48,12 +48,20 @@ class CourseController {
     async getCourses(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             let categoryId = req.query.categoryId;
-            const courses = await this.courseService.getCourses();
+            let courseId = req.query.courseId;
+            if (courseId) {
+                const course = await this.courseService.getCourseById(courseId as string);
+                ResponseUtil.success(res, course, API_MESSAGES.COURSE.COURSES_FETCHED);
+                return ;
+            }
             if (categoryId) {
                 const coursesByCategory = await this.courseService.getCoursesByCategory(categoryId as string);
                 ResponseUtil.success(res, coursesByCategory, API_MESSAGES.COURSE.COURSES_FETCHED);
+                return ;
             }
-         ResponseUtil.success(res, courses, API_MESSAGES.COURSE.COURSES_FETCHED);
+            const courses = await this.courseService.getCourses();
+            ResponseUtil.success(res, courses, API_MESSAGES.COURSE.COURSES_FETCHED);
+            return ;
         } catch (error) {
             next(error);
         }

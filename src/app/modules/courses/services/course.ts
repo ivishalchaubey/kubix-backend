@@ -59,6 +59,10 @@ class CourseService {
         throw error;
       }
     }
+
+    async getCourseById(courseId: string): Promise<any> {
+      return await this.courseRepository.getUserCoursesbyId(courseId);
+    }
     
 }
 

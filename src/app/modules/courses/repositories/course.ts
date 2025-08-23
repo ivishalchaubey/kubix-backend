@@ -52,6 +52,10 @@ class CourseRepository {
   return courses;
 };
 
+  getUserCoursesbyId = async (courseId: string): Promise<any> => {
+    return await Course.findById(courseId);
+  }
+
 
 
 }
