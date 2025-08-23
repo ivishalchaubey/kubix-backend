@@ -49,9 +49,9 @@ class CourseService {
   async getCoursesByCategory(categoryId: string): Promise<any[]> {
     return await Course.find({ categoryId: categoryId }).lean();
   }
-  async getUserCourses(userId: string): Promise<any> {
+  async getUserCourses(userId: string, search: string): Promise<any> {
       try {
-        const courses = await this.courseRepository.getUserCourses(userId);
+        const courses = await this.courseRepository.getUserCourses(userId, search);
         logger.info(`User courses retrieved for user: ${userId}`);
         return  courses ;
       } catch (error) {

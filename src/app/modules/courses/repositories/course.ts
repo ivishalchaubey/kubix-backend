@@ -11,10 +11,11 @@ import { AppError } from "../../../middlewares/errorHandler.js";
 
 class CourseRepository {
   
-//   get courses by user ID
+  //   get courses by user ID with optional search
   getUserCourses = async (
-  userId: string
-): Promise<any[] | null> => {
+    userId: string,
+    search?: string
+  ): Promise<any[] | null> => {
   if (!Types.ObjectId.isValid(userId)) {
     throw new AppError(
       API_MESSAGES.ERROR.USER_NOT_FOUND,
@@ -33,9 +34,16 @@ class CourseRepository {
 
   // ✅ Use Promise.all properly with correct populate
   const coursesArrays = await Promise.all(
-    user.categoryIds.map((categoryId: Types.ObjectId) => 
-      Course.find({ categoryId }).populate("UniversityId") // populate UniversityId field with name
-    )
+    user.categoryIds.map((categoryId: Types.ObjectId) => {
+      const query: any = { categoryId };
+      
+      // Add search functionality if search term is provided
+      if (search && search.trim()) {
+        query.name = { $regex: search.trim(), $options: "i" };
+      }
+      
+      return Course.find(query).populate("UniversityId");
+    })
   );
 
   // ✅ Flatten results

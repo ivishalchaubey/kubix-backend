@@ -69,9 +69,9 @@ class CourseController {
             ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
             return;
           }
-    
+          const search = req.query.search as string;
           const userId = req.user._id;
-          const courses = await this.courseService.getUserCourses(userId);
+          const courses = await this.courseService.getUserCourses(userId , search);
     
           ResponseUtil.success(res, { courses }, "User courses retrieved successfully");
         } catch (error) {
