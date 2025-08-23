@@ -53,7 +53,15 @@ class CourseRepository {
 };
 
   getUserCoursesbyId = async (courseId: string): Promise<any> => {
-    return await Course.findById(courseId);
+    return await Course.findById(courseId).populate("UniversityId");
+  }
+
+  getCoursesByCategory = async (categoryId: string): Promise<any> => {
+    return await Course.find({ categoryId: categoryId }).populate("UniversityId");
+  }
+
+  getCourses = async (): Promise<any> => {
+    return await Course.find().populate("UniversityId");
   }
 
 

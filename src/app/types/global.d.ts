@@ -35,6 +35,7 @@ export interface IUserReq {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  role: string;
   role: UserRole;
 }
 

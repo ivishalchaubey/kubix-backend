@@ -100,7 +100,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     role: {
       type: String,
       enum: Object.values(UserRole),
-      default: UserRole.User,
+      default: UserRole.USER,
     },
     isEmailVerified: {
       type: Boolean,

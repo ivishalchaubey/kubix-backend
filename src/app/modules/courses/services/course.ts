@@ -42,12 +42,14 @@ class CourseService {
   }
 
   async getCourses(): Promise<any[]> {
-    return await Course.find();
+    const result = await this.courseRepository.getCourses();
+    return result;
   }
 
   // function to get the courses based on categoryId
   async getCoursesByCategory(categoryId: string): Promise<any[]> {
-    return await Course.find({ categoryId: categoryId }).lean();
+    const result = await this.courseRepository.getCoursesByCategory(categoryId);
+    return result;
   }
   async getUserCourses(userId: string, search: string): Promise<any> {
       try {

@@ -1,7 +1,7 @@
 // Enums
 export enum   UserRole {
   ADMIN = "admin",
-  User = "user",
+  USER = "user",
   UNIVERSITY = "university",
 }
 

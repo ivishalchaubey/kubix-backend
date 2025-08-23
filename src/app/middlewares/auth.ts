@@ -88,7 +88,7 @@ class AuthMiddleware {
         return;
       }
 
-      if (!roles.includes(req.user.role)) {
+      if (!roles.includes(req.user.role as UserRole)) {
         ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
         return;
       }
@@ -137,7 +137,7 @@ class AuthMiddleware {
   ): void => {
     if (
       !req.user ||
-      ![UserRole.User, UserRole.ADMIN].includes(req.user.role)
+      ![UserRole.USER, UserRole.ADMIN].includes(req.user.role as UserRole)
     ) {
       ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
       return;
