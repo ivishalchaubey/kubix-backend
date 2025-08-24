@@ -8,6 +8,7 @@ import adminRouter from "./app/modules/admin/categories/routes/adminRoutes.js";
 import courseRouter from "./app/modules/courses/routes/course.js";
 import userRouter from "./app/modules/user/routes/user.js";
 import ImageRouter from "./app/modules/auth/routes/imageUploadRoutes.js";
+import notificationRouter from "./app/modules/notifications/routes/notification.routes.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -41,7 +42,8 @@ app.use("/api/v1", routes);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/users", userRouter);
-app.use("/api/v1/image", ImageRouter)
+app.use("/api/v1/image", ImageRouter);
+app.use("/api/v1/notifications", notificationRouter);
 
 
 // Handle undefined routes

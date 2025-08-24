@@ -64,6 +64,13 @@ export const API_MESSAGES = {
     COURSE_DELETED: "Course deleted successfully",
     COURSES_FETCHED: "Courses fetched successfully",
   },
+  NOTIFICATION:{
+    NOTIFICATION_CREATED: "Notification created successfully",
+    NOTIFICATION_UPDATED: "Notification updated successfully",
+    NOTIFICATION_DELETED: "Notification deleted successfully",
+    NOTIFICATIONS_FETCHED: "Notifications fetched successfully",
+    NOTIFICATION_FETCHED: "Notification fetched successfully",
+  },
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",

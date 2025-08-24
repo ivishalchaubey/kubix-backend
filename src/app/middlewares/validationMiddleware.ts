@@ -197,4 +197,63 @@ export const authValidation = {
   }),
 };
 
+// Notification validation schemas
+export const notificationValidation = {
+  create: Validator.validate({
+    title: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 200 }
+    ],
+    content: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 1000 }
+    ],
+    datetime: [
+      { 
+        required: false, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "datetime must be a valid date";
+          }
+          return true;
+        }
+      }
+    ],
+    isSentToAll: [
+      { required: false, type: "boolean" }
+    ],
+    userId: [
+      { required: false, type: "string" }
+    ]
+  }),
+
+  update: Validator.validate({
+    title: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 200 }
+    ],
+    content: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 1000 }
+    ],
+    datetime: [
+      { 
+        required: false, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "datetime must be a valid date";
+          }
+          return true;
+        }
+      }
+    ],
+    isSentToAll: [
+      { required: false, type: "boolean" }
+    ],
+    userId: [
+      { required: false, type: "string" }
+    ]
+  })
+};
+
 export default Validator;
