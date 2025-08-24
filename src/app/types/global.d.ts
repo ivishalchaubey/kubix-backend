@@ -15,6 +15,7 @@ export interface IUser {
   phoneNumber: string;
   categoryIds: ObjectId[];
   likedCourses: ObjectId[];
+  bookmarkedCourses: ObjectId[];
   board: string;
   stream: string;
   password: string;

@@ -41,6 +41,27 @@ class UserService {
     return user;
   }
 
+  async bookmarkCourse(userId: string, courseId: string): Promise<any> {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    if (!user.bookmarkedCourses) {
+      user.bookmarkedCourses = [];
+    }
+    let courseObjectId = new mongoose.Types.ObjectId(courseId);
+    if(user.bookmarkedCourses.includes(courseObjectId)) {
+      user.bookmarkedCourses = user.bookmarkedCourses.filter((id) => !id.equals(courseObjectId));
+      await user.save();
+    }
+    else{
+      user.bookmarkedCourses.push(courseObjectId);
+      await user.save();
+    }
+    return user;
+  }
+  
+
   async deleteUser(UserId: string): Promise<void> {
     const deletedUser = await User.findByIdAndDelete(UserId);
     if (!deletedUser) {
@@ -64,6 +85,15 @@ class UserService {
     }
     return user.likedCourses || [];
   }
+
+  async getBookmarkedCourses(userId: string): Promise<any> {
+    const user = await User.findById(userId).populate('bookmarkedCourses').lean();
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user.bookmarkedCourses || [];
+  }
+
 }
 
 export default UserService;

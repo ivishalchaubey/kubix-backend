@@ -62,6 +62,11 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       ref: "Course",
       default: [],
     },
+    bookmarkedCourses: {
+      type: [Schema.Types.ObjectId],
+      ref: "Course",
+      default: [],
+    },
     countryCode: {
       type: String,
       required: [true, "Country code is required"],

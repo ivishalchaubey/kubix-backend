@@ -19,6 +19,9 @@ class UserController {
             if(UserData.courseId){
                  const result = await this.userService.likeCourse(UserId, UserData.courseId);
             }
+            if(UserData.bookmarkCourseId){
+                const result = await this.userService.bookmarkCourse(UserId, UserData.bookmarkCourseId);
+            }
 
             const result = await this.userService.updateUser(UserId, UserData);
 
@@ -52,6 +55,20 @@ class UserController {
             const UserId = req.user._id;
             const user = await this.userService.getLikedCOurse(UserId, {});
             ResponseUtil.success(res, user, API_MESSAGES.USER.LIKED_COURSES_FETCHED);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async bookmarkedCourses(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            if (!req.user || !req.user._id ) {
+                ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
+                return;
+            }
+            const UserId = req.user._id;
+            const user = await this.userService.getBookmarkedCourses(UserId);
+            ResponseUtil.success(res, user, API_MESSAGES.USER.BOOKMARKED_COURSES_FETCHED);
         } catch (error) {
             next(error);
         }

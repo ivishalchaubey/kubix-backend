@@ -51,7 +51,8 @@ export const API_MESSAGES = {
     User_DELETED: "User deleted successfully",
     UserS_FETCHED: "Users fetched successfully",
     COURSE_LIKED: "Course liked successfully",
-    LIKED_COURSES_FETCHED: "Liked courses fetched successfully",
+    LIKED_COURSES_FETCHED: "Liked courses fetched successfully",  
+    BOOKMARKED_COURSES_FETCHED: "Bookmarked courses fetched successfully",
   },
   USER_ERROR: {
     USER_NOT_FOUND: "User not found",
