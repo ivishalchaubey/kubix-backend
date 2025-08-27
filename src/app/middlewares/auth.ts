@@ -43,6 +43,45 @@ class AuthMiddleware {
     }
   };
 
+  static universityauthenticate = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      // Get token from header
+      const authHeader = req.headers.authorization;
+      
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+      return;
+        }
+
+      let token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      // decode token
+          const decoded = jwt.verify(token, config.jwt.secret) as any;
+
+          if(decoded.role != "university"){
+            ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.ACCESSDENIED);
+            return ;
+          }
+
+        req.user = {
+          _id: decoded.userId,
+          firstName: decoded.firstName ,
+          lastName: decoded.lastName,
+          email: decoded.email,
+          role: decoded.role,
+          phoneNumber: decoded.phoneNumber,
+          
+        };
+        next();
+      
+    } catch (error) {
+      next(error);
+    }
+  };
+
   /**
    * Optional authentication - doesn't fail if no token provided
    */

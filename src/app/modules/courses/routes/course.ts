@@ -12,7 +12,7 @@ courseRouter.get("/", courseController.getCourses.bind(courseController));
 
 courseRouter.get("/user/courses",AuthMiddleware.authenticate, courseController.getUserCourses);
 
-courseRouter.get('/university/:universityId/courses', courseController.getUniversityCourses.bind(courseController));
+courseRouter.get('/university/courses', AuthMiddleware.universityauthenticate, courseController.getUniversityCourses.bind(courseController));
 
 
 

@@ -1,4 +1,5 @@
 import { Types } from "mongoose";
+import mongoose from "mongoose";
 import User from "../../auth/models/User.js";
 import { IUser } from "../../../types/global.js";
 import {Course} from "../models/course.js";
@@ -73,7 +74,7 @@ class CourseRepository {
     }
     
     return await Course.aggregate([{
-      $match :{ UniversityId: universityId }
+      $match :{ UniversityId: new mongoose.Types.ObjectId(universityId) }
     },
     {
       $lookup: {
@@ -89,9 +90,61 @@ class CourseRepository {
     {
       $lookup:{
         from : "users",
-        localField: "_id",
+        localField : "_id",
         foreignField : "likedCourses",
         as : "likes"
+      }
+    },
+    {
+      $unwind : "$likes"
+    },
+    {
+      $project :{
+        _id : 1,
+        name : 1,
+        description : 1,
+        amount : 1,
+        universityFirstName : "$University.firstName",
+        universityLastName : "$University.lastName",
+        likeFirstName : "$likes.firstName",
+        likeLastName : "$likes.lastName",
+        likeEmail : "$likes.email",
+        likeCountryCode : "$likes.countryCode",
+        likePhoneNumber : "$likes.phoneNumber",
+      }
+    },
+    {
+      $group :{
+        _id : {
+          id : "$_id", 
+          name : "$name", 
+          description : "$description", 
+          amount : "$amount", 
+          universityFirstName : "$universityFirstName", 
+          universityLastName : "$universityLastName"
+        },
+        likes : { 
+          $push : {
+            firstName: "$likeFirstName",
+            lastName: "$likeLastName", 
+            email: "$likeEmail",
+            countryCode: "$likeCountryCode",
+            phoneNumber: "$likePhoneNumber"
+          }
+        }
+      }
+    },
+    {
+      $project:{
+        _id : "$_id.id",
+        name : "$_id.name",
+        description : "$_id.description",
+        amount : "$_id.amount",
+        University : {
+          firstName : "$_id.universityFirstName",
+          lastName : "$_id.universityLastName"
+        },
+        likes : "$likes",
       }
     }
   ])

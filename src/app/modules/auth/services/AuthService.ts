@@ -171,11 +171,11 @@ class AuthService {
       // Generate auth tokens
       // const tokens = await (user as IUser & IUserMethods).generateAuthTokens();
       const accessToken = jwt.sign(
-        { userId: user?._id, role: "user", email: user.email, firstName: user.firstName ,lastName : user.lastName },
+        { userId: user?._id, role: role, email: user.email, firstName: user.firstName ,lastName : user.lastName },
         config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
-        { userId: user._id, role: "user" , email: user.email ,  firstName: user.firstName ,lastName : user.lastName},
+        { userId: user._id, role: role , email: user.email ,  firstName: user.firstName ,lastName : user.lastName},
         config.jwt.refreshSecret as string
         );
       
