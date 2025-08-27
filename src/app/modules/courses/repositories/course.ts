@@ -64,6 +64,38 @@ class CourseRepository {
     return await Course.find().populate("UniversityId");
   }
 
+  getUniversityCourses = async (universityId: string): Promise<any[]> => {
+    if (!Types.ObjectId.isValid(universityId)) {
+      throw new AppError(
+        API_MESSAGES.ERROR.UNIVERSITY_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
+    }
+    
+    return await Course.aggregate([{
+      $match :{ UniversityId: universityId }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "UniversityId",
+        foreignField: "_id",
+        as: "University"
+      }
+    },
+    {
+      $unwind: "$University"
+    },
+    {
+      $lookup:{
+        from : "users",
+        localField: "_id",
+        foreignField : "likedCourses",
+        as : "likes"
+      }
+    }
+  ])
+  }
 
 
 }

@@ -83,6 +83,7 @@ export const API_MESSAGES = {
     VALIDATION_ERROR: "Validation error",
     INTERNAL_SERVER_ERROR: "Internal server error",
     UNAUTHORIZED: "Unauthorized access",
+    ACCESSDENIED: "Access Denied",
     FORBIDDEN: "Forbidden access",
     RESOURCE_: "Resource not found",
     INVALID_ROLE: "Invalid user role",
@@ -91,6 +92,7 @@ export const API_MESSAGES = {
     UNPROCESSABLE_ENTITY: "Unprocessable entity",
     INVALID_OTP: "Invalid OTP",
     OTP_EXPIRED: "OTP has expired",
+    UNIVERSITY_NOT_FOUND: "University not found",
   },
   ADMIN_ERROR: {
     CATEGORY_NOT_FOUND: "Category not found",

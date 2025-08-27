@@ -86,6 +86,22 @@ class CourseController {
           next(error);
         }
       }
+
+    async getUniversityCourses(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            if (!req.user) {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+                return;
+            }
+            const universityId = req.user._id;
+            const courses = await this.courseService.getUniversityCourses(universityId);
+            ResponseUtil.success(res, courses, API_MESSAGES.COURSE.COURSES_FETCHED);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    
 }
 
 export default CourseController;

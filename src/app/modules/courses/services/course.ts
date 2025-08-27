@@ -65,6 +65,18 @@ class CourseService {
     async getCourseById(courseId: string): Promise<any> {
       return await this.courseRepository.getUserCoursesbyId(courseId);
     }
+
+    async getUniversityCourses(universityId: string): Promise<any[]> {
+        try {
+            const courses = await this.courseRepository.getUniversityCourses(universityId);
+            logger.info(`University courses retrieved for university: ${universityId}`);
+            return courses;
+        } catch (error) {
+            logger.error("Get university courses failed:", error);
+            throw error;
+        }
+    }
+
     
 }
 

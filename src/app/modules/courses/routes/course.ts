@@ -12,4 +12,8 @@ courseRouter.get("/", courseController.getCourses.bind(courseController));
 
 courseRouter.get("/user/courses",AuthMiddleware.authenticate, courseController.getUserCourses);
 
+courseRouter.get('/university/:universityId/courses', courseController.getUniversityCourses.bind(courseController));
+
+
+
 export default courseRouter;
