@@ -13,7 +13,6 @@ class AdminController {
 
     async createCategory(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {   
-            const { description , degree , branch, course , courseStream , subject } = req.body;
             
              const result = await this.adminRepositories.saveCareerOptionsTree(req.body, null, 1);
             ResponseUtil.created(res, {}, API_MESSAGES.ADMIN_SUCCESS.CATEGORY_CREATED);
