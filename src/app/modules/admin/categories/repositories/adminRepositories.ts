@@ -51,7 +51,7 @@ class AdminRepositories {
 
   async saveCareerOptionsTree(treeData: any, parentId: ObjectId | null, order: number = 1) {
     for (const node of treeData) {
-      const { name, children = [], image , description , parentId, order , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = node;
+      const { name, children = [], image , description , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = node;
 
       // Save current node
       const newNode = new CategoryModel({

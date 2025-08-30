@@ -15,12 +15,12 @@ export const config = {
   env: process.env.NODE_ENV || "development",
   port: parseInt(process.env.PORT || "5000"),
   mongoose: {
-    url: process.env.MONGO_URI!,
+    url: process.env.MONGODB_URI || "mongodb+srv://vishalchaubey0011:tyVQdc92r1i1uzZi@cluster0.zajfs.mongodb.net/",
   },
   jwt: {
-    secret: "jwt_kubix_backend",
+    secret: process.env.JWT_SECRET || "jwt_kubix_backend",
     accessExpirationMinutes: process.env.JWT_EXPIRE || "7d",
-    refreshSecret: "jwt_kubix_backend_refresh",
+    refreshSecret: process.env.JWT_REFRESH_SECRET || "jwt_kubix_backend_refresh",
     refreshExpirationDays: process.env.JWT_REFRESH_EXPIRE || "30d",
   },
   bcrypt: {

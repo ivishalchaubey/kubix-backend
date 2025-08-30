@@ -96,7 +96,10 @@ class CourseRepository {
       }
     },
     {
-      $unwind : "$likes"
+      $unwind : {
+        path: "$likes",
+        preserveNullAndEmptyArrays: true
+      }
     },
     {
       $project :{
@@ -104,6 +107,9 @@ class CourseRepository {
         name : 1,
         description : 1,
         amount : 1,
+        currency : 1,
+        chapters : 1,
+        duration : 1,
         universityFirstName : "$University.firstName",
         universityLastName : "$University.lastName",
         likeFirstName : "$likes.firstName",
@@ -120,6 +126,9 @@ class CourseRepository {
           name : "$name", 
           description : "$description", 
           amount : "$amount", 
+          chapters : "$chapters",
+          currency : "$currency",
+          duration : "$duration",
           universityFirstName : "$universityFirstName", 
           universityLastName : "$universityLastName"
         },
@@ -138,8 +147,11 @@ class CourseRepository {
       $project:{
         _id : "$_id.id",
         name : "$_id.name",
-        description : "$_id.description",
+        chapters : "$_id.chapters",
+        currency : "$_id.currency",
         amount : "$_id.amount",
+        description : "$_id.description",
+        duration : "$_id.duration",
         University : {
           firstName : "$_id.universityFirstName",
           lastName : "$_id.universityLastName"

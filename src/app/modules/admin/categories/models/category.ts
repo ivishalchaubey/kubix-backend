@@ -7,7 +7,7 @@ export interface ICategory extends Document {
   parentId?: mongoose.Types.ObjectId | null;
   description?: string;
   image?: string;
-  order?: number;
+  order: number;
   isLeafNode?: boolean;
   a_day_in_life?: string;
   core_skills?: {
