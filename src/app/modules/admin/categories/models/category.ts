@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, ObjectId } from "mongoose";
 
 // Correct TypeScript interface
 export interface ICategory extends Document {
-  _id : ObjectId;
+  _id : mongoose.Types.ObjectId;
   name: string;
   parentId?: mongoose.Types.ObjectId | null;
   description?: string;

@@ -21,6 +21,19 @@ class AdminController {
         }
     }
 
+    async uploadCategoriesFromCSV(req: Request, res: Response, next: NextFunction): Promise<any> {
+        try {
+            if (!req.file) {
+                return ResponseUtil.badRequest(res, "CSV file is required");
+            }
+
+            const result = await this.adminRepositories.saveCategoriesFromCSV(req.file);
+            ResponseUtil.created(res, { result }, "Categories uploaded successfully from CSV");
+        } catch (error) {
+            next(error);
+        }
+    }
+
 
     async updateCategory(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
