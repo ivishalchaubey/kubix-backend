@@ -23,20 +23,53 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { firstName, lastName, email, password, role, dob, countryCode, phoneNumber, board, stream } = req.body;
+      const { 
+        firstName, 
+        lastName, 
+        email, 
+        password, 
+        role, 
+        dob, 
+        countryCode, 
+        phoneNumber, 
+        board, 
+        stream,
+        profileImage,
+        collegeName,
+        collegeCode,
+        location,
+        address,
+        specialization,
+        description,
+        bannerYoutubeVideoLink
+      } = req.body;
 
-      const result = await this.authService.register({
+ 
+      // Create registration data object with optional fields
+      const registrationData: any = {
         firstName,
         lastName,
-        dob,
-        countryCode,
-        phoneNumber,
-        board,
-        stream,
         email,
         password,
         role,
-      });
+      };
+
+      // Add optional fields only if they exist
+      if (dob) registrationData.dob = dob;
+      if (countryCode) registrationData.countryCode = countryCode;
+      if (phoneNumber) registrationData.phoneNumber = phoneNumber;
+      if (board) registrationData.board = board;
+      if (stream) registrationData.stream = stream;
+      if (profileImage) registrationData.profileImage = profileImage;
+      if (collegeName) registrationData.collegeName = collegeName;
+      if (collegeCode) registrationData.collegeCode = collegeCode;
+      if (location) registrationData.location = location;
+      if (address) registrationData.address = address;
+      if (specialization) registrationData.specialization = specialization;
+      if (description) registrationData.description = description;
+      if (bannerYoutubeVideoLink) registrationData.bannerYoutubeVideoLink = bannerYoutubeVideoLink;
+
+      const result = await this.authService.register(registrationData);
 
       ResponseUtil.created(res, result, API_MESSAGES.SUCCESS.USER_CREATED);
     } catch (error) {
