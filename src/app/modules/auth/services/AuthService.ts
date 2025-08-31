@@ -598,6 +598,37 @@ class AuthService {
       throw error;
     }
   }
+
+  /**
+   * Change user status
+   */
+  async changeUserStatus(userId: string, status: string): Promise<IUser> {
+    try {
+      const user = await this.authRepository.findUserById(userId);
+      if (!user) {
+        throw new AppError(
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      // Update user status
+      const updatedUser = await this.authRepository.updateUserById(userId, { status } as any);
+      if (!updatedUser) {
+        throw new AppError(
+          API_MESSAGES.ERROR.INTERNAL_SERVER_ERROR,
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      logger.info(`User status changed to ${status} for user: ${userId}`);
+      return updatedUser;
+    } catch (error) {
+      logger.error("Change user status failed:", error);
+      throw error;
+    }
+  }
+
   /**
    * Generate random token
    */

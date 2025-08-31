@@ -32,5 +32,7 @@ router.get("/profile",AuthMiddleware.authenticate, authController.getProfile);
 router.patch("/profile", AuthMiddleware.authenticate,authController.updateProfile);
 router.get("/user/courses",AuthMiddleware.authenticate, authController.getUserCourses);
 router.patch("/change-password", authController.changePassword);
+router.patch("/update-user", AuthMiddleware.authenticate, authController.updateUser);
+router.patch("/change-user-status", AuthMiddleware.authenticate, authController.changeUserStatus);
 
 export default router;

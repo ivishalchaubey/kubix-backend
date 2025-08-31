@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authRoutes } from "./auth/index.js";
 
-const router = Router();
+const   router = Router();
 
 // Mount auth routes
 router.use("/auth", authRoutes);

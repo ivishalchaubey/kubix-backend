@@ -388,6 +388,112 @@ let updateData: any = {};
       next(error);
     }
   }
+
+  /**
+   * Change user status (activate, deactivate, etc.)
+   */
+  updateUser = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      if (!req.user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+
+      const {  status, firstName, lastName, email, phoneNumber, countryCode, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink } = req.body;
+
+      let userId = req.user._id;
+      // Validate required fields
+      if (!userId) {
+        ResponseUtil.badRequest(res, "userId is required");
+        return;
+      }
+
+      // Validate status values if provided
+      if (status) {
+        const validStatuses = ['active', 'inactive'];
+        if (!validStatuses.includes(status)) {
+          ResponseUtil.badRequest(res, `Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+          return;
+        }
+      }
+
+      // Build update data object
+      let updateData: any = {};
+      
+      // Add status if provided
+      if (status) updateData.status = status;
+      
+      // Add other fields if provided
+      if (firstName) updateData.firstName = firstName;
+      if (lastName) updateData.lastName = lastName;
+      if (email) updateData.email = email;
+      if (phoneNumber) updateData.phoneNumber = phoneNumber;
+      if (countryCode) updateData.countryCode = countryCode;
+      if (profileImage) updateData.profileImage = profileImage;
+      if (collegeName) updateData.collegeName = collegeName;
+      if (collegeCode) updateData.collegeCode = collegeCode;
+      if (location) updateData.location = location;
+      if (address) updateData.address = address;
+      if (specialization) updateData.specialization = specialization;
+      if (description) updateData.description = description;
+      if (bannerYoutubeVideoLink) updateData.bannerYoutubeVideoLink = bannerYoutubeVideoLink;
+
+      // Check if any update data is provided
+      if (Object.keys(updateData).length === 0) {
+        ResponseUtil.badRequest(res, "No update data provided");
+        return;
+      }
+
+      const result = await this.authService.updateUserProfile(userId, updateData);
+
+      ResponseUtil.success(res, { user: result }, "User updated successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Change user status (activate, deactivate, etc.)
+   */
+  changeUserStatus = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      if (!req.user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      // Check if user has admin privileges
+      
+      const { userId, status } = req.body;
+
+      if (!userId || !status) {
+        ResponseUtil.badRequest(res, "userId and status are required");
+        return;
+      }
+
+      // Validate status values
+      const validStatuses = ['active', 'inactive'];
+      if (!validStatuses.includes(status)) {
+        ResponseUtil.badRequest(res, `Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+        return;
+      }
+
+      const result = await this.authService.changeUserStatus(userId, status);
+
+      ResponseUtil.success(res, { user: result }, `User status changed to ${status} successfully`);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default AuthController;

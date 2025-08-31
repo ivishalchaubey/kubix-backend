@@ -159,6 +159,11 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       trim: true,
       maxlength: 2000,
     },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
     bannerYoutubeVideoLink: {
       type: String,
       trim: true,
