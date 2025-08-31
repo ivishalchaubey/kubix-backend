@@ -404,9 +404,8 @@ let updateData: any = {};
       }
 
 
-      const {  status, firstName, lastName, email, phoneNumber, countryCode, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink } = req.body;
+      const { userId, status, firstName, lastName, email, phoneNumber, countryCode, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink } = req.body;
 
-      let userId = req.user._id;
       // Validate required fields
       if (!userId) {
         ResponseUtil.badRequest(res, "userId is required");
@@ -490,6 +489,23 @@ let updateData: any = {};
       const result = await this.authService.changeUserStatus(userId, status);
 
       ResponseUtil.success(res, { user: result }, `User status changed to ${status} successfully`);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Get list of universities
+   */
+  getUniversities = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const universities = await this.authService.getUniversities();
+
+      ResponseUtil.success(res, { universities }, "Universities retrieved successfully");
     } catch (error) {
       next(error);
     }

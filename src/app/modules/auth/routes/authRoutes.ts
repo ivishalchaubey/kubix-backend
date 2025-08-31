@@ -34,5 +34,6 @@ router.get("/user/courses",AuthMiddleware.authenticate, authController.getUserCo
 router.patch("/change-password", authController.changePassword);
 router.patch("/update-user", AuthMiddleware.authenticate, authController.updateUser);
 router.patch("/change-user-status", AuthMiddleware.authenticate, authController.changeUserStatus);
+router.get("/universities",AuthMiddleware.authenticate, authController.getUniversities);
 
 export default router;

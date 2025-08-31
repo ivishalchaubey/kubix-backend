@@ -630,6 +630,21 @@ class AuthService {
   }
 
   /**
+   * Get list of universities
+   */
+  async getUniversities(): Promise<IUser[]> {
+    try {
+      const universities = await this.authRepository.findUsersByRole('university');
+      
+      logger.info(`Retrieved ${universities.length} universities`);
+      return universities;
+    } catch (error) {
+      logger.error("Get universities failed:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Generate random token
    */
   private generateRandomToken(): string {

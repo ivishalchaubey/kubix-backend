@@ -405,6 +405,13 @@ class AuthRepository {
     const user = await User.findById(userId).select("_id");
     return !!user;
   }
+
+  /**
+   * Find users by role
+   */
+  async findUsersByRole(role: string): Promise<IUser[]> {
+    return await User.find({ role }).select('-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires');
+  }
 }
 
 export default AuthRepository;
