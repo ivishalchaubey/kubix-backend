@@ -26,6 +26,17 @@ export interface IUser {
   passwordResetExpires?: Date;
   refreshToken?: string;
   accessToken?: string;
+  profileImage?: string;
+  collegeName?: string;
+  collegeCode?: string;
+  location?: string;
+  email?: string;
+  countryCode?: string;
+  phoneNumber?: string;
+  address?: string;
+  specialization?: string;
+  description?: string;
+  bannerYoutubeVideoLink?: string;
   createdAt: Date;
   updatedAt: Date;
 }

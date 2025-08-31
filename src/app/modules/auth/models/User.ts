@@ -23,14 +23,12 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
   {
     firstName: {
       type: String,
-      required: [true, "Name is required"],
       trim: true,
       minlength: [2, "Name must be at least 2 characters long"],
       maxlength: [50, "Name cannot exceed 50 characters"],
     },
     lastName: {
       type: String,
-      required: [true, "Last name is required"],
       trim: true,
       minlength: [2, "Last name must be at least 2 characters long"],
       maxlength: [50, "Last name cannot exceed 50 characters"],
@@ -54,7 +52,6 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     dob: {
       type: String,
-      required: [true, "Date of birth is required"],
       match: [/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"],
     },
     likedCourses: {
@@ -81,14 +78,12 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     board: {
       type: String,
-      required: [true, "Board is required"],
       trim: true,
       enum: ["CBSE", "ICSE", "State", "IB", "Other"], // Example boards
     },
     stream: {
       type: String,
-      required: [true, "Stream is required"],
-      trim: true,
+       trim: true,
       enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
     },
     password: {
@@ -128,7 +123,51 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
          },
     accessToken: {
       type: String,
-    }
+    },
+    profileImage: {
+      type: String,
+      trim: true,
+    },
+    collegeName: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 100,
+    },
+    collegeCode: {
+      type: String,
+      trim: true,
+      maxlength: 50,
+    },
+    location: {
+      type: String,
+      trim: true,
+      maxlength: 255,
+    },
+    address: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
+    specialization: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 2000,
+    },
+    bannerYoutubeVideoLink: {
+      type: String,
+      trim: true,
+      match: [
+        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+        "Invalid YouTube URL",
+      ],
+    },
+
   },
   {
     timestamps: true,

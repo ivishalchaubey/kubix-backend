@@ -150,12 +150,10 @@ class Validator {
 export const authValidation = {
   register: Validator.validate({
     firstName: [
-      { required: true, type: "string" },
       { minLength: VALIDATION_RULES.NAME.MIN_LENGTH },
       { maxLength: VALIDATION_RULES.NAME.MAX_LENGTH },
     ],
     lastName: [
-      { required: true, type: "string" },
       { minLength: VALIDATION_RULES.NAME.MIN_LENGTH },
       { maxLength: VALIDATION_RULES.NAME.MAX_LENGTH },
     ],
@@ -169,12 +167,46 @@ export const authValidation = {
       { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },
       { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
     ],
-    dob: [{ required: true, type: "string" }], // Assuming dob is a string in ISO format
+    dob: [{ required: false, type: "string" }], // Assuming dob is a string in ISO format
     countryCode: [{ required: true, type: "string" }],
     role: [{ required: true, type: "string" }], // Assuming role is a string
     phoneNumber: [{ required: true, type: "string" }],
-    board: [{ required: true, type: "string" }],
-    stream: [{ required: true, type: "string" }],
+    board: [{ required: false, type: "string" }],
+    stream: [{ required: false, type: "string" }],
+    collegeCode: [{ required: false, type: "string" }],
+    profileImage: [{ type: "string" }],
+
+    collegeName: [
+      { type: "string" },
+      { minLength: VALIDATION_RULES.NAME.MIN_LENGTH },
+      { maxLength: VALIDATION_RULES.NAME.MAX_LENGTH },
+    ],
+
+    location: [
+      { type: "string" },
+      { maxLength: 255 },
+    ],
+
+    address: [
+      { type: "string" },
+      { maxLength: 500 },
+    ],
+
+    specialization: [
+      { type: "string" },
+      { maxLength: 100 },
+    ],
+
+    description: [
+      { type: "string" },
+      { maxLength: 2000 },
+    ],
+
+    bannerYoutubeVideoLink: [
+      { type: "string" },
+      { pattern: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/ },
+    ],
+
    }),
 
   login: Validator.validate({
