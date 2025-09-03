@@ -62,6 +62,23 @@ class AdminRepositories {
       educational_path,
       salary_range,
       future_outlook,
+      // New fields
+      soft_skills,
+      checklist,
+      education_10_2,
+      education_diploma,
+      education_graduation,
+      education_post_graduation,
+      myth,
+      reality,
+      pros,
+      cons,
+      superstar1,
+      superstar2,
+      superstar3,
+      related_careers,
+      growth_path,
+      qualifying_exams,
     } = categoryData;
 
     const newCategory = new CategoryModel({
@@ -76,6 +93,23 @@ class AdminRepositories {
       educational_path,
       salary_range,
       future_outlook,
+      // New fields
+      soft_skills: soft_skills || [],
+      checklist: checklist || [],
+      education_10_2: education_10_2 || "",
+      education_diploma: education_diploma || "",
+      education_graduation: education_graduation || "",
+      education_post_graduation: education_post_graduation || "",
+      myth: myth || "",
+      reality: reality || "",
+      pros: pros || [],
+      cons: cons || [],
+      superstar1: superstar1 || "",
+      superstar2: superstar2 || "",
+      superstar3: superstar3 || "",
+      related_careers: related_careers || [],
+      growth_path: growth_path || "",
+      qualifying_exams: qualifying_exams || [],
     });
 
     const savedCategory = await newCategory.save();
@@ -476,6 +510,23 @@ class AdminRepositories {
           salary_range = "",
           future_outlook_demand = "",
           future_outlook_reason = "",
+          // New fields
+          soft_skills = "",
+          checklist = "",
+          education_10_2 = "",
+          education_diploma = "",
+          education_graduation = "",
+          education_post_graduation = "",
+          myth = "",
+          reality = "",
+          pros = "",
+          cons = "",
+          superstar1 = "",
+          superstar2 = "",
+          superstar3 = "",
+          related_careers = "",
+          growth_path = "",
+          qualifying_exams = "",
         } = record;
 
         // Skip records with missing required fields
@@ -510,6 +561,26 @@ class AdminRepositories {
           reason: future_outlook_reason || "",
         };
 
+        // Parse new fields
+        const parsedSoftSkills = soft_skills
+          ? soft_skills.split(",").map((s: string) => s.trim())
+          : [];
+        const parsedChecklist = checklist
+          ? checklist.split(",").map((s: string) => s.trim())
+          : [];
+        const parsedPros = pros
+          ? pros.split(",").map((s: string) => s.trim())
+          : [];
+        const parsedCons = cons
+          ? cons.split(",").map((s: string) => s.trim())
+          : [];
+        const parsedRelatedCareers = related_careers
+          ? related_careers.split(",").map((s: string) => s.trim())
+          : [];
+        const parsedQualifyingExams = qualifying_exams
+          ? qualifying_exams.split(",").map((s: string) => s.trim())
+          : [];
+
         const newCategory = new CategoryModel({
           name,
           parentId: new mongoose.Types.ObjectId(parentId),
@@ -522,6 +593,23 @@ class AdminRepositories {
           educational_path,
           salary_range,
           future_outlook,
+          // New fields
+          soft_skills: parsedSoftSkills,
+          checklist: parsedChecklist,
+          education_10_2,
+          education_diploma,
+          education_graduation,
+          education_post_graduation,
+          myth,
+          reality,
+          pros: parsedPros,
+          cons: parsedCons,
+          superstar1,
+          superstar2,
+          superstar3,
+          related_careers: parsedRelatedCareers,
+          growth_path,
+          qualifying_exams: parsedQualifyingExams,
         });
 
         const savedCategory = await newCategory.save();
