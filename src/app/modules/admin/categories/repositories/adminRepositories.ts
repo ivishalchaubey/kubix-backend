@@ -347,5 +347,200 @@ class AdminRepositories {
     }
     return;
   }
+
+  async saveCategoriesFromCSVUnderParent(
+    file: Express.Multer.File,
+    parentId: string,
+    order: number
+  ): Promise<any> {
+    try {
+      // Validate parent exists
+      const parentCategory = await CategoryModel.findById(parentId);
+      if (!parentCategory) {
+        throw new Error("Parent category not found");
+      }
+
+      // Validate file
+      if (!file || !file.buffer) {
+        throw new Error("No file provided or file is empty");
+      }
+
+      // Parse CSV content
+      const csvContent = file.buffer.toString("utf-8");
+
+      // Validate CSV content is not empty
+      if (!csvContent || csvContent.trim().length === 0) {
+        throw new Error("CSV file is empty");
+      }
+
+      // Log the first few lines for debugging
+      console.log("CSV Content Preview:");
+      console.log(csvContent.split("\n").slice(0, 5).join("\n"));
+
+      let records;
+      try {
+        records = parse(csvContent, {
+          columns: true,
+          skip_empty_lines: true,
+          trim: true,
+          relax_column_count: true,
+          relax_quotes: true,
+        });
+      } catch (parseError) {
+        throw new Error(
+          `Invalid CSV format: ${
+            parseError instanceof Error
+              ? parseError.message
+              : "Unknown parsing error"
+          }`
+        );
+      }
+
+      // Validate CSV structure
+      if (!records || records.length === 0) {
+        throw new Error("CSV file contains no valid records");
+      }
+
+      // Validate required columns
+      const requiredColumns = ["name"];
+      const availableColumns = Object.keys(records[0]);
+      const missingColumns = requiredColumns.filter(
+        (col) => !availableColumns.includes(col)
+      );
+
+      if (missingColumns.length > 0) {
+        throw new Error(
+          `Missing required columns: ${missingColumns.join(
+            ", "
+          )}. Available columns: ${availableColumns.join(", ")}`
+        );
+      }
+
+      // Validate data types and content
+      const validationErrors: string[] = [];
+      records.forEach((record: any, index: number) => {
+        const rowNumber = index + 2; // +2 because index starts at 0 and we skip header row
+
+        // Validate name is not empty
+        if (!record.name || record.name.trim() === "") {
+          validationErrors.push(
+            `Row ${rowNumber}: Name is required and cannot be empty`
+          );
+        }
+
+        // Validate isLeafNode if provided
+        if (
+          record.isLeafNode &&
+          !["true", "false", "1", "0", ""].includes(
+            record.isLeafNode.toLowerCase()
+          )
+        ) {
+          validationErrors.push(
+            `Row ${rowNumber}: isLeafNode must be 'true', 'false', '1', '0', or empty`
+          );
+        }
+
+        // Validate order if provided (should be numeric)
+        if (record.order && isNaN(Number(record.order))) {
+          validationErrors.push(
+            `Row ${rowNumber}: order must be a valid number`
+          );
+        }
+      });
+
+      if (validationErrors.length > 0) {
+        throw new Error(
+          `CSV validation failed:\n${validationErrors.join("\n")}`
+        );
+      }
+
+      console.log(`Parsed ${records.length} records from CSV`);
+      if (records.length > 0) {
+        console.log("Sample record keys:", Object.keys(records[0]));
+      }
+
+      const savedCategories = [];
+
+      // Process each record and save under the specified parent
+      for (const record of records) {
+        const {
+          name = "",
+          description = "",
+          image = "",
+          isLeafNode = false,
+          a_day_in_life = "",
+          core_skills_technical = "",
+          core_skills_soft = "",
+          educational_path_ug = "",
+          educational_path_pg = "",
+          salary_range = "",
+          future_outlook_demand = "",
+          future_outlook_reason = "",
+        } = record;
+
+        // Skip records with missing required fields
+        if (!name) {
+          console.log(`Skipping invalid record: name="${name}"`);
+          continue;
+        }
+
+        // Parse core skills
+        const core_skills = {
+          technical: core_skills_technical
+            ? core_skills_technical.split(",").map((s: string) => s.trim())
+            : [],
+          soft: core_skills_soft
+            ? core_skills_soft.split(",").map((s: string) => s.trim())
+            : [],
+        };
+
+        // Parse educational path
+        const educational_path = {
+          ug_courses: educational_path_ug
+            ? educational_path_ug.split(",").map((s: string) => s.trim())
+            : [],
+          pg_courses: educational_path_pg
+            ? educational_path_pg.split(",").map((s: string) => s.trim())
+            : [],
+        };
+
+        // Parse future outlook
+        const future_outlook = {
+          demand: future_outlook_demand || "",
+          reason: future_outlook_reason || "",
+        };
+
+        const newCategory = new CategoryModel({
+          name,
+          parentId: new mongoose.Types.ObjectId(parentId),
+          description,
+          image,
+          order,
+          isLeafNode: isLeafNode === "true" || isLeafNode === "1",
+          a_day_in_life,
+          core_skills,
+          educational_path,
+          salary_range,
+          future_outlook,
+        });
+
+        const savedCategory = await newCategory.save();
+        savedCategories.push(savedCategory);
+      }
+
+      return {
+        message: "Categories uploaded successfully under parent",
+        parentId,
+        order,
+        totalProcessed: records.length,
+        totalSaved: savedCategories.length,
+        categories: savedCategories,
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      throw new Error(`Error processing CSV: ${errorMessage}`);
+    }
+  }
 }
 export default AdminRepositories;

@@ -53,6 +53,70 @@ class AdminController {
     }
   }
 
+  async uploadCategoriesFromCSVUnderParent(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<any> {
+    try {
+      // Validate file
+      if (!req.file) {
+        return ResponseUtil.badRequest(res, "CSV file is required");
+      }
+
+      // Validate file type
+      if (
+        !req.file.mimetype.includes("csv") &&
+        !req.file.originalname.toLowerCase().endsWith(".csv")
+      ) {
+        return ResponseUtil.badRequest(res, "File must be a CSV file");
+      }
+
+      // Validate file size (5MB limit)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (req.file.size > maxSize) {
+        return ResponseUtil.badRequest(res, "File size must be less than 5MB");
+      }
+
+      const { parentId, order } = req.body;
+
+      // Validate parentId
+      if (!parentId || parentId.trim() === "") {
+        return ResponseUtil.badRequest(res, "Parent ID is required");
+      }
+
+      // Validate parentId format (should be a valid MongoDB ObjectId)
+      if (!/^[0-9a-fA-F]{24}$/.test(parentId)) {
+        return ResponseUtil.badRequest(
+          res,
+          "Parent ID must be a valid MongoDB ObjectId"
+        );
+      }
+
+      // Validate order
+      if (!order || isNaN(Number(order)) || Number(order) < 1) {
+        return ResponseUtil.badRequest(
+          res,
+          "Order must be a valid positive number"
+        );
+      }
+
+      const result =
+        await this.adminRepositories.saveCategoriesFromCSVUnderParent(
+          req.file,
+          parentId,
+          Number(order)
+        );
+      ResponseUtil.created(
+        res,
+        { result },
+        "Categories uploaded successfully under parent from CSV"
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async updateCategory(
     req: Request,
     res: Response,
