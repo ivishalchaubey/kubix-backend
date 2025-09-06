@@ -83,7 +83,7 @@ class UserController {
             const UserId = req.user._id;
             
             const user = await this.userService.updateToken(UserId, req.body.token);
-            ResponseUtil.success(res, user, "Token updated successfully");
+            ResponseUtil.success(res, user, API_MESSAGES.USER.TOKEN_UPDATED);
         } catch (error) {
             next(error);
         }
