@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import AuthRepository from "../repositories/AuthRepository.js";
-import { IUser, IUserMethods, TokenResponse } from "../../../types/global.js";
+import { IUser, IUserMethods, IUserToken, TokenResponse } from "../../../types/global.js";
 import jwt from "jsonwebtoken";
 import { config } from "../../../config/env.js";
 import bcrypt from "bcryptjs";
@@ -145,18 +145,20 @@ class AuthService {
     email: string;
     password: string;
     role: UserRole;
-  }): Promise<{ user: IUser; tokens: TokenResponse }> {
+  }): Promise<{ user: IUser; userToken?: IUserToken; tokens: TokenResponse }> {
     try {
       const { email, password , role } = credentials;
 
       // Find user with password
       const user = await this.authRepository.findUserByEmailAndRole(email,role , true);
-      if (!user) {
+      if(!user){
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
           HttpStatus.UNAUTHORIZED
         );
       }
+      const userToken = await this.authRepository.findUserToken(user._id);
+      
 
       // Check password using the user model's method
       //  check password using bcrypt
@@ -198,7 +200,7 @@ class AuthService {
 
       logger.info(`User logged in: ${user.email}`);
 
-      return { user: userWithoutPassword!, tokens: { access: { token: accessToken, expires: new Date(Date.now() + 15 * 60 * 1000) }, refresh: { token: refreshToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } } };
+      return { user: userWithoutPassword!, userToken: userToken, tokens: { access: { token: accessToken, expires: new Date(Date.now() + 15 * 60 * 1000) }, refresh: { token: refreshToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } } };
     } catch (error) {
       logger.error("Login failed:", error);
       throw error;

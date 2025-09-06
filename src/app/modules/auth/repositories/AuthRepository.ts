@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import User from "../models/User.js";
-import { IUser } from "../../../types/global.js";
+import { UserToken } from "../models/usertoken.js";
+import { IUser, IUserToken } from "../../../types/global.js";
 import CourseService from "../../courses/services/course.js";
 import {
   UserRole,
@@ -71,6 +72,31 @@ class AuthRepository {
       query.select("+password");
     }
     return await query.exec();
+  }
+
+  async findUserToken(userId: string): Promise<IUserToken> {
+
+    if (!Types.ObjectId.isValid(userId)) {
+      return {
+        _id: '',
+        userId: new Types.ObjectId(userId),
+        token: 0,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+    }
+    // const userId = new Types.ObjectId(userId);
+
+    let userTokenData =  await UserToken.findOne({ userId: userId });
+    if(userTokenData){
+      return userTokenData;
+    }
+
+    // create a new user token with 0 token
+    let newUserToken = new UserToken({ userId: userId, token: 0, createdAt: new Date(), updatedAt: new Date() });
+    await newUserToken.save();
+    return newUserToken;
+
   }
 
   getUserCourses = async (

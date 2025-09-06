@@ -2,6 +2,7 @@
 import { Router } from "express";
 import  User  from "../../auth/models/User.js";
 import mongoose from "mongoose";
+import { UserToken } from "../../auth/models/usertoken.js";
 class UserService {
   
   async updateUser(userId: string, userData: any): Promise<any> {
@@ -92,6 +93,23 @@ class UserService {
       throw new Error("User not found");
     }
     return user.bookmarkedCourses || [];
+  }
+
+  async updateToken(userId: string, token: number): Promise<any> {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const userToken = await UserToken.findOne({ userId: userId });
+    if (!userToken) {
+      throw new Error("User token not found");
+    }
+    let tokenValue = userToken.token - token;
+    userToken.token = tokenValue;
+    await userToken.save();
+    await user.save();
+    return userToken;
   }
 
 }

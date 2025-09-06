@@ -73,6 +73,21 @@ class UserController {
             next(error);
         }
     }
+
+    async updateToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            if (!req.user || !req.user._id ) {
+                ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
+                return;
+            }
+            const UserId = req.user._id;
+            
+            const user = await this.userService.updateToken(UserId, req.body.token);
+            ResponseUtil.success(res, user, API_MESSAGES.USER.TOKEN_UPDATED);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
 
 export default UserController;

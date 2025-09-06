@@ -12,5 +12,7 @@ userRouter.get("/",AuthMiddleware.authenticate, asyncHandler((req : Request, res
 userRouter.get("/likedCourses", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.likedCourses(req, res, next)));
 userRouter.get("/bookmarkedCourses", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.bookmarkedCourses(req, res, next)));
 
+userRouter.patch("/update/token", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.updateToken(req, res, next)));
+
 
 export default userRouter;
