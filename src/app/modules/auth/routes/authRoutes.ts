@@ -1,5 +1,6 @@
 import { Router } from "express";
 import AuthController from "../controllers/AuthController.js";
+import { UserTokenController } from "../controllers/usertoken.controller.js";
 import AuthMiddleware from "../../../middlewares/auth.js";
 import { authValidation } from "../../../middlewares/validationMiddleware.js";
 
@@ -35,5 +36,13 @@ router.patch("/change-password", authController.changePassword);
 router.patch("/update-user", AuthMiddleware.authenticate, authController.updateUser);
 router.patch("/change-user-status", AuthMiddleware.authenticate, authController.changeUserStatus);
 router.get("/universities",AuthMiddleware.authenticate, authController.getUniversities);
+
+// Token management routes
+router.get("/tokens/balance", AuthMiddleware.authenticate, UserTokenController.getUserTokenBalance);
+router.post("/tokens/spend", AuthMiddleware.authenticate, UserTokenController.spendTokens);
+router.get("/tokens/history", AuthMiddleware.authenticate, UserTokenController.getTokenHistory);
+
+// Admin routes for token management
+router.post("/tokens/add", AuthMiddleware.authenticate, UserTokenController.addTokens);
 
 export default router;

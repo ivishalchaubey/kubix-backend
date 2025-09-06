@@ -113,6 +113,17 @@ export class PaymentStatusController {
           paidAt: isPaymentSuccessful ? new Date(session.created * 1000).toISOString() : null,
           verificationTimestamp: new Date().toISOString(),
         };
+        session.metadata!.userId = req.user?._id || '';
+        // add details to payment record
+        await PaymentService.updatePaymentInDatabase({
+          sessionId: session.id,
+          customerEmail: session.customer_email || undefined,
+          amount: session.amount_total || 0,
+          currency: session.currency || 'inr',
+          paymentStatus: session.payment_status || undefined,
+          metadata: session.metadata || undefined,
+         
+        });
 
         logger.info(`Payment verification for session ${sessionId}: ${isPaymentSuccessful ? 'SUCCESS' : 'FAILED'}`);
 

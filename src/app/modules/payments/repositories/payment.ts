@@ -55,7 +55,7 @@ class PaymentRepository {
     ]);
 
     return {
-      payments,
+      payments: payments as IPayment[],
       total,
       page,
       limit,
@@ -99,7 +99,7 @@ class PaymentRepository {
     ]);
 
     return {
-      payments,
+      payments: payments as IPayment[],
       total,
       page,
       limit,

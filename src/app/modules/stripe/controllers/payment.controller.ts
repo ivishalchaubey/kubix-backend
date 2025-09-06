@@ -39,6 +39,12 @@ export class PaymentController {
           return ResponseUtil.badRequest(res, 'Amount must be a positive number');
         }
 
+        // Add userId to metadata if user is authenticated
+        const enhancedMetadata = {
+          ...metadata,
+          ...(req.user?._id && { userId: req.user._id })
+        };
+
         // Create checkout session
         const result = await PaymentService.createCheckoutSession({
           amount,
@@ -46,7 +52,7 @@ export class PaymentController {
           successUrl,
           cancelUrl,
           customerEmail,
-          metadata
+          metadata: enhancedMetadata
         });
 
         logger.info(`Checkout session created: ${result.sessionId}`);
@@ -90,8 +96,9 @@ export class PaymentController {
         let event: Stripe.Event;
 
         try {
-          // Verify webhook signature
-          event = Stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+          // Verify webhook signature with raw body
+          const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+          event = Stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
         } catch (err) {
           logger.error('Webhook signature verification failed:', err);
           return ResponseUtil.badRequest(res, 'Invalid signature');
@@ -162,6 +169,7 @@ export class PaymentController {
         }
 
         const session = await PaymentService.getCheckoutSession(sessionId);
+        // add data in payment record
 
         return ResponseUtil.success(res, {
           sessionId: session.id,

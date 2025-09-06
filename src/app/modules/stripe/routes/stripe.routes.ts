@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { PaymentController } from '../controllers/payment.controller.js';
 import { PaymentStatusController } from '../controllers/payment-status.controller.js';
 import { config } from '../../../config/env.js';
+import AuthMiddleware from '../../../middlewares/auth.js';
 
 /**
  * Stripe Payment Routes
@@ -31,7 +32,25 @@ router.post('/create-checkout-session', PaymentController.createCheckoutSession)
  * @note    This endpoint should be configured in Stripe dashboard
  * @note    Requires raw body parser middleware
  */
-router.post('/webhook', PaymentController.handleWebhook);
+router.post('/webhook', 
+  // Middleware to capture raw body for webhook signature verification
+  (req, res, next) => {
+    if (req.get('content-type')?.includes('application/json')) {
+      let data = '';
+      req.setEncoding('utf8');
+      req.on('data', (chunk) => {
+        data += chunk;
+      });
+      req.on('end', () => {
+        req.body = data;
+        next();
+      });
+    } else {
+      next();
+    }
+  },
+  PaymentController.handleWebhook
+);
 
 /**
  * @route   GET /api/v1/stripe/session/:sessionId
@@ -73,7 +92,7 @@ router.get('/payment/:sessionId/details', PaymentStatusController.getPaymentDeta
  * @desc    Verify if payment was successful
  * @access  Public
  */
-router.get('/payment/:sessionId/verify', PaymentStatusController.verifyPaymentSuccess);
+router.get('/payment/:sessionId/verify',AuthMiddleware.authenticate, PaymentStatusController.verifyPaymentSuccess);
 
 /**
  * @route   GET /api/v1/stripe/payment/:sessionId/receipt
