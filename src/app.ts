@@ -9,6 +9,8 @@ import courseRouter from "./app/modules/courses/routes/course.js";
 import userRouter from "./app/modules/user/routes/user.js";
 import ImageRouter from "./app/modules/auth/routes/imageUploadRoutes.js";
 import notificationRouter from "./app/modules/notifications/routes/notification.routes.js";
+import paymentRouter from "./app/modules/payments/routes/payment.js";
+import stripeRoutes from "./app/modules/stripe/routes/stripe.routes.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -30,6 +32,9 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
+// Raw body parser for Stripe webhooks (must be before other routes)
+app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
+
 // Request logging
 app.use((req: Request, _res: Response, next: NextFunction) => {
   logger.info(`${req.method} ${req.path} - ${req.ip}`);
@@ -44,6 +49,8 @@ app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/image", ImageRouter);
 app.use("/api/v1/notifications", notificationRouter);
+app.use("/api/v1/payments", paymentRouter);
+app.use("/api/v1/stripe", stripeRoutes);
 
 
 // Handle undefined routes

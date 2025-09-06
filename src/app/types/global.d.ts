@@ -122,6 +122,26 @@ export interface ValidationError {
   value?: any;
 }
 
+// Payment related types
+export interface IPayment {
+  _id: string;
+  userId: ObjectId;
+  stripePaymentId: string;
+  amount: number; // in cents
+  tokens: number; // calculated based on price
+  status: 'succeeded' | 'failed' | 'pending';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IPaymentMethods {
+  // Add any instance methods if needed
+}
+
+export interface IPaymentModel extends Model<IPayment, {}, IPaymentMethods> {
+  // Add any static methods if needed
+}
+
 // Error types
 export interface CustomError extends Error {
   statusCode?: number;
