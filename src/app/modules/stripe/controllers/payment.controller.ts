@@ -188,4 +188,24 @@ export class PaymentController {
       }
     }
   );
+
+
+  static getPaymentHistory = asyncHandler(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+
+        if (!req.user) {
+          return ResponseUtil.unauthorized(res, 'User not authenticated');
+        }
+        const  userId = req.user._id;
+        const paymentHistory = await PaymentService.getPaymentHistory(userId);
+        return ResponseUtil.success(res, paymentHistory, 'Payment history retrieved successfully');
+      
+      } catch (error) {
+        logger.error('Error retrieving payment history:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Internal server error';
+          return ResponseUtil.internalServerError(res, errorMessage);
+      }
+    }
+  );
 }

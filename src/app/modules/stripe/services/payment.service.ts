@@ -172,13 +172,14 @@ export class PaymentService {
       // Get additional payment details from Stripe
       let paymentMethodDetails = {};
       let receiptUrl = '';
-      let transactionId = '';
       
       if (paymentData.paymentIntentId) {
         try {
           const paymentIntent = await stripe.paymentIntents.retrieve(paymentData.paymentIntentId, {
             expand: ['charges', 'payment_method']
           });
+
+          console.log(paymentIntent , "paymentIntent <>><><><><><><><><><><><");
           
           // Extract payment method details
           if (paymentIntent.payment_method) {
@@ -198,7 +199,6 @@ export class PaymentService {
           if ((paymentIntent as any).charges?.data?.[0]) {
             const charge = (paymentIntent as any).charges.data[0];
             receiptUrl = charge.receipt_url || '';
-            transactionId = charge.id || '';
           }
         } catch (error) {
           logger.warn(`Failed to retrieve additional payment details: ${error}`);
@@ -237,8 +237,6 @@ export class PaymentService {
         // Customer information
         customerEmail: paymentData.customerEmail,
         
-        // Transaction details
-        transactionId: transactionId,
         receiptUrl: receiptUrl,
         
         // Payment processing details
@@ -275,7 +273,6 @@ export class PaymentService {
         status: paymentRecord.status,
         currency: paymentRecord.currency,
         paymentMethod: paymentRecord.paymentMethod?.type,
-        transactionId: paymentRecord.transactionId,
         receiptUrl: paymentRecord.receiptUrl ? 'Available' : 'Not available'
       });
       
@@ -344,6 +341,16 @@ export class PaymentService {
       return session;
     } catch (error) {
       logger.error(`Error retrieving checkout session ${sessionId}:`, error);
+      throw error;
+    }
+  }
+
+  static async getPaymentHistory(userId: string): Promise<any[]> {
+    try {
+      const paymentHistory = await Payment.find({ userId: new Types.ObjectId(userId) });
+      return paymentHistory;
+    } catch (error) {
+      logger.error('Error retrieving payment history:', error);
       throw error;
     }
   }

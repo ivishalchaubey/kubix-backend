@@ -117,4 +117,7 @@ router.get('/payments/customer/:email', PaymentStatusController.getCustomerPayme
  */
 router.get('/analytics/payments', PaymentStatusController.getPaymentAnalytics);
 
+
+router.get('/payment-history',AuthMiddleware.authenticate, PaymentController.getPaymentHistory);
+
 export default router;
