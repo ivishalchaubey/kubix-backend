@@ -11,6 +11,8 @@ import {
 } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
 import logger from "../../../utils/logger.js";
+import { UserCourseLiked } from "../models/usercourseliked.js";
+import { Types } from "mongoose";
 
 class AuthService {
   private authRepository: AuthRepository;
@@ -642,6 +644,54 @@ class AuthService {
       return universities;
     } catch (error) {
       logger.error("Get universities failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update user course payment status
+   */
+  async updateUserCoursePaymentStatus(userId: string, courseId: string): Promise<any> {
+    try {
+      // Validate ObjectIds
+      if (!Types.ObjectId.isValid(userId)) {
+        throw new AppError(
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      if (!Types.ObjectId.isValid(courseId)) {
+        throw new AppError(
+          "Invalid course ID",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      // Find the user course liked record
+      const userCourseLiked = await UserCourseLiked.findOne({
+        userId: new Types.ObjectId(userId),
+        courseId: new Types.ObjectId(courseId)
+      });
+
+      if (!userCourseLiked) {
+        throw new AppError(
+          "User course liked record not found",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      // Update isPaidByAdmin to true
+      const updatedRecord = await UserCourseLiked.findByIdAndUpdate(
+        userCourseLiked._id,
+        { isPaidByAdmin: true },
+        { new: true }
+      );
+
+      logger.info(`User course payment status updated for user: ${userId}, course: ${courseId}`);
+      return updatedRecord;
+    } catch (error) {
+      logger.error("Update user course payment status failed:", error);
       throw error;
     }
   }

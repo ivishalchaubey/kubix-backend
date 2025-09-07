@@ -37,6 +37,9 @@ router.patch("/update-user", AuthMiddleware.authenticate, authController.updateU
 router.patch("/change-user-status", AuthMiddleware.authenticate, authController.changeUserStatus);
 router.get("/universities",AuthMiddleware.authenticate, authController.getUniversities);
 
+// Update user course payment status
+router.patch("/user-course-payment-status", AuthMiddleware.authenticate, authValidation.updateUserCoursePaymentStatus, authController.updateUserCoursePaymentStatus);
+
 // Token management routes
 router.get("/tokens/balance", AuthMiddleware.authenticate, UserTokenController.getUserTokenBalance);
 router.post("/tokens/spend", AuthMiddleware.authenticate, UserTokenController.spendTokens);
