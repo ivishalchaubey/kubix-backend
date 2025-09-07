@@ -41,6 +41,14 @@ export const config = {
       },
     },
   },
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY || "",
+    publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
+  },
+  payment: {
+    tokenRate: 10, // 1 USD = 10 tokens
+  },
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
 };
 

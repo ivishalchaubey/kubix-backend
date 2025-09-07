@@ -73,93 +73,111 @@ class CourseRepository {
       );
     }
     
-    return await Course.aggregate([{
-      $match :{ UniversityId: new mongoose.Types.ObjectId(universityId) }
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "UniversityId",
-        foreignField: "_id",
-        as: "University"
-      }
-    },
-    {
-      $unwind: "$University"
-    },
-    {
-      $lookup:{
-        from : "users",
-        localField : "_id",
-        foreignField : "likedCourses",
-        as : "likes"
-      }
-    },
-    {
-      $unwind : {
-        path: "$likes",
-        preserveNullAndEmptyArrays: true
-      }
-    },
-    {
-      $project :{
-        _id : 1,
-        name : 1,
-        description : 1,
-        amount : 1,
-        currency : 1,
-        chapters : 1,
-        duration : 1,
-        universityFirstName : "$University.firstName",
-        universityLastName : "$University.lastName",
-        likeFirstName : "$likes.firstName",
-        likeLastName : "$likes.lastName",
-        likeEmail : "$likes.email",
-        likeCountryCode : "$likes.countryCode",
-        likePhoneNumber : "$likes.phoneNumber",
-      }
-    },
-    {
-      $group :{
-        _id : {
-          id : "$_id", 
-          name : "$name", 
-          description : "$description", 
-          amount : "$amount", 
-          chapters : "$chapters",
-          currency : "$currency",
-          duration : "$duration",
-          universityFirstName : "$universityFirstName", 
-          universityLastName : "$universityLastName"
-        },
-        likes : { 
-          $push : {
-            firstName: "$likeFirstName",
-            lastName: "$likeLastName", 
-            email: "$likeEmail",
-            countryCode: "$likeCountryCode",
-            phoneNumber: "$likePhoneNumber"
+    return await Course.aggregate([
+      {
+        $match: { UniversityId: new mongoose.Types.ObjectId(universityId) }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "UniversityId",
+          foreignField: "_id",
+          as: "University"
+        }
+      },
+      {
+        $unwind: "$University"
+      },
+      {
+        $lookup: {
+          from: "usercourselikeds",
+          localField: "_id",
+          foreignField: "courseId",
+          as: "likes"
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "likes.userId",
+          foreignField: "_id",
+          as: "likedUsers"
+        }
+      },
+      {
+        $addFields: {
+          likes: {
+            $map: {
+              input: "$likes",
+              as: "like",
+              in: {
+                $mergeObjects: [
+                  "$$like",
+                  {
+                    user: {
+                      $arrayElemAt: [
+                        {
+                          $filter: {
+                            input: "$likedUsers",
+                            cond: { $eq: ["$$this._id", "$$like.userId"] }
+                          }
+                        },
+                        0
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          description: 1,
+          amount: 1,
+          currency: 1,
+          chapters: 1,
+          duration: 1,
+          image: 1,
+          University: {
+            _id: "$University._id",
+            firstName: "$University.firstName",
+            lastName: "$University.lastName",
+            email: "$University.email",
+            countryCode: "$University.countryCode",
+            phoneNumber: "$University.phoneNumber",
+            profileImage: "$University.profileImage"
+          },
+          likes: {
+            $map: {
+              input: "$likes",
+              as: "like",
+              in: {
+                _id: "$$like._id",
+                userId: "$$like.userId",
+                courseId: "$$like.courseId",
+                isPaidByAdmin: "$$like.isPaidByAdmin",
+                status: "$$like.status",
+                createdAt: "$$like.createdAt",
+                updatedAt: "$$like.updatedAt",
+                user: {
+                  _id: "$$like.user._id",
+                  firstName: "$$like.user.firstName",
+                  lastName: "$$like.user.lastName",
+                  email: "$$like.user.email",
+                  countryCode: "$$like.user.countryCode",
+                  phoneNumber: "$$like.user.phoneNumber",
+                  profileImage: "$$like.user.profileImage"
+                }
+              }
+            }
           }
         }
       }
-    },
-    {
-      $project:{
-        _id : "$_id.id",
-        name : "$_id.name",
-        chapters : "$_id.chapters",
-        currency : "$_id.currency",
-        amount : "$_id.amount",
-        description : "$_id.description",
-        duration : "$_id.duration",
-        University : {
-          firstName : "$_id.universityFirstName",
-          lastName : "$_id.universityLastName"
-        },
-        likes : "$likes",
-      }
-    }
-  ])
+    ])
   }
 
 

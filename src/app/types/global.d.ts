@@ -42,6 +42,15 @@ export interface IUser {
   updatedAt: Date;
 }
 
+
+export interface IUserToken {
+  _id: string;
+  userId: ObjectId;
+  token: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export interface IUserReq {
   _id: string;
   email: string;
@@ -120,6 +129,92 @@ export interface ValidationError {
   field: string;
   message: string;
   value?: any;
+}
+
+// Payment related types
+export interface IPayment {
+  _id: string;
+  userId: ObjectId;
+  
+  // Stripe IDs
+  stripePaymentId: string;
+  stripeSessionId: string;
+  stripePaymentIntentId?: string;
+  stripeCustomerId?: string;
+  stripePaymentMethodId?: string;
+  
+  // Payment amount and currency
+  amount: number; // in cents
+  currency: 'inr' | 'usd' | 'eur' | 'gbp';
+  netAmount: number; // amount after processing fees
+  
+  // Token allocation
+  tokens: number; // calculated based on price
+  
+  // Payment status and processing
+  status: 'succeeded' | 'failed' | 'pending' | 'canceled' | 'refunded';
+  
+  // Payment method details
+  paymentMethod?: {
+    type: 'card' | 'bank_transfer' | 'wallet' | 'upi' | 'netbanking';
+    last4?: string;
+    brand?: string;
+    expMonth?: number;
+    expYear?: number;
+  };
+  
+  // Customer information
+  customerEmail?: string;
+  customerName?: string;
+  customerPhone?: string;
+  
+  // Transaction details
+  transactionId?: string;
+  receiptNumber?: string;
+  receiptUrl?: string;
+  
+  // Payment processing details
+  processingFee: number;
+  
+  // Payment timing
+  paidAt?: Date;
+  failedAt?: Date;
+  refundedAt?: Date;
+  
+  // Additional metadata
+  description?: string;
+  metadata?: Map<string, string> | Record<string, string>;
+  
+  // Refund information
+  refundAmount: number;
+  refundReason?: string;
+  
+  // IP and location tracking
+  ipAddress?: string;
+  userAgent?: string;
+  
+  // Risk assessment
+  riskScore?: number;
+  riskLevel: 'low' | 'medium' | 'high';
+  
+  // Payment source tracking
+  source: 'web' | 'mobile' | 'api' | 'admin';
+  
+  // Related entities
+  courseId?: ObjectId;
+  subscriptionId?: ObjectId;
+  
+  // Timestamps
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IPaymentMethods {
+  // Add any instance methods if needed
+}
+
+export interface IPaymentModel extends Model<IPayment, {}, IPaymentMethods> {
+  // Add any static methods if needed
 }
 
 // Error types

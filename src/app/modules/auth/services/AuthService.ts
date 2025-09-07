@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import AuthRepository from "../repositories/AuthRepository.js";
-import { IUser, IUserMethods, TokenResponse } from "../../../types/global.js";
+import { IUser, IUserMethods, IUserToken, TokenResponse } from "../../../types/global.js";
 import jwt from "jsonwebtoken";
 import { config } from "../../../config/env.js";
 import bcrypt from "bcryptjs";
@@ -11,6 +11,8 @@ import {
 } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
 import logger from "../../../utils/logger.js";
+import { UserCourseLiked } from "../models/usercourseliked.js";
+import { Types } from "mongoose";
 
 class AuthService {
   private authRepository: AuthRepository;
@@ -145,18 +147,20 @@ class AuthService {
     email: string;
     password: string;
     role: UserRole;
-  }): Promise<{ user: IUser; tokens: TokenResponse }> {
+  }): Promise<{ user: IUser; userToken?: IUserToken; tokens: TokenResponse }> {
     try {
       const { email, password , role } = credentials;
 
       // Find user with password
       const user = await this.authRepository.findUserByEmailAndRole(email,role , true);
-      if (!user) {
+      if(!user){
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
           HttpStatus.UNAUTHORIZED
         );
       }
+      const userToken = await this.authRepository.findUserToken(user._id);
+      
 
       // Check password using the user model's method
       //  check password using bcrypt
@@ -198,7 +202,7 @@ class AuthService {
 
       logger.info(`User logged in: ${user.email}`);
 
-      return { user: userWithoutPassword!, tokens: { access: { token: accessToken, expires: new Date(Date.now() + 15 * 60 * 1000) }, refresh: { token: refreshToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } } };
+      return { user: userWithoutPassword!, userToken: userToken, tokens: { access: { token: accessToken, expires: new Date(Date.now() + 15 * 60 * 1000) }, refresh: { token: refreshToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } } };
     } catch (error) {
       logger.error("Login failed:", error);
       throw error;
@@ -640,6 +644,54 @@ class AuthService {
       return universities;
     } catch (error) {
       logger.error("Get universities failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update user course payment status
+   */
+  async updateUserCoursePaymentStatus(userId: string, courseId: string): Promise<any> {
+    try {
+      // Validate ObjectIds
+      if (!Types.ObjectId.isValid(userId)) {
+        throw new AppError(
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      if (!Types.ObjectId.isValid(courseId)) {
+        throw new AppError(
+          "Invalid course ID",
+          HttpStatus.BAD_REQUEST
+        );
+      }
+
+      // Find the user course liked record
+      const userCourseLiked = await UserCourseLiked.findOne({
+        userId: new Types.ObjectId(userId),
+        courseId: new Types.ObjectId(courseId)
+      });
+
+      if (!userCourseLiked) {
+        throw new AppError(
+          "User course liked record not found",
+          HttpStatus.NOT_FOUND
+        );
+      }
+
+      // Update isPaidByAdmin to true
+      const updatedRecord = await UserCourseLiked.findByIdAndUpdate(
+        userCourseLiked._id,
+        { isPaidByAdmin: true },
+        { new: true }
+      );
+
+      logger.info(`User course payment status updated for user: ${userId}, course: ${courseId}`);
+      return updatedRecord;
+    } catch (error) {
+      logger.error("Update user course payment status failed:", error);
       throw error;
     }
   }

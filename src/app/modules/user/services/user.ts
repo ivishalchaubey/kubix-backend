@@ -2,8 +2,14 @@
 import { Router } from "express";
 import  User  from "../../auth/models/User.js";
 import mongoose from "mongoose";
+import { UserToken } from "../../auth/models/usertoken.js";
+import UserRepository from "../repositories/user.js";
 class UserService {
-  
+  private userRepository: UserRepository;
+  constructor() {
+    this.userRepository = new UserRepository();
+  }
+
   async updateUser(userId: string, userData: any): Promise<any> {
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -29,15 +35,16 @@ class UserService {
     if(user.likedCourses.includes(courseObjectId)) {
       // remove course from likedCourses
       user.likedCourses = user.likedCourses.filter((id) => !id.equals(courseObjectId));
+      await this.userRepository.unlikeCourse(userId, courseId);
       await user.save();
 
     }
 
     else{
       user.likedCourses.push(courseObjectId);
+      await this.userRepository.likeCourse(userId, courseId);
       await user.save();
     }
-
     return user;
   }
 
@@ -79,11 +86,12 @@ class UserService {
   }
 
   async getLikedCOurse(userId: string, filter: any): Promise<any> {
-    const user = await User.findById(userId).populate('likedCourses').lean();
-    if (!user) {
-      throw new Error("User not found");
+    
+    const user = await this.userRepository.getLikedCourse(userId);
+    if (!user || user.length === 0) {
+      throw new Error("User liked courses not found");
     }
-    return user.likedCourses || [];
+    return user || [];
   }
 
   async getBookmarkedCourses(userId: string): Promise<any> {
@@ -92,6 +100,23 @@ class UserService {
       throw new Error("User not found");
     }
     return user.bookmarkedCourses || [];
+  }
+
+  async updateToken(userId: string, token: number): Promise<any> {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const userToken = await UserToken.findOne({ userId: userId });
+    if (!userToken) {
+      throw new Error("User token not found");
+    }
+    let tokenValue = userToken.token - token;
+    userToken.token = tokenValue;
+    await userToken.save();
+    await user.save();
+    return userToken;
   }
 
 }

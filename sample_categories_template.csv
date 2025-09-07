@@ -1,0 +1,10 @@
+name,level,description,image,isLeafNode,a_day_in_life,core_skills_technical,core_skills_soft,educational_path_ug,educational_path_pg,salary_range,future_outlook_demand,future_outlook_reason
+Engineering And Science,1,,,,false,,,,,,,
+Computer Science Engineering,2,,,,false,,,,,,,
+AI/ML Engineer,3,,,,false,,,,,,,
+Frontend Developer,4,,,,false,,,,,,,
+Backend Developer,4,"Lead product strategy and execution to deliver value to customers and achieve business objectives through market insights.","https://commondatastorage.googleapis.com/codeskulptor-demos/riceracer_assets/img/car_1.png",true,"Begin with team standups and stakeholder meetings analyze user data and feedback prioritize features and work closely with design and engineering teams to ensure successful product delivery.","SQL,Analytics,Roadmapping,A/B Testing","Leadership,Strategic Thinking,Stakeholder Management,Decision Making","B.Tech,BBA,B.Com,B.Sc","MBA,PGDM,MS Management","₹8-25 LPA","High","Increasing focus on product-led growth"
+Fullstack Engineer,3,,,,false,,,,,,,
+Chemical Engineering,2,,,,false,,,,,,,
+Environment Engineer,3,,,,false,,,,,,,
+Sustainiblity Engineer,4,,,,false,,,,,, 

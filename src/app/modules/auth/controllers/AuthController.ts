@@ -510,6 +510,31 @@ let updateData: any = {};
       next(error);
     }
   }
+
+  /**
+   * Update user course payment status
+   */
+  updateUserCoursePaymentStatus = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { userId, courseId } = req.body;
+
+      // Validate required fields
+      if (!userId || !courseId) {
+        ResponseUtil.badRequest(res, "userId and courseId are required");
+        return;
+      }
+
+      const result = await this.authService.updateUserCoursePaymentStatus(userId, courseId);
+
+      ResponseUtil.success(res, { userCourseLiked: result }, "User course payment status updated successfully");
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default AuthController;

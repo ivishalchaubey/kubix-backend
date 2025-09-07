@@ -1,0 +1,198 @@
+
+import mongoose, { Schema } from "mongoose";
+import { IPayment, IPaymentMethods, IPaymentModel } from "../../../types/global.js";
+
+// Payment schema
+const paymentSchema = new Schema<IPayment, IPaymentModel, IPaymentMethods>(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: [true, "User ID is required"],
+    },
+    stripePaymentId: {
+      type: String,
+      required: [true, "Stripe Payment ID is required"],
+      unique: true,
+    },
+    stripeSessionId: {
+      type: String,
+      required: [true, "Stripe Session ID is required"],
+      unique: true,
+    },
+    stripePaymentIntentId: {
+      type: String,
+      required: false,
+    },
+    stripeCustomerId: {
+      type: String,
+      required: false,
+    },
+    stripePaymentMethodId: {
+      type: String,
+      required: false,
+    },
+    // Payment amount and currency
+    amount: {
+      type: Number,
+      required: [true, "Amount is required"],
+      min: [1, "Amount must be greater than 0"],
+    },
+    currency: {
+      type: String,
+      required: [true, "Currency is required"],
+      default: "inr",
+      enum: ["inr", "usd", "eur", "gbp"],
+    },
+    // Token allocation
+    tokens: {
+      type: Number,
+      required: [true, "Tokens is required"],
+      min: [1, "Tokens must be greater than 0"],
+    },
+    // Payment status and processing
+    status: {
+      type: String,
+      enum: ["succeeded", "failed", "pending", "canceled", "refunded"],
+      default: "pending",
+      required: true,
+    },
+    // Payment method details
+    paymentMethod: {
+      type: {
+        type: String, // card, bank_transfer, wallet, etc.
+        enum: ["card", "bank_transfer", "wallet", "upi", "netbanking"],
+        default: "card",
+      },
+      last4: String, // Last 4 digits of card
+      brand: String, // visa, mastercard, etc.
+      expMonth: Number,
+      expYear: Number,
+    },
+    // Customer information
+    customerEmail: {
+      type: String,
+      required: false,
+    },
+    customerName: {
+      type: String,
+      required: false,
+    },
+    customerPhone: {
+      type: String,
+      required: false,
+    },
+    // Transaction details
+    receiptNumber: {
+      type: String,
+      required: false,
+    },
+    receiptUrl: {
+      type: String,
+      required: false,
+    },
+    // Payment processing details
+    processingFee: {
+      type: Number,
+      default: 0,
+      min: [0, "Processing fee cannot be negative"],
+    },
+    netAmount: {
+      type: Number,
+      required: [true, "Net amount is required"],
+      min: [1, "Net amount must be greater than 0"],
+    },
+    // Payment timing
+    paidAt: {
+      type: Date,
+      required: false,
+    },
+    failedAt: {
+      type: Date,
+      required: false,
+    },
+    refundedAt: {
+      type: Date,
+      required: false,
+    },
+    // Additional metadata
+    description: {
+      type: String,
+      required: false,
+      maxlength: [500, "Description cannot exceed 500 characters"],
+    },
+    metadata: {
+      type: Map,
+      of: String,
+      required: false,
+    },
+    // Refund information
+    refundAmount: {
+      type: Number,
+      default: 0,
+      min: [0, "Refund amount cannot be negative"],
+    },
+    refundReason: {
+      type: String,
+      required: false,
+    },
+    // IP and location tracking
+    ipAddress: {
+      type: String,
+      required: false,
+    },
+    userAgent: {
+      type: String,
+      required: false,
+    },
+    // Risk assessment
+    riskScore: {
+      type: Number,
+      min: [0, "Risk score cannot be negative"],
+      max: [100, "Risk score cannot exceed 100"],
+      required: false,
+    },
+    riskLevel: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "low",
+    },
+    // Payment source tracking
+    source: {
+      type: String,
+      enum: ["web", "mobile", "api", "admin"],
+      default: "web",
+    },
+    // Related entities
+    courseId: {
+      type: Schema.Types.ObjectId,
+      ref: "Course",
+      required: false,
+    },
+    subscriptionId: {
+      type: Schema.Types.ObjectId,
+      ref: "Subscription",
+      required: false,
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: function (doc, ret: any) {
+        delete ret.__v;
+        return ret;
+      },
+    },
+    toObject: {
+      transform: function (doc, ret: any) {
+        delete ret.__v;
+        return ret;
+      },
+    },
+  }
+);
+
+// Create and export the Payment model
+const Payment = mongoose.model<IPayment, IPaymentModel>("Payment", paymentSchema);
+
+export default Payment;

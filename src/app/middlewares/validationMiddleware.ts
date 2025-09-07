@@ -227,6 +227,11 @@ export const authValidation = {
       { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
     ],
   }),
+
+  updateUserCoursePaymentStatus: Validator.validate({
+    userId: [{ required: true, type: "string" }],
+    courseId: [{ required: true, type: "string" }],
+  }),
 };
 
 // Notification validation schemas
