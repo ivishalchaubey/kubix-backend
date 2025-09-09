@@ -34,6 +34,8 @@ class AuthMiddleware {
           email: decoded.email,
           role: decoded.role,
           phoneNumber: decoded.phoneNumber,
+          stream: decoded.stream,
+          board: decoded.board,
           
         };
         next();

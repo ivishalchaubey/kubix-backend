@@ -3,6 +3,8 @@ import mongoose, { Schema, Document, ObjectId } from "mongoose";
 // Correct TypeScript interface
 export interface ICategory extends Document {
   _id : mongoose.Types.ObjectId;
+  stream?: string;
+  branch?: string;
   name: string;
   parentId?: mongoose.Types.ObjectId | null;
   description?: string;
@@ -32,6 +34,8 @@ const categorySchema = new Schema<ICategory>(
     parentId: { type: mongoose.Schema.Types.ObjectId, default: null , ref : "Category" },
     description: { type: String, required: false , default : "" },
     image: { type: String, required: false , default : "" },
+    stream:{ type: String, required: false , default : "" },
+    branch:{ type: String, required: false , default : "" },
     order: { type: Number }, // 1 = Stream, 2 = Field, etc.
     isLeafNode: { type: Boolean, default: false },
     a_day_in_life: { type: String, default: "" },
