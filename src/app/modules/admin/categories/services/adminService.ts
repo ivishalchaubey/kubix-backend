@@ -29,6 +29,10 @@ class AdminService {
     const categories = await this.adminRepositories.getAllCategories();
     return categories;
   }
+  async getUserCategories(stream: string, board: string) :Promise <any> {
+    const categories = await this.adminRepositories.getUserCategories(stream, board);
+    return categories;
+  }
 
   async createCategory(categoryData: any[]) {
     let orderToIdMap : any = {}; 

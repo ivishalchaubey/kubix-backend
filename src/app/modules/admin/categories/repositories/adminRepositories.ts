@@ -16,6 +16,8 @@ class AdminRepositories {
         name,
         children = [],
         image,
+        stream,
+        branch,
         description,
         isLeafNode,
         a_day_in_life,
@@ -31,6 +33,8 @@ class AdminRepositories {
         parentId,
         description,
         image,
+        stream,
+        branch,
         order,
         isLeafNode,
         a_day_in_life,
@@ -152,6 +156,8 @@ class AdminRepositories {
           image = "",
           isLeafNode = false,
           a_day_in_life = "",
+          stream = "",
+          branch = "",
           core_skills_technical = "",
           core_skills_soft = "",
           educational_path_ug = "",
@@ -363,6 +369,88 @@ class AdminRepositories {
       },
     ]);
 
+    return categories;
+  }
+
+  async getUserCategories(stream: string, board: string): Promise<ICategory[]> {
+    const categories = await CategoryModel.aggregate([
+      {
+        $match: {
+          $or: [{ stream: stream }, { board: board }],
+        },
+      },
+      {
+        $graphLookup: {
+          from: "categories",
+          startWith: "$_id",
+          connectFromField: "_id",
+          connectToField: "parentId",
+          as: "childrenFlat",
+          depthField: "depth",
+        },
+      },
+      // Build nested children recursively without $function
+      {
+        $addFields: {
+          children: {
+            $map: {
+              input: {
+                $filter: {
+                  input: "$childrenFlat",
+                  as: "child",
+                  cond: {
+                    $eq: ["$$child.parentId", "$_id"],
+                  },
+                },
+              },
+              as: "level1",
+              in: {
+                $mergeObjects: [
+                  "$$level1",
+                  {
+                    children: {
+                      $map: {
+                        input: {
+                          $filter: {
+                            input: "$childrenFlat",
+                            as: "child2",
+                            cond: {
+                              $eq: ["$$child2.parentId", "$$level1._id"],
+                            },
+                          },
+                        },
+                        as: "level2",
+                        in: {
+                          $mergeObjects: [
+                            "$$level2",
+                            {
+                              children: {
+                                $filter: {
+                                  input: "$childrenFlat",
+                                  as: "child3",
+                                  cond: {
+                                    $eq: ["$$child3.parentId", "$$level2._id"],
+                                  },
+                                },
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          childrenFlat: 0, // Remove flat list
+        },
+      },
+    ]);
     return categories;
   }
 

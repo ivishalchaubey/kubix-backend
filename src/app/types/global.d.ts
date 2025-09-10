@@ -59,6 +59,8 @@ export interface IUserReq {
   phoneNumber: string;
   role: string;
   role: UserRole;
+  stream?: string;
+  board?: string;
 }
 
 export interface IUserMethods {

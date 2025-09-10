@@ -178,6 +178,36 @@ class AdminController {
     }
   }
 
+  async getUserCategories(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+      let stream = req.user.stream;
+      let board = req.user.board;
+      if (!stream || !board) {
+        ResponseUtil.badRequest(res, "Stream and board are required");
+        return;
+      }
+      const categories = await this.adminService.getUserCategories(
+        stream,
+        board
+      );
+      ResponseUtil.success(
+        res,
+        categories,
+        API_MESSAGES.ADMIN_SUCCESS.CATEGORIES_FETCHED
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async getCategoryById(
     req: Request,
     res: Response,
