@@ -52,7 +52,7 @@ class AdminRepositories {
 
   async saveCareerOptionsTree(treeData: any, parentId: mongoose.Types.ObjectId | null, order: number = 1) {
     for (const node of treeData) {
-      const { name, children = [], image ,stream ,branch , description , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = node;
+      const { name, children = [], image ,stream ,board , description , isLeafNode , a_day_in_life,core_skills,educational_path,salary_range,future_outlook } = node;
 
       // Save current node
       const newNode = new CategoryModel({
@@ -61,7 +61,7 @@ class AdminRepositories {
         description,
         image,
         stream,
-        branch,
+        board,
         order,
         isLeafNode,
         a_day_in_life,
@@ -118,7 +118,7 @@ class AdminRepositories {
           isLeafNode = false,
           a_day_in_life = "",
           stream = "",
-          branch = "",
+          board = "",
           core_skills_technical = "",
           core_skills_soft = "",
           educational_path_ug = "",

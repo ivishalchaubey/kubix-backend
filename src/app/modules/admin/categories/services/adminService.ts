@@ -5,7 +5,7 @@ import { promises } from "dns";
 export interface ICategory {
   description: string;
   degree: string; // engineering, arts, science
-  branch: string; // circuit branch ie(computer , electronics, electrical) and non-circuit branch (civil, mechanical, chemical)
+  board: string; // circuit board ie(computer , electronics, electrical) and non-circuit board (civil, mechanical, chemical)
   course: string; // computer science, electronics, electrical, civil, mechanical, chemical
   courseStream: string; // frontend, backend, database, operating system, data structure, algorithm , drawing engineering, etc
   subject: string; // data structure, algorithm, operating system, etc
