@@ -25,6 +25,23 @@ export interface ICategory extends Document {
     demand: string;
     reason: string;
   };
+  // New optional fields
+  soft_skills?: string[];
+  checklist?: string[];
+  education_10_2?: string;
+  education_diploma?: string;
+  education_graduation?: string;
+  education_post_graduation?: string;
+  myth?: string;
+  reality?: string;
+  pros?: string[];
+  cons?: string[];
+  superstar1?: string;
+  superstar2?: string;
+  superstar3?: string;
+  related_careers?: string[];
+  growth_path?: string;
+  qualifying_exams?: string[];
 }
 
 // Define schema
@@ -52,12 +69,28 @@ const categorySchema = new Schema<ICategory>(
       demand: { type: String, default: "" },
       reason: { type: String, default: "" },
     },
+    // New optional fields
+    soft_skills: { type: [String], default: [] },
+    checklist: { type: [String], default: [] },
+    education_10_2: { type: String, default: "" },
+    education_diploma: { type: String, default: "" },
+    education_graduation: { type: String, default: "" },
+    education_post_graduation: { type: String, default: "" },
+    myth: { type: String, default: "" },
+    reality: { type: String, default: "" },
+    pros: { type: [String], default: [] },
+    cons: { type: [String], default: [] },
+    superstar1: { type: String, default: "" },
+    superstar2: { type: String, default: "" },
+    superstar3: { type: String, default: "" },
+    related_careers: { type: [String], default: [] },
+    growth_path: { type: String, default: "" },
+    qualifying_exams: { type: [String], default: [] },
   },
   {
     timestamps: true,
   }
 );
-
 
 // Create and export model
 const CategoryModel = mongoose.model<ICategory>("Category", categorySchema);

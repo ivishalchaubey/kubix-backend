@@ -1,6 +1,5 @@
-
 import { Router } from "express";
-import  User  from "../../auth/models/User.js";
+import User from "../../auth/models/User.js";
 import mongoose from "mongoose";
 import { UserToken } from "../../auth/models/usertoken.js";
 import UserRepository from "../repositories/user.js";
@@ -11,11 +10,9 @@ class UserService {
   }
 
   async updateUser(userId: string, userData: any): Promise<any> {
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      userData,
-      { new: true }
-    );
+    const updatedUser = await User.findByIdAndUpdate(userId, userData, {
+      new: true,
+    });
     if (!updatedUser) {
       throw new Error("User not found");
     }
@@ -31,16 +28,15 @@ class UserService {
       user.likedCourses = [];
     }
     let courseObjectId = new mongoose.Types.ObjectId(courseId);
-    
-    if(user.likedCourses.includes(courseObjectId)) {
+
+    if (user.likedCourses.includes(courseObjectId)) {
       // remove course from likedCourses
-      user.likedCourses = user.likedCourses.filter((id) => !id.equals(courseObjectId));
+      user.likedCourses = user.likedCourses.filter(
+        (id) => !id.equals(courseObjectId)
+      );
       await this.userRepository.unlikeCourse(userId, courseId);
       await user.save();
-
-    }
-
-    else{
+    } else {
       user.likedCourses.push(courseObjectId);
       await this.userRepository.likeCourse(userId, courseId);
       await user.save();
@@ -57,17 +53,17 @@ class UserService {
       user.bookmarkedCourses = [];
     }
     let courseObjectId = new mongoose.Types.ObjectId(courseId);
-    if(user.bookmarkedCourses.includes(courseObjectId)) {
-      user.bookmarkedCourses = user.bookmarkedCourses.filter((id) => !id.equals(courseObjectId));
+    if (user.bookmarkedCourses.includes(courseObjectId)) {
+      user.bookmarkedCourses = user.bookmarkedCourses.filter(
+        (id) => !id.equals(courseObjectId)
+      );
       await user.save();
-    }
-    else{
+    } else {
       user.bookmarkedCourses.push(courseObjectId);
       await user.save();
     }
     return user;
   }
-  
 
   async deleteUser(UserId: string): Promise<void> {
     const deletedUser = await User.findByIdAndDelete(UserId);
@@ -85,17 +81,28 @@ class UserService {
     return await User.find({ categoryId: categoryId }).lean();
   }
 
-  async getLikedCOurse(userId: string, filter: any): Promise<any> {
-    
-    const user = await this.userRepository.getLikedCourse(userId);
-    if (!user || user.length === 0) {
-      throw new Error("User liked courses not found");
+  async getLikedCourse(userId: string, filter: any): Promise<any> {
+    try {
+      console.log("Getting liked courses for user:", userId);
+      if (!mongoose.Types.ObjectId.isValid(userId)) {
+        throw new Error("Invalid user ID format");
+      }
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+      const user = await this.userRepository.getLikedCourse(
+        userObjectId.toString()
+      );
+      console.log("Found liked courses:", user);
+      return user || [];
+    } catch (error) {
+      console.error("Error in getLikedCourse:", error);
+      throw error;
     }
-    return user || [];
   }
 
   async getBookmarkedCourses(userId: string): Promise<any> {
-    const user = await User.findById(userId).populate('bookmarkedCourses').lean();
+    const user = await User.findById(userId)
+      .populate("bookmarkedCourses")
+      .lean();
     if (!user) {
       throw new Error("User not found");
     }
@@ -118,7 +125,6 @@ class UserService {
     await user.save();
     return userToken;
   }
-
 }
 
 export default UserService;
