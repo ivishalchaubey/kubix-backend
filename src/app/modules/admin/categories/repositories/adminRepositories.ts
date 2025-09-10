@@ -63,6 +63,8 @@ class AdminRepositories {
       isLeafNode,
       a_day_in_life,
       core_skills,
+      stream,
+      board,
       educational_path,
       salary_range,
       future_outlook,
@@ -95,6 +97,8 @@ class AdminRepositories {
       a_day_in_life,
       core_skills,
       educational_path,
+      stream,
+      board,
       salary_range,
       future_outlook,
       // New fields
