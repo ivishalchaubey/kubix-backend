@@ -637,11 +637,16 @@ class AdminRepositories {
             : [],
         };
 
+        const normalizeArray = (
+          value: string | string[] | undefined
+        ): string[] => {
+          if (Array.isArray(value)) return value.map((s) => s.trim());
+          return value?.trim() ? [value.trim()] : [];
+        };
+
         // Parse educational path
         const educational_path = {
-          ug_courses: educational_path_ug
-            ? educational_path_ug.split(",").map((s: string) => s.trim())
-            : [],
+          ug_courses: normalizeArray(educational_path_ug),
           pg_courses: educational_path_pg
             ? educational_path_pg.split(",").map((s: string) => s.trim())
             : [],
