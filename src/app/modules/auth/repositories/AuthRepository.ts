@@ -75,33 +75,34 @@ class AuthRepository {
   }
 
   async findUserToken(userId: string): Promise<IUserToken> {
-
     if (!Types.ObjectId.isValid(userId)) {
       return {
-        _id: '',
+        _id: "",
         userId: new Types.ObjectId(userId),
         token: 0,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
     }
     // const userId = new Types.ObjectId(userId);
 
-    let userTokenData =  await UserToken.findOne({ userId: userId });
-    if(userTokenData){
+    let userTokenData = await UserToken.findOne({ userId: userId });
+    if (userTokenData) {
       return userTokenData;
     }
 
     // create a new user token with 0 token
-    let newUserToken = new UserToken({ userId: userId, token: 0, createdAt: new Date(), updatedAt: new Date() });
+    let newUserToken = new UserToken({
+      userId: userId,
+      token: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
     await newUserToken.save();
     return newUserToken;
-
   }
 
-  getUserCourses = async (
-    userId: string
-  ): Promise<any | null> => {
+  getUserCourses = async (userId: string): Promise<any | null> => {
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
@@ -129,23 +130,22 @@ class AuthRepository {
     const courses = coursesArrays.flat();
 
     // You can attach courses to user object if you want
-    return  courses;
-  }
+    return courses;
+  };
 
   /**
    * Find user by ID
    */
   async findUserById(
     userId: string,
-    includePassword = false
+    includePassword = false,
+    includeAllFields = false
   ): Promise<any | null> {
     if (!Types.ObjectId.isValid(userId)) {
       return null;
     }
 
-    const query = User.findById(userId);
-
-    const pipeline = [
+    const pipeline: any[] = [
       {
         $match: { _id: new Types.ObjectId(userId) },
       },
@@ -157,7 +157,11 @@ class AuthRepository {
           as: "categories",
         },
       },
-      {
+    ];
+
+    // If includeAllFields is true, don't add $project to get all fields
+    if (!includeAllFields) {
+      pipeline.push({
         $project: {
           _id: 1,
           firstName: 1,
@@ -173,15 +177,26 @@ class AuthRepository {
           courses: 1,
           categories: 1,
         },
-      },
-    ];
-
-    if (includePassword) {
-      query.select("+password");
+      });
+    } else {
+      // For university users, include all fields except sensitive ones
+      pipeline.push({
+        $project: {
+          password: 0,
+          refreshToken: 0,
+          accessToken: 0,
+          emailVerificationToken: 0,
+          passwordResetToken: 0,
+          passwordResetExpires: 0,
+          __v: 0,
+          otp: 0,
+          otpExpires: 0,
+        },
+      });
     }
-    let x = await User.aggregate(pipeline);
-    return x[0];
 
+    let result = await User.aggregate(pipeline);
+    return result[0] || null;
   }
 
   /**
@@ -208,10 +223,7 @@ class AuthRepository {
   /**
    * send otp
    */
-  async setOtp(
-    email: string,
-    otp: string
-  ): Promise<IUser | any> {
+  async setOtp(email: string, otp: string): Promise<IUser | any> {
     if (!email) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
@@ -241,11 +253,7 @@ class AuthRepository {
     return await User.findByIdAndDelete(userId);
   }
 
-
-  async setPhoneOtp(
-    phone: string,
-    otp: string
-  ): Promise<IUser | any> {
+  async setPhoneOtp(phone: string, otp: string): Promise<IUser | any> {
     if (!phone) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
@@ -261,40 +269,36 @@ class AuthRepository {
     return await User.findOne({ phoneNumber: phone });
   }
 
-
-  async clearOtp(
-    email: string
-  ): Promise<IUser | null> {
-    let data = await User.findOneAndUpdate
-      ({ email: email },
-        { otp: "" },
-        { new: true, runValidators: true }
-      );
+  async clearOtp(email: string): Promise<IUser | null> {
+    let data = await User.findOneAndUpdate(
+      { email: email },
+      { otp: "" },
+      { new: true, runValidators: true }
+    );
 
     return data;
-  };
+  }
 
-  async findUserByPhone(
-    phone: string,): Promise<IUser | null> {
-    let userData = await User.findOne({ phoneNumber: phone }).select('otp firstName lastName _id otpExpires dob email ').lean();
+  async findUserByPhone(phone: string): Promise<IUser | null> {
+    let userData = await User.findOne({ phoneNumber: phone })
+      .select("otp firstName lastName _id otpExpires dob email ")
+      .lean();
     return userData;
-  };
+  }
 
-  async clearPhoneOtp(
-    phone: string
-  ): Promise<IUser | null> {
-    let data = await User.findOneAndUpdate
-      ({ phoneNumber: phone },
-        { otp: "" },
-        { new: true, runValidators: true }
-      );
+  async clearPhoneOtp(phone: string): Promise<IUser | null> {
+    let data = await User.findOneAndUpdate(
+      { phoneNumber: phone },
+      { otp: "" },
+      { new: true, runValidators: true }
+    );
 
     return data;
-  };
+  }
 
   /**
-   * 
-   * 
+   *
+   *
    * Find user by email verification token
    */
   async findUserByEmailVerificationToken(token: string): Promise<IUser | null> {
@@ -436,7 +440,9 @@ class AuthRepository {
    * Find users by role
    */
   async findUsersByRole(role: string): Promise<IUser[]> {
-    return await User.find({ role }).select('-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires');
+    return await User.find({ role }).select(
+      "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+    );
   }
 }
 
