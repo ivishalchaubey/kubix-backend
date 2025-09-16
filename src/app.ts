@@ -5,6 +5,7 @@ import cors from "cors";
 import { config } from "./app/config/env.js";
 import routes from "./app/modules/index.js";
 import adminRouter from "./app/modules/admin/categories/routes/adminRoutes.js";
+import dashboardRouter from "./app/modules/admin/categories/routes/dashboardRoutes.js";
 import courseRouter from "./app/modules/courses/routes/course.js";
 import userRouter from "./app/modules/user/routes/user.js";
 import ImageRouter from "./app/modules/auth/routes/imageUploadRoutes.js";
@@ -23,7 +24,7 @@ app.set("trust proxy", 1);
 // Security middlewares
 app.use(
   cors({
-    origin: '*',
+    origin: "*",
     credentials: true,
   })
 );
@@ -33,7 +34,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Raw body parser for Stripe webhooks (must be before other routes)
-app.use('/api/v1/stripe/webhook', express.raw({ type: 'application/json' }));
+app.use("/api/v1/stripe/webhook", express.raw({ type: "application/json" }));
 
 // Request logging
 app.use((req: Request, _res: Response, next: NextFunction) => {
@@ -45,13 +46,13 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 app.use("/api/v1", routes);
 
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/admin/dashboard", dashboardRouter);
 app.use("/api/v1/courses", courseRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/image", ImageRouter);
 app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/stripe", stripeRoutes);
-
 
 // Handle undefined routes
 app.all("*", (req: Request, res: Response) => {
