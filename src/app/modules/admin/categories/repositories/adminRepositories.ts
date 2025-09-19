@@ -365,15 +365,23 @@ class AdminRepositories {
 
 async getUserCategories(stream: string, board: string): Promise<ICategory[]> {
 
-  const categories = await CategoryModel.aggregate([
-    {
+  // Build aggregation pipeline conditionally
+  const pipeline: any[] = [];
+
+  // Only add match condition if stream is not 'Medical' or 'Non Medical'
+  if(stream !== 'Medical' && stream !== 'Non Medical'){
+    pipeline.push({
       $match: {
         $or: [
           { stream: stream },
           { board: board }
           ]
       }
-    },
+    });
+  }
+
+  // Add the rest of the pipeline stages
+  pipeline.push(
     {
       $graphLookup: {
         from: "categories",
@@ -445,7 +453,9 @@ async getUserCategories(stream: string, board: string): Promise<ICategory[]> {
         childrenFlat: 0 // Remove flat list
       }
     }
-  ]);
+  );
+
+  const categories = await CategoryModel.aggregate(pipeline);
   return categories;
 }
 
