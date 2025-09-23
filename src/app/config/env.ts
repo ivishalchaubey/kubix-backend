@@ -15,12 +15,15 @@ export const config = {
   env: process.env.NODE_ENV || "development",
   port: parseInt(process.env.PORT || "5000"),
   mongoose: {
-    url: process.env.MONGODB_URI || "mongodb+srv://vishalchaubey0011:tyVQdc92r1i1uzZi@cluster0.zajfs.mongodb.net/",
+    url:
+      process.env.MONGODB_URI ||
+      "mongodb+srv://vishalchaubey0011:tyVQdc92r1i1uzZi@cluster0.zajfs.mongodb.net/",
   },
   jwt: {
     secret: process.env.JWT_SECRET || "jwt_kubix_backend",
     accessExpirationMinutes: process.env.JWT_EXPIRE || "7d",
-    refreshSecret: process.env.JWT_REFRESH_SECRET || "jwt_kubix_backend_refresh",
+    refreshSecret:
+      process.env.JWT_REFRESH_SECRET || "jwt_kubix_backend_refresh",
     refreshExpirationDays: process.env.JWT_REFRESH_EXPIRE || "30d",
   },
   bcrypt: {
@@ -45,6 +48,11 @@ export const config = {
     secretKey: process.env.STRIPE_SECRET_KEY || "",
     publishableKey: process.env.STRIPE_PUBLISHABLE_KEY || "",
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
+  },
+  razorpay: {
+    keyId: process.env.RAZORPAY_KEY_ID || "",
+    keySecret: process.env.RAZORPAY_KEY_SECRET || "",
+    webhookSecret: process.env.RAZORPAY_WEBHOOK_SECRET || "",
   },
   payment: {
     tokenRate: 10, // 1 USD = 10 tokens

@@ -12,6 +12,7 @@ import ImageRouter from "./app/modules/auth/routes/imageUploadRoutes.js";
 import notificationRouter from "./app/modules/notifications/routes/notification.routes.js";
 import paymentRouter from "./app/modules/payments/routes/payment.js";
 import stripeRoutes from "./app/modules/stripe/routes/stripe.routes.js";
+import razorpayRoutes from "./app/modules/razorpay/routes/razorpay.routes.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -36,6 +37,9 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 // Raw body parser for Stripe webhooks (must be before other routes)
 app.use("/api/v1/stripe/webhook", express.raw({ type: "application/json" }));
 
+// Raw body parser for Razorpay webhooks (must be before other routes)
+app.use("/api/v1/razorpay/webhook", express.raw({ type: "application/json" }));
+
 // Request logging
 app.use((req: Request, _res: Response, next: NextFunction) => {
   logger.info(`${req.method} ${req.path} - ${req.ip}`);
@@ -53,6 +57,7 @@ app.use("/api/v1/image", ImageRouter);
 app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/stripe", stripeRoutes);
+app.use("/api/v1/razorpay", razorpayRoutes);
 
 // Handle undefined routes
 app.all("*", (req: Request, res: Response) => {
