@@ -30,8 +30,8 @@ app.use(
 );
 
 // Body parsers
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
 // Raw body parser for Stripe webhooks (must be before other routes)
 app.use("/api/v1/stripe/webhook", express.raw({ type: "application/json" }));
