@@ -215,7 +215,7 @@ class AuthController {
 
       // Generate OTP
       // Save OTP to user
-      if (type == 'email') {
+      // if (type == 'email') {
         const user = await this.authService.sendOtp(email);
 
         if (!user) {
@@ -223,24 +223,24 @@ class AuthController {
           return;
         }
 
-        ResponseUtil.success(res, null, "OTP sent successfully");
-      }
-      else if (type == 'phone') {
-        const user = await this.authService.sendPhoneOtp(phone);
+        // ResponseUtil.success(res, null, "OTP sent successfully");
+      // }
+      // else if (type == 'phone') {
+      //   const user = await this.authService.sendPhoneOtp(phone);
 
-        if (!user) {
-          ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-          return;
-        }
+      //   if (!user) {
+      //     ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+      //     return;
+      //   }
 
-        ResponseUtil.success(res, null, "Phone OTP sent successfully");
-      }
-      const user = await this.authService.sendOtp(email);
+      //   ResponseUtil.success(res, null, "Phone OTP sent successfully");
+      // }
+      // const user = await this.authService.sendOtp(email);
 
-      if (!user) {
-        ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-        return;
-      }
+      // if (!user) {
+      //   ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+      //   return;
+      // }
 
       ResponseUtil.success(res, null, "OTP sent successfully");
     } catch (error) {

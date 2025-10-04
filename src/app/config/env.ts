@@ -5,6 +5,14 @@ dotenv.config();
 // Validate required environment variables
 const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "JWT_REFRESH_SECRET"];
 
+// Validate email configuration (optional but recommended)
+const emailEnvVars = ["EMAIL_HOST", "EMAIL_USER", "EMAIL_PASS"];
+const missingEmailVars = emailEnvVars.filter(envVar => !process.env[envVar]);
+
+if (missingEmailVars.length > 0) {
+  console.warn(`Warning: Missing email configuration variables: ${missingEmailVars.join(', ')}. Email service will not be available.`);
+}
+
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     throw new Error(`Missing required environment variable: ${envVar}`);
@@ -36,8 +44,8 @@ export const config = {
       host: process.env.EMAIL_HOST,
       port: parseInt(process.env.EMAIL_PORT || "587"),
       auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
       },
     },
   },
