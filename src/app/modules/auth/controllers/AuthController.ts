@@ -41,7 +41,8 @@ class AuthController {
         address,
         specialization,
         description,
-        bannerYoutubeVideoLink
+        bannerYoutubeVideoLink,
+        website
       } = req.body;
 
  
@@ -68,6 +69,7 @@ class AuthController {
       if (specialization) registrationData.specialization = specialization;
       if (description) registrationData.description = description;
       if (bannerYoutubeVideoLink) registrationData.bannerYoutubeVideoLink = bannerYoutubeVideoLink;
+      if(website) registrationData.website = website;
 
       const result = await this.authService.register(registrationData);
 

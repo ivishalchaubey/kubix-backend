@@ -19,16 +19,26 @@ class AuthRepository {
    * Create a new user
    */
   async createUser(userData: {
-    firstName: string;
-    lastName: string;
+    firstName?: string;
+    lastName?: string;
     email: string;
-    dob: string;
+    dob?: string;
     countryCode: string;
     phoneNumber: string;
-    board: string;
-    stream: string;
+    board?: string;
+    stream?: string;
     password: string;
     role: UserRole;
+    profileImage?: string;
+    collegeName?: string;
+    collegeCode?: string;
+    location?: string;
+    address?: string;
+    specialization?: string;
+    description?: string;
+    bannerYoutubeVideoLink?: string;
+    website?: string;
+    [key: string]: any; // Allow additional fields
   }): Promise<IUser> {
     // Check if email is already taken
     const isEmailTaken = await User.isEmailTaken(userData.email);

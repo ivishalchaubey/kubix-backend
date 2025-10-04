@@ -31,16 +31,26 @@ class AuthService {
    */
 
   async register(userData: {
-    firstName: string;
-    lastName: string;
-    dob: string;
+    firstName?: string;
+    lastName?: string;
+    dob?: string;
     countryCode: string;
     phoneNumber: string;
-    board: string;
-    stream: string;
+    board?: string;
+    stream?: string;
     email: string;
     password: string;
     role: UserRole;
+    profileImage?: string;
+    collegeName?: string;
+    collegeCode?: string;
+    location?: string;
+    address?: string;
+    specialization?: string;
+    description?: string;
+    bannerYoutubeVideoLink?: string;
+    website?: string;
+    [key: string]: any; // Allow additional fields
   }): Promise<{ user: IUser; tokens: TokenResponse }> {
     try {
       // Check if user already exists and role is not admin

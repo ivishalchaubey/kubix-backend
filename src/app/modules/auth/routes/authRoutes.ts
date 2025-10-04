@@ -8,7 +8,7 @@ const router = Router();
 const authController = new AuthController();
 
 // Public routes (no authentication required)
-router.post("/register", authValidation.register, authController.register);
+router.post("/register", authController.register); // Removed validation for bulk upload
 router.post("/login",  authController.login);
 router.post(
   "/forgot-password",

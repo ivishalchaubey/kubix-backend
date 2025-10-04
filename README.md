@@ -93,6 +93,54 @@ backend/
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint errors automatically
 
+## 🎓 University Data Upload
+
+This project includes a production-ready script for bulk uploading university data to the database.
+
+### Quick Upload
+
+```bash
+# macOS/Linux
+./upload-universities.sh
+
+# Windows
+upload-universities.bat
+
+# Or directly with Node.js/Bun
+node data.js
+# or
+bun data.js
+```
+
+### Features
+
+- ✅ **Batch Processing** - Uploads in controlled batches to prevent server overload
+- ✅ **Error Handling** - Automatic retry logic with exponential backoff
+- ✅ **Progress Tracking** - Real-time progress updates with detailed statistics
+- ✅ **Resume Capability** - Automatically skips already uploaded universities
+- ✅ **Rate Limiting** - Configurable delays to respect server limits
+
+### Configuration
+
+Edit the `CONFIG` section in `data.js`:
+
+```javascript
+const CONFIG = {
+  API_URL: "http://localhost:5001/api/v1/auth/register",
+  BATCH_SIZE: 5,              // Universities per batch
+  DELAY_BETWEEN_REQUESTS: 1000, // Delay between each request (ms)
+  DELAY_BETWEEN_BATCHES: 3000,  // Delay between batches (ms)
+  MAX_RETRIES: 3,             // Retry attempts for failed uploads
+};
+```
+
+### Documentation
+
+- 📖 **Detailed Guide**: `UNIVERSITY_UPLOAD_GUIDE.md`
+- 📋 **Quick Reference**: `QUICK_UPLOAD_REFERENCE.md`
+
+For full documentation on uploading university data, configuration options, troubleshooting, and best practices, see the [University Upload Guide](UNIVERSITY_UPLOAD_GUIDE.md).
+
 ## 🔐 Authentication API Endpoints
 
 ### Public Endpoints

@@ -37,6 +37,7 @@ export interface IUser {
   specialization?: string;
   description?: string;
   bannerYoutubeVideoLink?: string;
+  website?: string;
   status: string;
   createdAt: Date;
   updatedAt: Date;

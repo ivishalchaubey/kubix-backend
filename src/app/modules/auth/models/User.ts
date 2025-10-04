@@ -24,14 +24,12 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     firstName: {
       type: String,
       trim: true,
-      minlength: [2, "Name must be at least 2 characters long"],
-      maxlength: [50, "Name cannot exceed 50 characters"],
+      // Removed minlength/maxlength for bulk upload flexibility
     },
     lastName: {
       type: String,
       trim: true,
-      minlength: [2, "Last name must be at least 2 characters long"],
-      maxlength: [50, "Last name cannot exceed 50 characters"],
+      // Removed minlength/maxlength for bulk upload flexibility
     },
     categoryIds: {
       type: [Schema.Types.ObjectId],
@@ -44,7 +42,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       unique: true,
       lowercase: true,
       trim: true,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
+      // Removed email regex validation for bulk upload flexibility
     },
     otp: {
       type: String,
@@ -52,7 +50,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     dob: {
       type: String,
-      match: [/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"],
+      // Removed date format validation for bulk upload flexibility
     },
     likedCourses: {
       type: [Schema.Types.ObjectId],
@@ -68,13 +66,13 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       type: String,
       required: [true, "Country code is required"],
       trim: true,
-      match: [/^\+\d{1,3}$/, "Country code must start with '+' followed by digits"],
+      // Removed regex validation for bulk upload flexibility
     },
     phoneNumber: {
       type: String,
       required: [true, "Phone number is required"],
       trim: true,
-      match: [/^\d{10}$/, "Phone number must be 10 digits long"],
+      // match: [/^\d{10}$/, "Phone number must be 10 digits long"],
     },
     board: {
       type: String,
@@ -89,7 +87,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [8, "Password must be at least 8 characters long"],
+      // Removed minlength for bulk upload flexibility
       select: false, // Don't include password in queries by default
     },
     otpExpires: {
@@ -131,33 +129,32 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     collegeName: {
       type: String,
       trim: true,
-      minlength: 2,
-      maxlength: 100,
+      // Removed length restrictions for bulk upload
     },
     collegeCode: {
       type: String,
       trim: true,
-      maxlength: 50,
+      // Removed maxlength for bulk upload
     },
     location: {
       type: String,
       trim: true,
-      maxlength: 255,
+      // Removed maxlength for bulk upload
     },
     address: {
       type: String,
       trim: true,
-      maxlength: 500,
+      // Removed maxlength for bulk upload
     },
     specialization: {
       type: String,
       trim: true,
-      maxlength: 100,
+      // Removed maxlength for bulk upload
     },
     description: {
       type: String,
       trim: true,
-      maxlength: 2000,
+      // Removed maxlength for bulk upload
     },
     status: {
       type: String,
@@ -167,10 +164,15 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     bannerYoutubeVideoLink: {
       type: String,
       trim: true,
-      match: [
-        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
-        "Invalid YouTube URL",
-      ],
+      // match: [
+      //   /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+      //   "Invalid YouTube URL",
+      // ],
+    },
+    website: {
+      type: String,
+      trim: true,
+      // Removed maxlength for bulk upload
     },
 
   },

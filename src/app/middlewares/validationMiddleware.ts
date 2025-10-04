@@ -204,7 +204,12 @@ export const authValidation = {
 
     bannerYoutubeVideoLink: [
       { type: "string" },
-      { pattern: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/ },
+      // { pattern: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/ },
+    ],
+
+    website: [
+      { type: "string" },
+      { maxLength: 200 },
     ],
 
    }),
