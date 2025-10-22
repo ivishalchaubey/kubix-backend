@@ -1,0 +1,341 @@
+╔════════════════════════════════════════════════════════════╗
+║       COURSE DATA UPLOAD SCRIPT - PRODUCTION MODE         ║
+╚════════════════════════════════════════════════════════════╝
+
+📂 Reading course data from: /Users/ivishalchaubey/Documents/coding/kubix/kubix-backend/all-cources-data.json
+✅ Successfully loaded 953 courses
+
+📊 Total courses to upload: 953
+⚙️  Batch size: 50
+⏱️  Delay between batches: 2000ms
+🔄 Max retries per batch: 3
+🌐 API URL: http://localhost:5001/api/v1/courses/bulk-upload
+
+Starting upload process...
+
+════════════════════════════════════════════════════════════
+
+📦 Total batches: 20
+
+
+📦 Processing Batch 1 (50 courses)...
+
+🔍 DEBUG - First course data being sent:
+{
+  "name": "B.A. Theatre Arts",
+  "categoryName": "Actor",
+  "universityName": "Sri Venkateswara University",
+  "description": "Performs characters in theatre, films, television shows through voice, movement and expressions to entertain audiences.",
+  "duration": "3 years",
+  "amount": 10000,
+  "currency": "INR",
+  "chapters": 1
+}
+
+✅ Batch 1: 50 courses uploaded successfully
+✓ Batch 1 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 2 (50 courses)...
+✅ Batch 2: 50 courses uploaded successfully
+✓ Batch 2 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 3 (50 courses)...
+✅ Batch 3: 50 courses uploaded successfully
+✓ Batch 3 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 4 (50 courses)...
+✅ Batch 4: 50 courses uploaded successfully
+✓ Batch 4 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 5 (50 courses)...
+✅ Batch 5: 50 courses uploaded successfully
+✓ Batch 5 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 6 (50 courses)...
+✅ Batch 6: 50 courses uploaded successfully
+✓ Batch 6 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 7 (50 courses)...
+✅ Batch 7: 50 courses uploaded successfully
+✓ Batch 7 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 8 (50 courses)...
+✅ Batch 8: 50 courses uploaded successfully
+✓ Batch 8 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 9 (50 courses)...
+✅ Batch 9: 50 courses uploaded successfully
+✓ Batch 9 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 10 (50 courses)...
+✅ Batch 10: 50 courses uploaded successfully
+✓ Batch 10 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 11 (50 courses)...
+✅ Batch 11: 50 courses uploaded successfully
+✓ Batch 11 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 12 (50 courses)...
+✅ Batch 12: 50 courses uploaded successfully
+✓ Batch 12 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 13 (50 courses)...
+✅ Batch 13: 33 courses uploaded successfully
+❌ Batch 13: 17 courses failed
+✓ Batch 13 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 14 (50 courses)...
+✅ Batch 14: 16 courses uploaded successfully
+❌ Batch 14: 34 courses failed
+✓ Batch 14 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 15 (50 courses)...
+✅ Batch 15: 21 courses uploaded successfully
+❌ Batch 15: 29 courses failed
+✓ Batch 15 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 16 (50 courses)...
+✅ Batch 16: 21 courses uploaded successfully
+❌ Batch 16: 29 courses failed
+✓ Batch 16 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 17 (50 courses)...
+✅ Batch 17: 17 courses uploaded successfully
+❌ Batch 17: 33 courses failed
+✓ Batch 17 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 18 (50 courses)...
+✅ Batch 18: 19 courses uploaded successfully
+❌ Batch 18: 31 courses failed
+✓ Batch 18 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 19 (50 courses)...
+✅ Batch 19: 22 courses uploaded successfully
+❌ Batch 19: 28 courses failed
+✓ Batch 19 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 20 (3 courses)...
+✅ Batch 20: 2 courses uploaded successfully
+❌ Batch 20: 1 courses failed
+✓ Batch 20 completed
+
+════════════════════════════════════════════════════════════
+
+📋 UPLOAD SUMMARY
+════════════════════════════════════════════════════════════
+✅ Successful uploads: 751
+❌ Failed uploads: 202
+📊 Total processed: 953/953
+⏱️  Total time: 594.97 seconds
+⚡ Average time per course: 0.624 seconds
+
+⚠️  CATEGORIES NOT FOUND:
+════════════════════════════════════════════════════════════
+1. "Machine Learning Engineer" (2 courses affected)
+2. "Software Development Engineer" (2 courses affected)
+3. "Cybersecurity Analyst" (2 courses affected)
+4. "Algorithm Developer" (1 courses affected)
+5. "Web Developer" (2 courses affected)
+6. "Mobile Application Developer" (1 courses affected)
+7. "DevOps Engineer" (1 courses affected)
+8. "Product Manager" (2 courses affected)
+9. "Communication Systems Engineer" (2 courses affected)
+10. "Power Systems Engineer" (3 courses affected)
+11. "Embedded Systems Engineer" (3 courses affected)
+12. "Control Systems Engineer" (2 courses affected)
+13. "Automotive Engineer" (2 courses affected)
+14. "Petrochemical Engineer" (1 courses affected)
+15. "Construction Engineer" (1 courses affected)
+16. "Infrastructure Engineer" (1 courses affected)
+17. "Quantum Engineer" (1 courses affected)
+18. "Python Developer" (1 courses affected)
+19. "Web Technologies Specialist" (1 courses affected)
+20. "Computer Networks Engineer" (1 courses affected)
+21. "RF Engineer" (1 courses affected)
+22. "Renewable Energy Engineer" (1 courses affected)
+23. "Production Engineer" (1 courses affected)
+24. "Construction Project Manager" (1 courses affected)
+25. "Infrastructure Development Engineer" (1 courses affected)
+26. "Chemical Plant Engineer" (1 courses affected)
+27. "Materials Engineer" (2 courses affected)
+28. "Metallurgical Engineer" (2 courses affected)
+29. "Quality Control Engineer" (2 courses affected)
+30. "Graphic Designer" (2 courses affected)
+31. "Brand Identity Designer" (1 courses affected)
+32. "Typography Designer" (1 courses affected)
+33. "Publication Designer" (1 courses affected)
+34. "Packaging Designer" (1 courses affected)
+35. "Digital Media Designer" (1 courses affected)
+36. "Advertising Creative Director" (1 courses affected)
+37. "Information Designer" (1 courses affected)
+38. "Illustration Designer" (1 courses affected)
+39. "Corporate Identity Designer" (1 courses affected)
+40. "UI/UX Designer" (1 courses affected)
+41. "Furniture Designer" (1 courses affected)
+42. "Automotive Designer" (1 courses affected)
+43. "Consumer Electronics Designer" (1 courses affected)
+44. "Design Consultant" (2 courses affected)
+45. "Design Researcher" (1 courses affected)
+46. "Sustainable Design Specialist" (1 courses affected)
+47. "Fashion Stylist" (1 courses affected)
+48. "Fashion Merchandiser" (1 courses affected)
+49. "Costume Designer" (1 courses affected)
+50. "Pattern Designer" (1 courses affected)
+51. "Software Developer" (3 courses affected)
+52. "Systems Administrator" (1 courses affected)
+53. "Laboratory Technician" (3 courses affected)
+54. "Research Associate" (1 courses affected)
+55. "Microbiologist" (3 courses affected)
+56. "Biotechnology Technician" (1 courses affected)
+57. "Environmental Scientist" (1 courses affected)
+58. "Tax Consultant" (1 courses affected)
+59. "Business Analyst" (4 courses affected)
+60. "Computer Application Specialist" (1 courses affected)
+61. "Civil Services Officer" (2 courses affected)
+62. "Economic Analyst" (2 courses affected)
+63. "Urdu Language Specialist" (1 courses affected)
+64. "Quality Control Analyst" (2 courses affected)
+65. "Wildlife Biologist" (1 courses affected)
+66. "Home Science Consultant" (1 courses affected)
+67. "Mathematics Teacher" (1 courses affected)
+68. "Organic Chemistry Researcher" (1 courses affected)
+69. "Cloud Architect" (1 courses affected)
+70. "IoT Developer" (1 courses affected)
+71. "AI Research Engineer" (1 courses affected)
+72. "Agricultural Scientist" (1 courses affected)
+73. "Forest Officer" (1 courses affected)
+74. "Biotechnology Researcher" (2 courses affected)
+75. "Food Technologist" (1 courses affected)
+76. "Forensic Analyst" (1 courses affected)
+77. "Cloud Solutions Specialist" (1 courses affected)
+78. "Agribusiness Manager" (1 courses affected)
+79. "Tourism Manager" (1 courses affected)
+80. "Legal Associate" (1 courses affected)
+81. "Digital Design Specialist" (1 courses affected)
+82. "Construction Manager" (1 courses affected)
+83. "Building Services Engineer" (1 courses affected)
+84. "Landscape Architect" (1 courses affected)
+85. "Project Architect" (1 courses affected)
+86. "Regional Planning Consultant" (1 courses affected)
+87. "Interior Designer" (2 courses affected)
+88. "Game Developer" (1 courses affected)
+89. "CAD Specialist" (1 courses affected)
+90. "Space Planner" (1 courses affected)
+91. "Art Therapist" (1 courses affected)
+92. "Public Art Coordinator" (1 courses affected)
+93. "Exhibition Designer" (1 courses affected)
+94. "Heritage Conservation Architect" (1 courses affected)
+95. "Temple Priest (Archaka)" (1 courses affected)
+96. "Purohit (Family Priest)" (1 courses affected)
+97. "Vedic Scholar" (1 courses affected)
+98. "Sanskrit Teacher" (1 courses affected)
+99. "Vedic Chanter" (1 courses affected)
+100. "Ritualistic Specialist" (1 courses affected)
+101. "Ayurvedic Consultant" (1 courses affected)
+102. "Vedic Commentator" (1 courses affected)
+103. "Vaishnavite Scholar" (1 courses affected)
+104. "Cultural Heritage Officer" (1 courses affected)
+105. "Religious Tourism Guide" (1 courses affected)
+106. "Accounts Officer (Temple Administration)" (1 courses affected)
+107. "Legal Advisor (Religious Institutions)" (1 courses affected)
+108. "Vedapathashala Teacher" (1 courses affected)
+109. "Religious Studies Professor" (1 courses affected)
+110. "Manuscript Researcher" (1 courses affected)
+111. "Spiritual Counselor" (1 courses affected)
+112. "Yoga and Meditation Instructor" (1 courses affected)
+113. "Ritual Consultant" (1 courses affected)
+114. "Traditional Medicine Practitioner" (1 courses affected)
+115. "Religious Administration Officer" (1 courses affected)
+116. "Cultural Program Coordinator" (1 courses affected)
+117. "Temple Financial Manager" (1 courses affected)
+118. "Sacred Music Director" (1 courses affected)
+119. "Heritage Documentation Specialist" (1 courses affected)
+120. "Interfaith Dialogue Coordinator" (1 courses affected)
+121. "Research Scientist" (1 courses affected)
+122. "Home Science Extension Officer" (1 courses affected)
+123. "Music Teacher" (1 courses affected)
+124. "Biologist" (1 courses affected)
+125. "Mental Health Counselor" (1 courses affected)
+126. "Doctor (MBBS)" (3 courses affected)
+127. "Medical Officer" (2 courses affected)
+128. "General Practitioner" (2 courses affected)
+129. "Ayurvedic Doctor" (1 courses affected)
+130. "Homeopathic Doctor" (1 courses affected)
+131. "Naturopathy Doctor" (1 courses affected)
+132. "Medical Laboratory Technologist" (2 courses affected)
+133. "Perfusionist" (2 courses affected)
+134. "Cardiac Technologist" (2 courses affected)
+135. "Medical Imaging Technologist" (2 courses affected)
+136. "Radiotherapy Technologist" (1 courses affected)
+137. "Operation Theatre Technician" (2 courses affected)
+138. "Anaesthesia Technician" (2 courses affected)
+139. "Respiratory Therapist" (1 courses affected)
+140. "Cardiopulmonary Technician" (1 courses affected)
+141. "Healthcare Quality Analyst" (1 courses affected)
+142. "Medical Device Specialist" (1 courses affected)
+143. "Healthcare Administrator" (1 courses affected)
+144. "Software Development Engineer (SDE)" (1 courses affected)
+145. "System Administrator" (1 courses affected)
+146. "Telecommunications Engineer" (1 courses affected)
+147. "Thermal Systems Engineer" (1 courses affected)
+148. "Project Manager (Construction)" (1 courses affected)
+149. "Geotechnical Engineer" (1 courses affected)
+150. "Plant Operations Engineer" (1 courses affected)
+151. "Biotechnology Research Scientist" (1 courses affected)
+152. "Quality Assurance Specialist" (1 courses affected)
+153. "Research & Development Engineer" (1 courses affected)
+154. "Technical Consultant" (1 courses affected)
+155. "Project Engineer" (1 courses affected)
+156. "Energy Systems Engineer" (1 courses affected)
+157. "Radiologic Technologist" (1 courses affected)
+158. "Chemical Engineer" (1 courses affected)
+159. "Biotechnologist" (1 courses affected)
+160. "Quality Analyst" (1 courses affected)
+161. "Chemistry Researcher" (1 courses affected)
+
+════════════════════════════════════════════════════════════
+✨ Upload process completed!
+════════════════════════════════════════════════════════════
+
+💡 SUGGESTIONS:
+════════════════════════════════════════════════════════════
+• Add missing categories to your database before re-uploading failed courses
+

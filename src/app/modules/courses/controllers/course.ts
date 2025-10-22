@@ -101,6 +101,46 @@ class CourseController {
         }
     }
 
+    async uploadCourse(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const courseData = req.body;
+            
+            // Validate required fields
+            if (!courseData.name || !courseData.categoryName || !courseData.universityName) {
+                ResponseUtil.badRequest(res, 'Missing required fields: name, categoryName, or universityName');
+                return;
+            }
+
+            const result = await this.courseService.uploadCourse(courseData);
+
+            if (result.success) {
+                ResponseUtil.created(res, result.course, result.message);
+            } else {
+                ResponseUtil.badRequest(res, result.message);
+            }
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async bulkUploadCourses(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const coursesData = req.body;
+            
+            // Validate that body is an array
+            if (!Array.isArray(coursesData) || coursesData.length === 0) {
+                ResponseUtil.badRequest(res, 'Request body must be a non-empty array of courses');
+                return;
+            }
+
+            const result = await this.courseService.bulkUploadCourses(coursesData);
+
+            ResponseUtil.success(res, result, `Bulk upload completed. Success: ${result.successCount}, Failed: ${result.failCount}`);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     
 }
 

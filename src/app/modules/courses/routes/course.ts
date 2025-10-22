@@ -14,6 +14,10 @@ courseRouter.get("/user/courses",AuthMiddleware.authenticate, courseController.g
 
 courseRouter.get('/university/courses', AuthMiddleware.universityauthenticate, courseController.getUniversityCourses.bind(courseController));
 
+// New upload routes with fuzzy matching for category and university names
+courseRouter.post("/upload", courseController.uploadCourse.bind(courseController));
+courseRouter.post("/bulk-upload", courseController.bulkUploadCourses.bind(courseController));
+
 
 
 export default courseRouter;
