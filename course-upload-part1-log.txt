@@ -1,0 +1,2532 @@
+╔════════════════════════════════════════════════════════════╗
+║       COURSE DATA UPLOAD SCRIPT - PRODUCTION MODE         ║
+╚════════════════════════════════════════════════════════════╝
+
+📂 Reading course data from: /Users/ivishalchaubey/Documents/coding/kubix/kubix-backend/bulk-upload/courses/courses-data-part-1.json
+✅ Successfully loaded 9864 courses
+
+📊 Total courses to upload: 9864
+⚙️  Batch size: 50
+⏱️  Delay between batches: 2000ms
+🔄 Max retries per batch: 3
+🌐 API URL: http://localhost:5001/api/v1/courses/bulk-upload
+
+Starting upload process...
+
+════════════════════════════════════════════════════════════
+
+📦 Total batches: 198
+
+
+📦 Processing Batch 1 (50 courses)...
+
+🔍 DEBUG - First course data being sent:
+{
+  "name": "B.A. Theatre Arts",
+  "categoryName": "Actor",
+  "universityName": "Sri Venkateswara University",
+  "description": "Performs characters in theatre, films, television shows through voice, movement and expressions to entertain audiences.",
+  "duration": "3 years",
+  "amount": 10000,
+  "currency": "INR",
+  "chapters": 1
+}
+
+✅ Batch 1: 50 courses uploaded successfully
+✓ Batch 1 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 2 (50 courses)...
+✅ Batch 2: 50 courses uploaded successfully
+✓ Batch 2 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 3 (50 courses)...
+✅ Batch 3: 50 courses uploaded successfully
+✓ Batch 3 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 4 (50 courses)...
+⚠️  Retry 1/3 for Batch 4: Request timeout
+✅ Batch 4: 50 courses uploaded successfully
+✓ Batch 4 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 5 (50 courses)...
+✅ Batch 5: 50 courses uploaded successfully
+✓ Batch 5 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 6 (50 courses)...
+✅ Batch 6: 50 courses uploaded successfully
+✓ Batch 6 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 7 (50 courses)...
+✅ Batch 7: 50 courses uploaded successfully
+✓ Batch 7 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 8 (50 courses)...
+✅ Batch 8: 50 courses uploaded successfully
+✓ Batch 8 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 9 (50 courses)...
+✅ Batch 9: 50 courses uploaded successfully
+✓ Batch 9 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 10 (50 courses)...
+✅ Batch 10: 50 courses uploaded successfully
+✓ Batch 10 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 11 (50 courses)...
+✅ Batch 11: 50 courses uploaded successfully
+✓ Batch 11 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 12 (50 courses)...
+✅ Batch 12: 50 courses uploaded successfully
+✓ Batch 12 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 13 (50 courses)...
+✅ Batch 13: 33 courses uploaded successfully
+❌ Batch 13: 17 courses failed
+✓ Batch 13 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 14 (50 courses)...
+✅ Batch 14: 50 courses uploaded successfully
+✓ Batch 14 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 15 (50 courses)...
+✅ Batch 15: 50 courses uploaded successfully
+✓ Batch 15 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 16 (50 courses)...
+⚠️  Retry 1/3 for Batch 16: Request timeout
+✅ Batch 16: 44 courses uploaded successfully
+❌ Batch 16: 6 courses failed
+✓ Batch 16 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 17 (50 courses)...
+✅ Batch 17: 21 courses uploaded successfully
+❌ Batch 17: 29 courses failed
+✓ Batch 17 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 18 (50 courses)...
+✅ Batch 18: 35 courses uploaded successfully
+❌ Batch 18: 15 courses failed
+✓ Batch 18 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 19 (50 courses)...
+✅ Batch 19: 20 courses uploaded successfully
+❌ Batch 19: 30 courses failed
+✓ Batch 19 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 20 (50 courses)...
+⚠️  Retry 1/3 for Batch 20: Request timeout
+⚠️  Retry 2/3 for Batch 20: Request timeout
+⚠️  Retry 3/3 for Batch 20: Request timeout
+❌ Failed to upload batch 20: Request timeout
+✓ Batch 20 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 21 (50 courses)...
+⚠️  Retry 1/3 for Batch 21: Request timeout
+⚠️  Retry 2/3 for Batch 21: Request timeout
+⚠️  Retry 3/3 for Batch 21: Request timeout
+❌ Failed to upload batch 21: Request timeout
+✓ Batch 21 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 22 (50 courses)...
+⚠️  Retry 1/3 for Batch 22: Request timeout
+⚠️  Retry 2/3 for Batch 22: Request timeout
+⚠️  Retry 3/3 for Batch 22: Request timeout
+❌ Failed to upload batch 22: Request timeout
+✓ Batch 22 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 23 (50 courses)...
+⚠️  Retry 1/3 for Batch 23: Request timeout
+⚠️  Retry 2/3 for Batch 23: Request timeout
+⚠️  Retry 3/3 for Batch 23: Request timeout
+❌ Failed to upload batch 23: Request timeout
+✓ Batch 23 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 24 (50 courses)...
+⚠️  Retry 1/3 for Batch 24: Request timeout
+⚠️  Retry 2/3 for Batch 24: Request timeout
+⚠️  Retry 3/3 for Batch 24: Request timeout
+❌ Failed to upload batch 24: Request timeout
+✓ Batch 24 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 25 (50 courses)...
+⚠️  Retry 1/3 for Batch 25: Request timeout
+⚠️  Retry 2/3 for Batch 25: Request timeout
+⚠️  Retry 3/3 for Batch 25: Request timeout
+❌ Failed to upload batch 25: Request timeout
+✓ Batch 25 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 26 (50 courses)...
+⚠️  Retry 1/3 for Batch 26: Request timeout
+⚠️  Retry 2/3 for Batch 26: Request timeout
+⚠️  Retry 3/3 for Batch 26: Request timeout
+✅ Batch 26: 15 courses uploaded successfully
+❌ Batch 26: 35 courses failed
+✓ Batch 26 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 27 (50 courses)...
+✅ Batch 27: 12 courses uploaded successfully
+❌ Batch 27: 38 courses failed
+✓ Batch 27 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 28 (50 courses)...
+✅ Batch 28: 20 courses uploaded successfully
+❌ Batch 28: 30 courses failed
+✓ Batch 28 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 29 (50 courses)...
+✅ Batch 29: 21 courses uploaded successfully
+❌ Batch 29: 29 courses failed
+✓ Batch 29 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 30 (50 courses)...
+✅ Batch 30: 15 courses uploaded successfully
+❌ Batch 30: 35 courses failed
+✓ Batch 30 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 31 (50 courses)...
+✅ Batch 31: 17 courses uploaded successfully
+❌ Batch 31: 33 courses failed
+✓ Batch 31 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 32 (50 courses)...
+✅ Batch 32: 16 courses uploaded successfully
+❌ Batch 32: 34 courses failed
+✓ Batch 32 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 33 (50 courses)...
+✅ Batch 33: 7 courses uploaded successfully
+❌ Batch 33: 43 courses failed
+✓ Batch 33 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 34 (50 courses)...
+⚠️  Retry 1/3 for Batch 34: Request timeout
+✅ Batch 34: 15 courses uploaded successfully
+❌ Batch 34: 35 courses failed
+✓ Batch 34 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 35 (50 courses)...
+✅ Batch 35: 11 courses uploaded successfully
+❌ Batch 35: 39 courses failed
+✓ Batch 35 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 36 (50 courses)...
+✅ Batch 36: 15 courses uploaded successfully
+❌ Batch 36: 35 courses failed
+✓ Batch 36 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 37 (50 courses)...
+✅ Batch 37: 23 courses uploaded successfully
+❌ Batch 37: 27 courses failed
+✓ Batch 37 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 38 (50 courses)...
+✅ Batch 38: 18 courses uploaded successfully
+❌ Batch 38: 32 courses failed
+✓ Batch 38 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 39 (50 courses)...
+✅ Batch 39: 20 courses uploaded successfully
+❌ Batch 39: 30 courses failed
+✓ Batch 39 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 40 (50 courses)...
+✅ Batch 40: 16 courses uploaded successfully
+❌ Batch 40: 34 courses failed
+✓ Batch 40 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 41 (50 courses)...
+✅ Batch 41: 24 courses uploaded successfully
+❌ Batch 41: 26 courses failed
+✓ Batch 41 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 42 (50 courses)...
+✅ Batch 42: 15 courses uploaded successfully
+❌ Batch 42: 35 courses failed
+✓ Batch 42 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 43 (50 courses)...
+✅ Batch 43: 21 courses uploaded successfully
+❌ Batch 43: 29 courses failed
+✓ Batch 43 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 44 (50 courses)...
+✅ Batch 44: 18 courses uploaded successfully
+❌ Batch 44: 32 courses failed
+✓ Batch 44 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 45 (50 courses)...
+✅ Batch 45: 17 courses uploaded successfully
+❌ Batch 45: 33 courses failed
+✓ Batch 45 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 46 (50 courses)...
+⚠️  Retry 1/3 for Batch 46: Request timeout
+✅ Batch 46: 11 courses uploaded successfully
+❌ Batch 46: 39 courses failed
+✓ Batch 46 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 47 (50 courses)...
+✅ Batch 47: 12 courses uploaded successfully
+❌ Batch 47: 38 courses failed
+✓ Batch 47 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 48 (50 courses)...
+✅ Batch 48: 10 courses uploaded successfully
+❌ Batch 48: 40 courses failed
+✓ Batch 48 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 49 (50 courses)...
+✅ Batch 49: 23 courses uploaded successfully
+❌ Batch 49: 27 courses failed
+✓ Batch 49 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 50 (50 courses)...
+✅ Batch 50: 18 courses uploaded successfully
+❌ Batch 50: 32 courses failed
+✓ Batch 50 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 51 (50 courses)...
+✅ Batch 51: 13 courses uploaded successfully
+❌ Batch 51: 37 courses failed
+✓ Batch 51 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 52 (50 courses)...
+✅ Batch 52: 26 courses uploaded successfully
+❌ Batch 52: 24 courses failed
+✓ Batch 52 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 53 (50 courses)...
+✅ Batch 53: 6 courses uploaded successfully
+❌ Batch 53: 44 courses failed
+✓ Batch 53 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 54 (50 courses)...
+✅ Batch 54: 21 courses uploaded successfully
+❌ Batch 54: 29 courses failed
+✓ Batch 54 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 55 (50 courses)...
+⚠️  Retry 1/3 for Batch 55: Request timeout
+⚠️  Retry 2/3 for Batch 55: Request timeout
+⚠️  Retry 3/3 for Batch 55: Request timeout
+❌ Failed to upload batch 55: Request timeout
+✓ Batch 55 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 56 (50 courses)...
+✅ Batch 56: 12 courses uploaded successfully
+❌ Batch 56: 38 courses failed
+✓ Batch 56 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 57 (50 courses)...
+✅ Batch 57: 9 courses uploaded successfully
+❌ Batch 57: 41 courses failed
+✓ Batch 57 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 58 (50 courses)...
+✅ Batch 58: 10 courses uploaded successfully
+❌ Batch 58: 40 courses failed
+✓ Batch 58 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 59 (50 courses)...
+✅ Batch 59: 19 courses uploaded successfully
+❌ Batch 59: 31 courses failed
+✓ Batch 59 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 60 (50 courses)...
+✅ Batch 60: 16 courses uploaded successfully
+❌ Batch 60: 34 courses failed
+✓ Batch 60 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 61 (50 courses)...
+✅ Batch 61: 14 courses uploaded successfully
+❌ Batch 61: 36 courses failed
+✓ Batch 61 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 62 (50 courses)...
+⚠️  Retry 1/3 for Batch 62: Request timeout
+✅ Batch 62: 17 courses uploaded successfully
+❌ Batch 62: 33 courses failed
+✓ Batch 62 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 63 (50 courses)...
+⚠️  Retry 1/3 for Batch 63: Request timeout
+✅ Batch 63: 25 courses uploaded successfully
+❌ Batch 63: 25 courses failed
+✓ Batch 63 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 64 (50 courses)...
+✅ Batch 64: 14 courses uploaded successfully
+❌ Batch 64: 36 courses failed
+✓ Batch 64 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 65 (50 courses)...
+✅ Batch 65: 4 courses uploaded successfully
+❌ Batch 65: 46 courses failed
+✓ Batch 65 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 66 (50 courses)...
+✅ Batch 66: 14 courses uploaded successfully
+❌ Batch 66: 36 courses failed
+✓ Batch 66 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 67 (50 courses)...
+⚠️  Retry 1/3 for Batch 67: Request timeout
+⚠️  Retry 2/3 for Batch 67: Request timeout
+⚠️  Retry 3/3 for Batch 67: Request timeout
+❌ Failed to upload batch 67: Request timeout
+✓ Batch 67 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 68 (50 courses)...
+✅ Batch 68: 12 courses uploaded successfully
+❌ Batch 68: 38 courses failed
+✓ Batch 68 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 69 (50 courses)...
+✅ Batch 69: 20 courses uploaded successfully
+❌ Batch 69: 30 courses failed
+✓ Batch 69 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 70 (50 courses)...
+✅ Batch 70: 15 courses uploaded successfully
+❌ Batch 70: 35 courses failed
+✓ Batch 70 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 71 (50 courses)...
+⚠️  Retry 1/3 for Batch 71: Request timeout
+⚠️  Retry 2/3 for Batch 71: Request timeout
+⚠️  Retry 3/3 for Batch 71: Request timeout
+❌ Failed to upload batch 71: Request timeout
+✓ Batch 71 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 72 (50 courses)...
+⚠️  Retry 1/3 for Batch 72: Request timeout
+⚠️  Retry 2/3 for Batch 72: Request timeout
+⚠️  Retry 3/3 for Batch 72: Request timeout
+❌ Failed to upload batch 72: Request timeout
+✓ Batch 72 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 73 (50 courses)...
+⚠️  Retry 1/3 for Batch 73: Request timeout
+⚠️  Retry 2/3 for Batch 73: Request timeout
+⚠️  Retry 3/3 for Batch 73: Request timeout
+❌ Failed to upload batch 73: Request timeout
+✓ Batch 73 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 74 (50 courses)...
+⚠️  Retry 1/3 for Batch 74: Request timeout
+⚠️  Retry 2/3 for Batch 74: Request timeout
+⚠️  Retry 3/3 for Batch 74: Request timeout
+❌ Failed to upload batch 74: Request timeout
+✓ Batch 74 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 75 (50 courses)...
+⚠️  Retry 1/3 for Batch 75: Request timeout
+⚠️  Retry 2/3 for Batch 75: Request timeout
+⚠️  Retry 3/3 for Batch 75: Request timeout
+❌ Failed to upload batch 75: Request timeout
+✓ Batch 75 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 76 (50 courses)...
+⚠️  Retry 1/3 for Batch 76: Request timeout
+⚠️  Retry 2/3 for Batch 76: Request timeout
+⚠️  Retry 3/3 for Batch 76: Request timeout
+❌ Failed to upload batch 76: Request timeout
+✓ Batch 76 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 77 (50 courses)...
+⚠️  Retry 1/3 for Batch 77: Request timeout
+⚠️  Retry 2/3 for Batch 77: Request timeout
+⚠️  Retry 3/3 for Batch 77: Request timeout
+❌ Failed to upload batch 77: Request timeout
+✓ Batch 77 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 78 (50 courses)...
+⚠️  Retry 1/3 for Batch 78: Request timeout
+⚠️  Retry 2/3 for Batch 78: Request timeout
+⚠️  Retry 3/3 for Batch 78: Request timeout
+❌ Failed to upload batch 78: Request timeout
+✓ Batch 78 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 79 (50 courses)...
+⚠️  Retry 1/3 for Batch 79: Request timeout
+⚠️  Retry 2/3 for Batch 79: Request timeout
+⚠️  Retry 3/3 for Batch 79: Request timeout
+❌ Failed to upload batch 79: Request timeout
+✓ Batch 79 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 80 (50 courses)...
+⚠️  Retry 1/3 for Batch 80: Request timeout
+⚠️  Retry 2/3 for Batch 80: Request timeout
+⚠️  Retry 3/3 for Batch 80: Request timeout
+❌ Failed to upload batch 80: Request timeout
+✓ Batch 80 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 81 (50 courses)...
+⚠️  Retry 1/3 for Batch 81: Request timeout
+⚠️  Retry 2/3 for Batch 81: Request timeout
+⚠️  Retry 3/3 for Batch 81: Request timeout
+❌ Failed to upload batch 81: Request timeout
+✓ Batch 81 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 82 (50 courses)...
+⚠️  Retry 1/3 for Batch 82: Request timeout
+⚠️  Retry 2/3 for Batch 82: Request timeout
+⚠️  Retry 3/3 for Batch 82: Request timeout
+❌ Failed to upload batch 82: Request timeout
+✓ Batch 82 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 83 (50 courses)...
+⚠️  Retry 1/3 for Batch 83: Request timeout
+⚠️  Retry 2/3 for Batch 83: Request timeout
+⚠️  Retry 3/3 for Batch 83: Request timeout
+❌ Failed to upload batch 83: Request timeout
+✓ Batch 83 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 84 (50 courses)...
+⚠️  Retry 1/3 for Batch 84: Request timeout
+⚠️  Retry 2/3 for Batch 84: Request timeout
+⚠️  Retry 3/3 for Batch 84: Request timeout
+❌ Failed to upload batch 84: Request timeout
+✓ Batch 84 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 85 (50 courses)...
+⚠️  Retry 1/3 for Batch 85: Request timeout
+⚠️  Retry 2/3 for Batch 85: Request timeout
+⚠️  Retry 3/3 for Batch 85: Request timeout
+❌ Failed to upload batch 85: Request timeout
+✓ Batch 85 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 86 (50 courses)...
+⚠️  Retry 1/3 for Batch 86: Request timeout
+⚠️  Retry 2/3 for Batch 86: Request timeout
+⚠️  Retry 3/3 for Batch 86: Request timeout
+❌ Failed to upload batch 86: Request timeout
+✓ Batch 86 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 87 (50 courses)...
+⚠️  Retry 1/3 for Batch 87: Request timeout
+⚠️  Retry 2/3 for Batch 87: Request timeout
+⚠️  Retry 3/3 for Batch 87: Request timeout
+❌ Failed to upload batch 87: Request timeout
+✓ Batch 87 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 88 (50 courses)...
+⚠️  Retry 1/3 for Batch 88: Request timeout
+⚠️  Retry 2/3 for Batch 88: Request timeout
+⚠️  Retry 3/3 for Batch 88: Request timeout
+❌ Failed to upload batch 88: Request timeout
+✓ Batch 88 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 89 (50 courses)...
+⚠️  Retry 1/3 for Batch 89: Request timeout
+⚠️  Retry 2/3 for Batch 89: Request timeout
+⚠️  Retry 3/3 for Batch 89: Request timeout
+❌ Failed to upload batch 89: Request timeout
+✓ Batch 89 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 90 (50 courses)...
+⚠️  Retry 1/3 for Batch 90: Request timeout
+⚠️  Retry 2/3 for Batch 90: Request timeout
+⚠️  Retry 3/3 for Batch 90: Request timeout
+❌ Failed to upload batch 90: Request timeout
+✓ Batch 90 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 91 (50 courses)...
+⚠️  Retry 1/3 for Batch 91: Request timeout
+⚠️  Retry 2/3 for Batch 91: Request timeout
+⚠️  Retry 3/3 for Batch 91: Request timeout
+❌ Failed to upload batch 91: Request timeout
+✓ Batch 91 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 92 (50 courses)...
+⚠️  Retry 1/3 for Batch 92: Request timeout
+⚠️  Retry 2/3 for Batch 92: Request timeout
+⚠️  Retry 3/3 for Batch 92: Request timeout
+❌ Failed to upload batch 92: Request timeout
+✓ Batch 92 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 93 (50 courses)...
+⚠️  Retry 1/3 for Batch 93: Request timeout
+⚠️  Retry 2/3 for Batch 93: Request timeout
+⚠️  Retry 3/3 for Batch 93: Request timeout
+❌ Failed to upload batch 93: Request timeout
+✓ Batch 93 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 94 (50 courses)...
+⚠️  Retry 1/3 for Batch 94: Request timeout
+⚠️  Retry 2/3 for Batch 94: Request timeout
+⚠️  Retry 3/3 for Batch 94: Request timeout
+❌ Failed to upload batch 94: Request timeout
+✓ Batch 94 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 95 (50 courses)...
+⚠️  Retry 1/3 for Batch 95: Request timeout
+⚠️  Retry 2/3 for Batch 95: Request timeout
+⚠️  Retry 3/3 for Batch 95: Request timeout
+❌ Failed to upload batch 95: Request timeout
+✓ Batch 95 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 96 (50 courses)...
+⚠️  Retry 1/3 for Batch 96: Request timeout
+⚠️  Retry 2/3 for Batch 96: Request timeout
+⚠️  Retry 3/3 for Batch 96: Request timeout
+❌ Failed to upload batch 96: Request timeout
+✓ Batch 96 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 97 (50 courses)...
+⚠️  Retry 1/3 for Batch 97: Request timeout
+⚠️  Retry 2/3 for Batch 97: Request timeout
+⚠️  Retry 3/3 for Batch 97: Request timeout
+❌ Failed to upload batch 97: Request timeout
+✓ Batch 97 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 98 (50 courses)...
+⚠️  Retry 1/3 for Batch 98: Request timeout
+⚠️  Retry 2/3 for Batch 98: Request timeout
+⚠️  Retry 3/3 for Batch 98: Request timeout
+❌ Failed to upload batch 98: Request timeout
+✓ Batch 98 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 99 (50 courses)...
+⚠️  Retry 1/3 for Batch 99: Request timeout
+⚠️  Retry 2/3 for Batch 99: Request timeout
+⚠️  Retry 3/3 for Batch 99: Request timeout
+❌ Failed to upload batch 99: Request timeout
+✓ Batch 99 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 100 (50 courses)...
+⚠️  Retry 1/3 for Batch 100: Request timeout
+⚠️  Retry 2/3 for Batch 100: Request timeout
+⚠️  Retry 3/3 for Batch 100: Request timeout
+❌ Failed to upload batch 100: Request timeout
+✓ Batch 100 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 101 (50 courses)...
+⚠️  Retry 1/3 for Batch 101: Request timeout
+⚠️  Retry 2/3 for Batch 101: Request timeout
+⚠️  Retry 3/3 for Batch 101: Request timeout
+❌ Failed to upload batch 101: Request timeout
+✓ Batch 101 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 102 (50 courses)...
+⚠️  Retry 1/3 for Batch 102: Request timeout
+⚠️  Retry 2/3 for Batch 102: Request timeout
+⚠️  Retry 3/3 for Batch 102: Request timeout
+❌ Failed to upload batch 102: Request timeout
+✓ Batch 102 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 103 (50 courses)...
+⚠️  Retry 1/3 for Batch 103: Request timeout
+⚠️  Retry 2/3 for Batch 103: Request timeout
+⚠️  Retry 3/3 for Batch 103: Request timeout
+❌ Failed to upload batch 103: Request timeout
+✓ Batch 103 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 104 (50 courses)...
+⚠️  Retry 1/3 for Batch 104: Request timeout
+⚠️  Retry 2/3 for Batch 104: Request timeout
+⚠️  Retry 3/3 for Batch 104: Request timeout
+❌ Failed to upload batch 104: Request timeout
+✓ Batch 104 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 105 (50 courses)...
+⚠️  Retry 1/3 for Batch 105: Request timeout
+⚠️  Retry 2/3 for Batch 105: Request timeout
+⚠️  Retry 3/3 for Batch 105: Request timeout
+❌ Failed to upload batch 105: Request timeout
+✓ Batch 105 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 106 (50 courses)...
+⚠️  Retry 1/3 for Batch 106: Request timeout
+⚠️  Retry 2/3 for Batch 106: Request timeout
+⚠️  Retry 3/3 for Batch 106: Request timeout
+❌ Failed to upload batch 106: Request timeout
+✓ Batch 106 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 107 (50 courses)...
+⚠️  Retry 1/3 for Batch 107: Request timeout
+⚠️  Retry 2/3 for Batch 107: Request timeout
+⚠️  Retry 3/3 for Batch 107: Request timeout
+❌ Failed to upload batch 107: Request timeout
+✓ Batch 107 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 108 (50 courses)...
+⚠️  Retry 1/3 for Batch 108: Request timeout
+⚠️  Retry 2/3 for Batch 108: Request timeout
+⚠️  Retry 3/3 for Batch 108: Request timeout
+❌ Failed to upload batch 108: Request timeout
+✓ Batch 108 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 109 (50 courses)...
+⚠️  Retry 1/3 for Batch 109: Request timeout
+⚠️  Retry 2/3 for Batch 109: Request timeout
+⚠️  Retry 3/3 for Batch 109: Request timeout
+❌ Failed to upload batch 109: Request timeout
+✓ Batch 109 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 110 (50 courses)...
+⚠️  Retry 1/3 for Batch 110: Request timeout
+⚠️  Retry 2/3 for Batch 110: Request timeout
+⚠️  Retry 3/3 for Batch 110: Request timeout
+❌ Failed to upload batch 110: Request timeout
+✓ Batch 110 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 111 (50 courses)...
+⚠️  Retry 1/3 for Batch 111: Request timeout
+⚠️  Retry 2/3 for Batch 111: Request timeout
+⚠️  Retry 3/3 for Batch 111: Request timeout
+❌ Failed to upload batch 111: Request timeout
+✓ Batch 111 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 112 (50 courses)...
+⚠️  Retry 1/3 for Batch 112: Request timeout
+⚠️  Retry 2/3 for Batch 112: Request timeout
+⚠️  Retry 3/3 for Batch 112: Request timeout
+❌ Failed to upload batch 112: Request timeout
+✓ Batch 112 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 113 (50 courses)...
+⚠️  Retry 1/3 for Batch 113: Request timeout
+⚠️  Retry 2/3 for Batch 113: Request timeout
+⚠️  Retry 3/3 for Batch 113: Request timeout
+❌ Failed to upload batch 113: Request timeout
+✓ Batch 113 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 114 (50 courses)...
+⚠️  Retry 1/3 for Batch 114: Request timeout
+⚠️  Retry 2/3 for Batch 114: Request timeout
+⚠️  Retry 3/3 for Batch 114: Request timeout
+❌ Failed to upload batch 114: Request timeout
+✓ Batch 114 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 115 (50 courses)...
+⚠️  Retry 1/3 for Batch 115: Request timeout
+⚠️  Retry 2/3 for Batch 115: Request timeout
+⚠️  Retry 3/3 for Batch 115: Request timeout
+❌ Failed to upload batch 115: Request timeout
+✓ Batch 115 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 116 (50 courses)...
+⚠️  Retry 1/3 for Batch 116: Request timeout
+⚠️  Retry 2/3 for Batch 116: Request timeout
+⚠️  Retry 3/3 for Batch 116: Request timeout
+❌ Failed to upload batch 116: Request timeout
+✓ Batch 116 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 117 (50 courses)...
+⚠️  Retry 1/3 for Batch 117: Request timeout
+⚠️  Retry 2/3 for Batch 117: Request timeout
+⚠️  Retry 3/3 for Batch 117: Request timeout
+❌ Failed to upload batch 117: Request timeout
+✓ Batch 117 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 118 (50 courses)...
+⚠️  Retry 1/3 for Batch 118: Request timeout
+⚠️  Retry 2/3 for Batch 118: Request timeout
+⚠️  Retry 3/3 for Batch 118: Request timeout
+❌ Failed to upload batch 118: Request timeout
+✓ Batch 118 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 119 (50 courses)...
+⚠️  Retry 1/3 for Batch 119: Request timeout
+⚠️  Retry 2/3 for Batch 119: Request timeout
+⚠️  Retry 3/3 for Batch 119: Request timeout
+❌ Failed to upload batch 119: Request timeout
+✓ Batch 119 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 120 (50 courses)...
+⚠️  Retry 1/3 for Batch 120: Request timeout
+⚠️  Retry 2/3 for Batch 120: Request timeout
+⚠️  Retry 3/3 for Batch 120: Request timeout
+❌ Failed to upload batch 120: Request timeout
+✓ Batch 120 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 121 (50 courses)...
+⚠️  Retry 1/3 for Batch 121: Request timeout
+⚠️  Retry 2/3 for Batch 121: Request timeout
+⚠️  Retry 3/3 for Batch 121: Request timeout
+❌ Failed to upload batch 121: Request timeout
+✓ Batch 121 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 122 (50 courses)...
+⚠️  Retry 1/3 for Batch 122: Request timeout
+⚠️  Retry 2/3 for Batch 122: Request timeout
+⚠️  Retry 3/3 for Batch 122: Request timeout
+❌ Failed to upload batch 122: Request timeout
+✓ Batch 122 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 123 (50 courses)...
+⚠️  Retry 1/3 for Batch 123: Request timeout
+⚠️  Retry 2/3 for Batch 123: Request timeout
+⚠️  Retry 3/3 for Batch 123: Request timeout
+❌ Failed to upload batch 123: Request timeout
+✓ Batch 123 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 124 (50 courses)...
+⚠️  Retry 1/3 for Batch 124: Request timeout
+⚠️  Retry 2/3 for Batch 124: Request timeout
+⚠️  Retry 3/3 for Batch 124: Request timeout
+❌ Failed to upload batch 124: Request timeout
+✓ Batch 124 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 125 (50 courses)...
+⚠️  Retry 1/3 for Batch 125: Request timeout
+⚠️  Retry 2/3 for Batch 125: Request timeout
+⚠️  Retry 3/3 for Batch 125: Request timeout
+❌ Failed to upload batch 125: Request timeout
+✓ Batch 125 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 126 (50 courses)...
+⚠️  Retry 1/3 for Batch 126: Request timeout
+⚠️  Retry 2/3 for Batch 126: Request timeout
+⚠️  Retry 3/3 for Batch 126: Request timeout
+❌ Failed to upload batch 126: Request timeout
+✓ Batch 126 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 127 (50 courses)...
+⚠️  Retry 1/3 for Batch 127: Request timeout
+⚠️  Retry 2/3 for Batch 127: Request timeout
+⚠️  Retry 3/3 for Batch 127: Request timeout
+❌ Failed to upload batch 127: Request timeout
+✓ Batch 127 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 128 (50 courses)...
+⚠️  Retry 1/3 for Batch 128: Request timeout
+⚠️  Retry 2/3 for Batch 128: Request timeout
+⚠️  Retry 3/3 for Batch 128: Request timeout
+❌ Failed to upload batch 128: Request timeout
+✓ Batch 128 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 129 (50 courses)...
+⚠️  Retry 1/3 for Batch 129: Request timeout
+⚠️  Retry 2/3 for Batch 129: Request timeout
+⚠️  Retry 3/3 for Batch 129: Request timeout
+❌ Failed to upload batch 129: Request timeout
+✓ Batch 129 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 130 (50 courses)...
+⚠️  Retry 1/3 for Batch 130: Request timeout
+⚠️  Retry 2/3 for Batch 130: Request timeout
+⚠️  Retry 3/3 for Batch 130: Request timeout
+❌ Failed to upload batch 130: Request timeout
+✓ Batch 130 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 131 (50 courses)...
+⚠️  Retry 1/3 for Batch 131: Request timeout
+⚠️  Retry 2/3 for Batch 131: Request timeout
+⚠️  Retry 3/3 for Batch 131: Request timeout
+❌ Failed to upload batch 131: Request timeout
+✓ Batch 131 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 132 (50 courses)...
+⚠️  Retry 1/3 for Batch 132: Request timeout
+⚠️  Retry 2/3 for Batch 132: Request timeout
+⚠️  Retry 3/3 for Batch 132: Request timeout
+❌ Failed to upload batch 132: Request timeout
+✓ Batch 132 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 133 (50 courses)...
+⚠️  Retry 1/3 for Batch 133: Request timeout
+⚠️  Retry 2/3 for Batch 133: Request timeout
+⚠️  Retry 3/3 for Batch 133: Request timeout
+❌ Failed to upload batch 133: Request timeout
+✓ Batch 133 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 134 (50 courses)...
+⚠️  Retry 1/3 for Batch 134: Request timeout
+⚠️  Retry 2/3 for Batch 134: Request timeout
+⚠️  Retry 3/3 for Batch 134: Request timeout
+❌ Failed to upload batch 134: Request timeout
+✓ Batch 134 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 135 (50 courses)...
+⚠️  Retry 1/3 for Batch 135: Request timeout
+⚠️  Retry 2/3 for Batch 135: Request timeout
+⚠️  Retry 3/3 for Batch 135: Request timeout
+❌ Failed to upload batch 135: Request timeout
+✓ Batch 135 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 136 (50 courses)...
+⚠️  Retry 1/3 for Batch 136: Request timeout
+⚠️  Retry 2/3 for Batch 136: Request timeout
+⚠️  Retry 3/3 for Batch 136: Request timeout
+❌ Failed to upload batch 136: Request timeout
+✓ Batch 136 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 137 (50 courses)...
+⚠️  Retry 1/3 for Batch 137: Request timeout
+⚠️  Retry 2/3 for Batch 137: Request timeout
+⚠️  Retry 3/3 for Batch 137: Request timeout
+❌ Failed to upload batch 137: Request timeout
+✓ Batch 137 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 138 (50 courses)...
+⚠️  Retry 1/3 for Batch 138: Request timeout
+⚠️  Retry 2/3 for Batch 138: Request timeout
+⚠️  Retry 3/3 for Batch 138: Request timeout
+❌ Failed to upload batch 138: Request timeout
+✓ Batch 138 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 139 (50 courses)...
+⚠️  Retry 1/3 for Batch 139: Request timeout
+⚠️  Retry 2/3 for Batch 139: Request timeout
+⚠️  Retry 3/3 for Batch 139: Request timeout
+❌ Failed to upload batch 139: Request timeout
+✓ Batch 139 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 140 (50 courses)...
+⚠️  Retry 1/3 for Batch 140: Request timeout
+⚠️  Retry 2/3 for Batch 140: Request timeout
+⚠️  Retry 3/3 for Batch 140: Request timeout
+❌ Failed to upload batch 140: Request timeout
+✓ Batch 140 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 141 (50 courses)...
+⚠️  Retry 1/3 for Batch 141: Request timeout
+⚠️  Retry 2/3 for Batch 141: Request timeout
+⚠️  Retry 3/3 for Batch 141: Request timeout
+❌ Failed to upload batch 141: Request timeout
+✓ Batch 141 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 142 (50 courses)...
+⚠️  Retry 1/3 for Batch 142: Request timeout
+⚠️  Retry 2/3 for Batch 142: Request timeout
+⚠️  Retry 3/3 for Batch 142: Request timeout
+❌ Failed to upload batch 142: Request timeout
+✓ Batch 142 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 143 (50 courses)...
+⚠️  Retry 1/3 for Batch 143: Request timeout
+⚠️  Retry 2/3 for Batch 143: Request timeout
+⚠️  Retry 3/3 for Batch 143: Request timeout
+❌ Failed to upload batch 143: Request timeout
+✓ Batch 143 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 144 (50 courses)...
+⚠️  Retry 1/3 for Batch 144: Request timeout
+⚠️  Retry 2/3 for Batch 144: Request timeout
+⚠️  Retry 3/3 for Batch 144: Request timeout
+❌ Failed to upload batch 144: Request timeout
+✓ Batch 144 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 145 (50 courses)...
+⚠️  Retry 1/3 for Batch 145: Request timeout
+⚠️  Retry 2/3 for Batch 145: Request timeout
+⚠️  Retry 3/3 for Batch 145: Request timeout
+❌ Failed to upload batch 145: Request timeout
+✓ Batch 145 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 146 (50 courses)...
+⚠️  Retry 1/3 for Batch 146: Request timeout
+⚠️  Retry 2/3 for Batch 146: Request timeout
+⚠️  Retry 3/3 for Batch 146: Request timeout
+❌ Failed to upload batch 146: Request timeout
+✓ Batch 146 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 147 (50 courses)...
+⚠️  Retry 1/3 for Batch 147: Request timeout
+⚠️  Retry 2/3 for Batch 147: Request timeout
+⚠️  Retry 3/3 for Batch 147: Request timeout
+❌ Failed to upload batch 147: Request timeout
+✓ Batch 147 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 148 (50 courses)...
+⚠️  Retry 1/3 for Batch 148: Request timeout
+⚠️  Retry 2/3 for Batch 148: Request timeout
+⚠️  Retry 3/3 for Batch 148: Request timeout
+❌ Failed to upload batch 148: Request timeout
+✓ Batch 148 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 149 (50 courses)...
+⚠️  Retry 1/3 for Batch 149: Request timeout
+⚠️  Retry 2/3 for Batch 149: Request timeout
+⚠️  Retry 3/3 for Batch 149: Request timeout
+❌ Failed to upload batch 149: Request timeout
+✓ Batch 149 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 150 (50 courses)...
+⚠️  Retry 1/3 for Batch 150: Request timeout
+⚠️  Retry 2/3 for Batch 150: Request timeout
+⚠️  Retry 3/3 for Batch 150: Request timeout
+❌ Failed to upload batch 150: Request timeout
+✓ Batch 150 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 151 (50 courses)...
+⚠️  Retry 1/3 for Batch 151: Request timeout
+⚠️  Retry 2/3 for Batch 151: Request timeout
+⚠️  Retry 3/3 for Batch 151: Request timeout
+❌ Failed to upload batch 151: Request timeout
+✓ Batch 151 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 152 (50 courses)...
+⚠️  Retry 1/3 for Batch 152: Request timeout
+⚠️  Retry 2/3 for Batch 152: Request timeout
+⚠️  Retry 3/3 for Batch 152: Request timeout
+❌ Failed to upload batch 152: Request timeout
+✓ Batch 152 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 153 (50 courses)...
+⚠️  Retry 1/3 for Batch 153: Request timeout
+⚠️  Retry 2/3 for Batch 153: Request timeout
+⚠️  Retry 3/3 for Batch 153: Request timeout
+❌ Failed to upload batch 153: Request timeout
+✓ Batch 153 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 154 (50 courses)...
+⚠️  Retry 1/3 for Batch 154: Request timeout
+⚠️  Retry 2/3 for Batch 154: Request timeout
+⚠️  Retry 3/3 for Batch 154: Request timeout
+❌ Failed to upload batch 154: Request timeout
+✓ Batch 154 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 155 (50 courses)...
+⚠️  Retry 1/3 for Batch 155: Request timeout
+⚠️  Retry 2/3 for Batch 155: Request timeout
+⚠️  Retry 3/3 for Batch 155: Request timeout
+❌ Failed to upload batch 155: Request timeout
+✓ Batch 155 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 156 (50 courses)...
+⚠️  Retry 1/3 for Batch 156: Request timeout
+⚠️  Retry 2/3 for Batch 156: Request timeout
+⚠️  Retry 3/3 for Batch 156: Request timeout
+❌ Failed to upload batch 156: Request timeout
+✓ Batch 156 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 157 (50 courses)...
+⚠️  Retry 1/3 for Batch 157: Request timeout
+⚠️  Retry 2/3 for Batch 157: Request timeout
+⚠️  Retry 3/3 for Batch 157: Request timeout
+❌ Failed to upload batch 157: Request timeout
+✓ Batch 157 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 158 (50 courses)...
+⚠️  Retry 1/3 for Batch 158: Request timeout
+⚠️  Retry 2/3 for Batch 158: Request timeout
+⚠️  Retry 3/3 for Batch 158: Request timeout
+❌ Failed to upload batch 158: Request timeout
+✓ Batch 158 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 159 (50 courses)...
+⚠️  Retry 1/3 for Batch 159: Request timeout
+⚠️  Retry 2/3 for Batch 159: Request timeout
+⚠️  Retry 3/3 for Batch 159: Request timeout
+❌ Failed to upload batch 159: Request timeout
+✓ Batch 159 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 160 (50 courses)...
+⚠️  Retry 1/3 for Batch 160: Request timeout
+⚠️  Retry 2/3 for Batch 160: Request timeout
+⚠️  Retry 3/3 for Batch 160: Request timeout
+❌ Failed to upload batch 160: Request timeout
+✓ Batch 160 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 161 (50 courses)...
+⚠️  Retry 1/3 for Batch 161: Request timeout
+⚠️  Retry 2/3 for Batch 161: Request timeout
+⚠️  Retry 3/3 for Batch 161: Request timeout
+❌ Failed to upload batch 161: Request timeout
+✓ Batch 161 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 162 (50 courses)...
+⚠️  Retry 1/3 for Batch 162: Request timeout
+⚠️  Retry 2/3 for Batch 162: Request timeout
+⚠️  Retry 3/3 for Batch 162: Request timeout
+❌ Failed to upload batch 162: Request timeout
+✓ Batch 162 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 163 (50 courses)...
+⚠️  Retry 1/3 for Batch 163: Request timeout
+⚠️  Retry 2/3 for Batch 163: Request timeout
+⚠️  Retry 3/3 for Batch 163: Request timeout
+❌ Failed to upload batch 163: Request timeout
+✓ Batch 163 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 164 (50 courses)...
+⚠️  Retry 1/3 for Batch 164: Request timeout
+⚠️  Retry 2/3 for Batch 164: Request timeout
+⚠️  Retry 3/3 for Batch 164: Request timeout
+❌ Failed to upload batch 164: Request timeout
+✓ Batch 164 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 165 (50 courses)...
+⚠️  Retry 1/3 for Batch 165: Request timeout
+⚠️  Retry 2/3 for Batch 165: Request timeout
+⚠️  Retry 3/3 for Batch 165: Request timeout
+❌ Failed to upload batch 165: Request timeout
+✓ Batch 165 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 166 (50 courses)...
+⚠️  Retry 1/3 for Batch 166: Request timeout
+⚠️  Retry 2/3 for Batch 166: Request timeout
+⚠️  Retry 3/3 for Batch 166: Request timeout
+❌ Failed to upload batch 166: Request timeout
+✓ Batch 166 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 167 (50 courses)...
+⚠️  Retry 1/3 for Batch 167: Request timeout
+⚠️  Retry 2/3 for Batch 167: Request timeout
+⚠️  Retry 3/3 for Batch 167: Request timeout
+❌ Failed to upload batch 167: Request timeout
+✓ Batch 167 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 168 (50 courses)...
+⚠️  Retry 1/3 for Batch 168: Request timeout
+⚠️  Retry 2/3 for Batch 168: Request timeout
+⚠️  Retry 3/3 for Batch 168: Request timeout
+❌ Failed to upload batch 168: Request timeout
+✓ Batch 168 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 169 (50 courses)...
+⚠️  Retry 1/3 for Batch 169: Request timeout
+⚠️  Retry 2/3 for Batch 169: Request timeout
+⚠️  Retry 3/3 for Batch 169: Request timeout
+❌ Failed to upload batch 169: Request timeout
+✓ Batch 169 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 170 (50 courses)...
+⚠️  Retry 1/3 for Batch 170: Request timeout
+⚠️  Retry 2/3 for Batch 170: Request timeout
+⚠️  Retry 3/3 for Batch 170: Request timeout
+❌ Failed to upload batch 170: Request timeout
+✓ Batch 170 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 171 (50 courses)...
+⚠️  Retry 1/3 for Batch 171: Request timeout
+⚠️  Retry 2/3 for Batch 171: Request timeout
+⚠️  Retry 3/3 for Batch 171: Request timeout
+❌ Failed to upload batch 171: Request timeout
+✓ Batch 171 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 172 (50 courses)...
+⚠️  Retry 1/3 for Batch 172: Request timeout
+⚠️  Retry 2/3 for Batch 172: Request timeout
+⚠️  Retry 3/3 for Batch 172: Request timeout
+❌ Failed to upload batch 172: Request timeout
+✓ Batch 172 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 173 (50 courses)...
+⚠️  Retry 1/3 for Batch 173: Request timeout
+⚠️  Retry 2/3 for Batch 173: Request timeout
+⚠️  Retry 3/3 for Batch 173: Request timeout
+❌ Failed to upload batch 173: Request timeout
+✓ Batch 173 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 174 (50 courses)...
+⚠️  Retry 1/3 for Batch 174: Request timeout
+⚠️  Retry 2/3 for Batch 174: Request timeout
+⚠️  Retry 3/3 for Batch 174: Request timeout
+❌ Failed to upload batch 174: Request timeout
+✓ Batch 174 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 175 (50 courses)...
+⚠️  Retry 1/3 for Batch 175: Request timeout
+⚠️  Retry 2/3 for Batch 175: Request timeout
+⚠️  Retry 3/3 for Batch 175: Request timeout
+❌ Failed to upload batch 175: Request timeout
+✓ Batch 175 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 176 (50 courses)...
+⚠️  Retry 1/3 for Batch 176: Request timeout
+⚠️  Retry 2/3 for Batch 176: Request timeout
+⚠️  Retry 3/3 for Batch 176: Request timeout
+❌ Failed to upload batch 176: Request timeout
+✓ Batch 176 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 177 (50 courses)...
+⚠️  Retry 1/3 for Batch 177: Request timeout
+⚠️  Retry 2/3 for Batch 177: Request timeout
+⚠️  Retry 3/3 for Batch 177: Request timeout
+❌ Failed to upload batch 177: Request timeout
+✓ Batch 177 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 178 (50 courses)...
+⚠️  Retry 1/3 for Batch 178: Request timeout
+⚠️  Retry 2/3 for Batch 178: Request timeout
+⚠️  Retry 3/3 for Batch 178: Request timeout
+❌ Failed to upload batch 178: Request timeout
+✓ Batch 178 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 179 (50 courses)...
+⚠️  Retry 1/3 for Batch 179: Request timeout
+⚠️  Retry 2/3 for Batch 179: Request timeout
+⚠️  Retry 3/3 for Batch 179: Request timeout
+❌ Failed to upload batch 179: Request timeout
+✓ Batch 179 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 180 (50 courses)...
+⚠️  Retry 1/3 for Batch 180: Request timeout
+⚠️  Retry 2/3 for Batch 180: Request timeout
+⚠️  Retry 3/3 for Batch 180: Request timeout
+❌ Failed to upload batch 180: Request timeout
+✓ Batch 180 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 181 (50 courses)...
+⚠️  Retry 1/3 for Batch 181: Request timeout
+⚠️  Retry 2/3 for Batch 181: Request timeout
+⚠️  Retry 3/3 for Batch 181: Request timeout
+❌ Failed to upload batch 181: Request timeout
+✓ Batch 181 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 182 (50 courses)...
+⚠️  Retry 1/3 for Batch 182: Request timeout
+⚠️  Retry 2/3 for Batch 182: Request timeout
+⚠️  Retry 3/3 for Batch 182: Request timeout
+❌ Failed to upload batch 182: Request timeout
+✓ Batch 182 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 183 (50 courses)...
+⚠️  Retry 1/3 for Batch 183: Request timeout
+⚠️  Retry 2/3 for Batch 183: Request timeout
+⚠️  Retry 3/3 for Batch 183: Request timeout
+❌ Failed to upload batch 183: Request timeout
+✓ Batch 183 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 184 (50 courses)...
+⚠️  Retry 1/3 for Batch 184: Request timeout
+⚠️  Retry 2/3 for Batch 184: Request timeout
+⚠️  Retry 3/3 for Batch 184: Request timeout
+❌ Failed to upload batch 184: Request timeout
+✓ Batch 184 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 185 (50 courses)...
+⚠️  Retry 1/3 for Batch 185: Request timeout
+⚠️  Retry 2/3 for Batch 185: Request timeout
+⚠️  Retry 3/3 for Batch 185: Request timeout
+❌ Failed to upload batch 185: Request timeout
+✓ Batch 185 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 186 (50 courses)...
+⚠️  Retry 1/3 for Batch 186: Request timeout
+⚠️  Retry 2/3 for Batch 186: Request timeout
+⚠️  Retry 3/3 for Batch 186: Request timeout
+❌ Failed to upload batch 186: Request timeout
+✓ Batch 186 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 187 (50 courses)...
+⚠️  Retry 1/3 for Batch 187: Request timeout
+⚠️  Retry 2/3 for Batch 187: Request timeout
+⚠️  Retry 3/3 for Batch 187: Request timeout
+❌ Failed to upload batch 187: Request timeout
+✓ Batch 187 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 188 (50 courses)...
+⚠️  Retry 1/3 for Batch 188: Request timeout
+⚠️  Retry 2/3 for Batch 188: Request timeout
+⚠️  Retry 3/3 for Batch 188: Request timeout
+❌ Failed to upload batch 188: Request timeout
+✓ Batch 188 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 189 (50 courses)...
+⚠️  Retry 1/3 for Batch 189: Request timeout
+⚠️  Retry 2/3 for Batch 189: Request timeout
+⚠️  Retry 3/3 for Batch 189: Request timeout
+❌ Failed to upload batch 189: Request timeout
+✓ Batch 189 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 190 (50 courses)...
+⚠️  Retry 1/3 for Batch 190: Request timeout
+⚠️  Retry 2/3 for Batch 190: Request timeout
+⚠️  Retry 3/3 for Batch 190: Request timeout
+❌ Failed to upload batch 190: Request timeout
+✓ Batch 190 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 191 (50 courses)...
+⚠️  Retry 1/3 for Batch 191: Request timeout
+⚠️  Retry 2/3 for Batch 191: Request timeout
+⚠️  Retry 3/3 for Batch 191: Request timeout
+❌ Failed to upload batch 191: Request timeout
+✓ Batch 191 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 192 (50 courses)...
+⚠️  Retry 1/3 for Batch 192: Request timeout
+⚠️  Retry 2/3 for Batch 192: Request timeout
+⚠️  Retry 3/3 for Batch 192: Request timeout
+❌ Failed to upload batch 192: Request timeout
+✓ Batch 192 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 193 (50 courses)...
+⚠️  Retry 1/3 for Batch 193: Request timeout
+⚠️  Retry 2/3 for Batch 193: Request timeout
+⚠️  Retry 3/3 for Batch 193: Request timeout
+❌ Failed to upload batch 193: Request timeout
+✓ Batch 193 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 194 (50 courses)...
+⚠️  Retry 1/3 for Batch 194: Request timeout
+⚠️  Retry 2/3 for Batch 194: Request timeout
+⚠️  Retry 3/3 for Batch 194: Request timeout
+❌ Failed to upload batch 194: Request timeout
+✓ Batch 194 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 195 (50 courses)...
+⚠️  Retry 1/3 for Batch 195: Request timeout
+⚠️  Retry 2/3 for Batch 195: Request timeout
+⚠️  Retry 3/3 for Batch 195: Request timeout
+❌ Failed to upload batch 195: Request timeout
+✓ Batch 195 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 196 (50 courses)...
+⚠️  Retry 1/3 for Batch 196: Request timeout
+⚠️  Retry 2/3 for Batch 196: Request timeout
+⚠️  Retry 3/3 for Batch 196: Request timeout
+❌ Failed to upload batch 196: Request timeout
+✓ Batch 196 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 197 (50 courses)...
+⚠️  Retry 1/3 for Batch 197: Request timeout
+⚠️  Retry 2/3 for Batch 197: Request timeout
+⚠️  Retry 3/3 for Batch 197: Request timeout
+❌ Failed to upload batch 197: Request timeout
+✓ Batch 197 completed
+⏳ Waiting 2000ms before next batch...
+
+
+📦 Processing Batch 198 (14 courses)...
+⚠️  Retry 1/3 for Batch 198: Request timeout
+⚠️  Retry 2/3 for Batch 198: Request timeout
+⚠️  Retry 3/3 for Batch 198: Request timeout
+❌ Failed to upload batch 198: Request timeout
+✓ Batch 198 completed
+
+════════════════════════════════════════════════════════════
+
+📋 UPLOAD SUMMARY
+════════════════════════════════════════════════════════════
+✅ Successful uploads: 1530
+❌ Failed uploads: 8334
+📊 Total processed: 9864/9864
+⏱️  Total time: 66545.46 seconds
+⚡ Average time per course: 6.746 seconds
+
+⚠️  CATEGORIES NOT FOUND:
+════════════════════════════════════════════════════════════
+1. "Machine Learning Engineer" (5 courses affected)
+2. "Software Development Engineer" (12 courses affected)
+3. "Cybersecurity Analyst" (5 courses affected)
+4. "Algorithm Developer" (1 courses affected)
+5. "Web Developer" (11 courses affected)
+6. "Mobile Application Developer" (1 courses affected)
+7. "DevOps Engineer" (2 courses affected)
+8. "Product Manager" (6 courses affected)
+9. "Communication Systems Engineer" (3 courses affected)
+10. "Power Systems Engineer" (10 courses affected)
+11. "Embedded Systems Engineer" (4 courses affected)
+12. "Control Systems Engineer" (8 courses affected)
+13. "Automotive Engineer" (6 courses affected)
+14. "Petrochemical Engineer" (1 courses affected)
+15. "Construction Engineer" (1 courses affected)
+16. "Infrastructure Engineer" (2 courses affected)
+17. "Quantum Engineer" (1 courses affected)
+18. "Software Developer" (21 courses affected)
+19. "Systems Administrator" (3 courses affected)
+20. "Laboratory Technician" (9 courses affected)
+21. "Research Associate" (3 courses affected)
+22. "Microbiologist" (9 courses affected)
+23. "Biotechnology Technician" (1 courses affected)
+24. "Environmental Scientist" (9 courses affected)
+25. "Tax Consultant" (8 courses affected)
+26. "Business Analyst" (20 courses affected)
+27. "Computer Application Specialist" (1 courses affected)
+28. "Civil Services Officer" (5 courses affected)
+29. "Economic Analyst" (15 courses affected)
+30. "Urdu Language Specialist" (3 courses affected)
+31. "Quality Control Analyst" (13 courses affected)
+32. "Wildlife Biologist" (2 courses affected)
+33. "Home Science Consultant" (1 courses affected)
+34. "Mathematics Teacher" (2 courses affected)
+35. "Organic Chemistry Researcher" (6 courses affected)
+36. "Cloud Architect" (1 courses affected)
+37. "IoT Developer" (2 courses affected)
+38. "AI Research Engineer" (3 courses affected)
+39. "Agricultural Scientist" (5 courses affected)
+40. "Forest Officer" (2 courses affected)
+41. "Biotechnology Researcher" (21 courses affected)
+42. "Food Technologist" (5 courses affected)
+43. "Forensic Analyst" (1 courses affected)
+44. "Cloud Solutions Specialist" (1 courses affected)
+45. "Agribusiness Manager" (3 courses affected)
+46. "Tourism Manager" (4 courses affected)
+47. "Design Consultant" (1 courses affected)
+48. "Legal Associate" (1 courses affected)
+49. "undefined" (2 courses affected)
+50. "Temple Priest (Archaka)" (1 courses affected)
+51. "Purohit (Family Priest)" (1 courses affected)
+52. "Vedic Scholar" (1 courses affected)
+53. "Sanskrit Teacher" (1 courses affected)
+54. "Vedic Chanter" (1 courses affected)
+55. "Ritualistic Specialist" (1 courses affected)
+56. "Ayurvedic Consultant" (1 courses affected)
+57. "Vedic Commentator" (1 courses affected)
+58. "Vaishnavite Scholar" (1 courses affected)
+59. "Cultural Heritage Officer" (1 courses affected)
+60. "Religious Tourism Guide" (1 courses affected)
+61. "Accounts Officer (Temple Administration)" (1 courses affected)
+62. "Legal Advisor (Religious Institutions)" (1 courses affected)
+63. "Vedapathashala Teacher" (1 courses affected)
+64. "Religious Studies Professor" (1 courses affected)
+65. "Manuscript Researcher" (1 courses affected)
+66. "Spiritual Counselor" (1 courses affected)
+67. "Yoga and Meditation Instructor" (1 courses affected)
+68. "Ritual Consultant" (1 courses affected)
+69. "Traditional Medicine Practitioner" (1 courses affected)
+70. "Religious Administration Officer" (1 courses affected)
+71. "Cultural Program Coordinator" (1 courses affected)
+72. "Temple Financial Manager" (1 courses affected)
+73. "Sacred Music Director" (1 courses affected)
+74. "Heritage Documentation Specialist" (1 courses affected)
+75. "Interfaith Dialogue Coordinator" (1 courses affected)
+76. "Research Scientist" (17 courses affected)
+77. "Home Science Extension Officer" (1 courses affected)
+78. "Music Teacher" (1 courses affected)
+79. "Interior Designer" (6 courses affected)
+80. "Biologist" (1 courses affected)
+81. "Mental Health Counselor" (1 courses affected)
+82. "Emergency Medicine Doctor" (1 courses affected)
+83. "Pediatrician" (1 courses affected)
+84. "Transportation Engineer" (2 courses affected)
+85. "Geotechnical Engineer" (2 courses affected)
+86. "Irrigation Engineer" (1 courses affected)
+87. "Farm Equipment Engineer" (1 courses affected)
+88. "Food Processing Engineer" (2 courses affected)
+89. "Mine Safety Engineer" (1 courses affected)
+90. "Mineral Processing Engineer" (1 courses affected)
+91. "Reservoir Engineer" (1 courses affected)
+92. "Drilling Engineer" (1 courses affected)
+93. "Production Engineer" (3 courses affected)
+94. "Clinical Research Associate" (8 courses affected)
+95. "Drug Inspector" (5 courses affected)
+96. "Regulatory Affairs Specialist" (1 courses affected)
+97. "Project Manager" (7 courses affected)
+98. "Financial Manager" (5 courses affected)
+99. "Human Resources Manager" (7 courses affected)
+100. "Strategy Consultant" (2 courses affected)
+101. "Business Development Manager" (7 courses affected)
+102. "Database Manager" (1 courses affected)
+103. "IT Manager" (1 courses affected)
+104. "Thermal Systems Engineer" (4 courses affected)
+105. "Software Architect" (2 courses affected)
+106. "Power Electronics Engineer" (1 courses affected)
+107. "Petroleum Reservoir Engineer" (1 courses affected)
+108. "Junior Engineer" (1 courses affected)
+109. "Electrical Technician" (1 courses affected)
+110. "Mechanical Technician" (2 courses affected)
+111. "Electronics Technician" (4 courses affected)
+112. "Computer Technician" (3 courses affected)
+113. "Systems Software Engineer" (1 courses affected)
+114. "Cloud Solutions Architect" (3 courses affected)
+115. "AI Engineer" (2 courses affected)
+116. "Deep Learning Research Engineer" (2 courses affected)
+117. "Computer Vision Engineer" (2 courses affected)
+118. "Natural Language Processing Engineer" (1 courses affected)
+119. "Cyber Security Analyst" (2 courses affected)
+120. "Information Security Engineer" (1 courses affected)
+121. "Ethical Hacker/Penetration Tester" (1 courses affected)
+122. "Security Operations Center Analyst" (1 courses affected)
+123. "Cryptography Engineer" (1 courses affected)
+124. "Digital Forensics Investigator" (1 courses affected)
+125. "Quantitative Analyst" (3 courses affected)
+126. "Data Engineer" (1 courses affected)
+127. "Signal Processing Engineer" (2 courses affected)
+128. "RF/Microwave Engineer" (1 courses affected)
+129. "Test and Verification Engineer" (1 courses affected)
+130. "IoT Systems Engineer" (2 courses affected)
+131. "Smart Systems Developer" (1 courses affected)
+132. "Wireless Communication Engineer" (1 courses affected)
+133. "Network Optimization Engineer" (1 courses affected)
+134. "Telecommunications Systems Engineer" (1 courses affected)
+135. "Wireless Protocol Engineer" (1 courses affected)
+136. "Big Data Engineer" (1 courses affected)
+137. "AI Product Manager" (1 courses affected)
+138. "Analytics Consultant" (1 courses affected)
+139. "Senior Cyber Security Architect" (1 courses affected)
+140. "Security Research Scientist" (1 courses affected)
+141. "Malware Analysis Expert" (1 courses affected)
+142. "Chief Information Security Officer" (1 courses affected)
+143. "Senior AI Research Scientist" (1 courses affected)
+144. "Machine Learning Architect" (1 courses affected)
+145. "AI Solutions Architect" (1 courses affected)
+146. "Technology Research Lead" (1 courses affected)
+147. "Electronics Research Scientist" (1 courses affected)
+148. "Hardware Research Engineer" (1 courses affected)
+149. "Communication Systems Researcher" (1 courses affected)
+150. "Senior Research Scientist" (2 courses affected)
+151. "Principal Scientist" (1 courses affected)
+152. "University Professor" (10 courses affected)
+153. "Chief Technology Officer" (2 courses affected)
+154. "Principal Research Engineer" (1 courses affected)
+155. "Senior Faculty" (1 courses affected)
+156. "Technology Consultant" (3 courses affected)
+157. "IoT Security Engineer" (1 courses affected)
+158. "Network Engineer" (4 courses affected)
+159. "Application Developer" (9 courses affected)
+160. "Anesthesia Technician" (2 courses affected)
+161. "Medical Laboratory Technologist" (3 courses affected)
+162. "Radiologic Technologist" (1 courses affected)
+163. "Cardiac Technologist" (1 courses affected)
+164. "Forensic Expert" (1 courses affected)
+165. "Pharmacy Technician" (1 courses affected)
+166. "Digital Transformation Consultant" (1 courses affected)
+167. "System Administrator" (6 courses affected)
+168. "Embedded Systems Developer" (1 courses affected)
+169. "Medical Device Engineer" (2 courses affected)
+170. "Environmental Health Specialist" (1 courses affected)
+171. "Healthcare Administrator" (2 courses affected)
+172. "Laboratory Manager" (7 courses affected)
+173. "Policy Analyst" (5 courses affected)
+174. "Diplomat" (1 courses affected)
+175. "Counseling Psychologist" (1 courses affected)
+176. "HR Specialist" (1 courses affected)
+177. "English Teacher" (2 courses affected)
+178. "AI Developer" (1 courses affected)
+179. "NLP Engineer" (1 courses affected)
+180. "Banking Professional" (15 courses affected)
+181. "Travel Coordinator" (1 courses affected)
+182. "IT Support Specialist" (1 courses affected)
+183. "E-commerce Manager" (1 courses affected)
+184. "Senior Policy Analyst" (1 courses affected)
+185. "Public Affairs Manager" (1 courses affected)
+186. "Telugu Language Specialist" (5 courses affected)
+187. "Literature Professor" (3 courses affected)
+188. "Literary Critic" (3 courses affected)
+189. "Governance Consultant" (1 courses affected)
+190. "Public Policy Specialist" (1 courses affected)
+191. "Economic Researcher" (1 courses affected)
+192. "Data Analytics Manager" (2 courses affected)
+193. "Applied Psychologist" (1 courses affected)
+194. "Counseling Supervisor" (1 courses affected)
+195. "Neuropsychologist" (1 courses affected)
+196. "AI Research Scientist" (1 courses affected)
+197. "Molecular Biologist" (1 courses affected)
+198. "Computational Social Scientist" (1 courses affected)
+199. "Social Data Analyst" (1 courses affected)
+200. "GIS Specialist" (3 courses affected)
+201. "Remote Sensing Analyst" (1 courses affected)
+202. "Space Systems Engineer" (1 courses affected)
+203. "Computational Scientist" (2 courses affected)
+204. "AI Systems Architect" (1 courses affected)
+205. "Senior AI Engineer" (1 courses affected)
+206. "General Manager" (2 courses affected)
+207. "Audit Manager" (2 courses affected)
+208. "Principal Research Scientist" (7 courses affected)
+209. "Policy Research Director" (2 courses affected)
+210. "Chief Research Officer" (1 courses affected)
+211. "Telecommunications Engineer" (4 courses affected)
+212. "Construction Manager" (4 courses affected)
+213. "Senior Software Architect" (6 courses affected)
+214. "Research Engineer" (6 courses affected)
+215. "Technical Consultant" (11 courses affected)
+216. "Chemical Research Associate" (1 courses affected)
+217. "Environmental Chemist" (1 courses affected)
+218. "Wildlife Conservationist" (1 courses affected)
+219. "Mathematical Analyst" (2 courses affected)
+220. "Environmental Analyst" (1 courses affected)
+221. "Materials Scientist" (3 courses affected)
+222. "Sericulture Specialist" (1 courses affected)
+223. "IT Consultant" (5 courses affected)
+224. "Project Coordinator" (6 courses affected)
+225. "Sales Executive" (5 courses affected)
+226. "Audit Associate" (3 courses affected)
+227. "Cost Accountant" (4 courses affected)
+228. "Policy Researcher" (1 courses affected)
+229. "Teacher/Professor" (1 courses affected)
+230. "Political Analyst" (2 courses affected)
+231. "Public Administrator" (7 courses affected)
+232. "Language Specialist" (1 courses affected)
+233. "Cultural Coordinator" (2 courses affected)
+234. "Pharmaceutical Sales Representative" (5 courses affected)
+235. "Educational Coordinator" (3 courses affected)
+236. "Academic Administrator" (10 courses affected)
+237. "Physical Education Teacher" (7 courses affected)
+238. "Corporate Lawyer" (8 courses affected)
+239. "Legal Researcher" (4 courses affected)
+240. "Information Specialist" (1 courses affected)
+241. "R&D Manager" (3 courses affected)
+242. "Medical Research Associate" (1 courses affected)
+243. "Bioinformatics Specialist" (2 courses affected)
+244. "Environmental Biologist" (1 courses affected)
+245. "Optics Engineer" (1 courses affected)
+246. "Chemical Researcher" (1 courses affected)
+247. "Pharmaceutical Scientist" (1 courses affected)
+248. "Chemical Engineer" (4 courses affected)
+249. "Analytical Chemist" (2 courses affected)
+250. "Catalysis Researcher" (1 courses affected)
+251. "Statistical Analyst" (2 courses affected)
+252. "Policy Research Analyst" (2 courses affected)
+253. "Financial Risk Analyst" (1 courses affected)
+254. "Market Research Analyst" (1 courses affected)
+255. "Principal Investigator" (1 courses affected)
+256. "Mathematical Researcher" (1 courses affected)
+257. "Climate Scientist" (1 courses affected)
+258. "Social Science Researcher" (1 courses affected)
+259. "Industrial Research Director" (1 courses affected)
+260. "Space Research Scientist" (1 courses affected)
+261. "Environmental Science Director" (1 courses affected)
+262. "Physics Research Specialist" (1 courses affected)
+263. "Earth Science Specialist" (1 courses affected)
+264. "Technology Transfer Specialist" (1 courses affected)
+265. "Science Policy Analyst" (1 courses affected)
+266. "R&D Project Manager" (1 courses affected)
+267. "Scientific Consultant" (1 courses affected)
+268. "Post-doctoral Researcher" (1 courses affected)
+269. "Visiting Research Fellow" (1 courses affected)
+270. "Senior Research Fellow" (1 courses affected)
+271. "Junior Research Fellow" (1 courses affected)
+272. "Associate Professor" (1 courses affected)
+273. "Visiting Professor" (1 courses affected)
+274. "Biotech Industry Scientist" (1 courses affected)
+275. "Pharmaceutical Research Scientist" (2 courses affected)
+276. "Technology Innovation Manager" (1 courses affected)
+277. "Scientific Data Analyst" (1 courses affected)
+278. "Scientific Officer" (1 courses affected)
+279. "Environmental Policy Analyst" (1 courses affected)
+280. "Science Communication Specialist" (1 courses affected)
+281. "International Research Collaborator" (1 courses affected)
+282. "Global Science Program Manager" (1 courses affected)
+283. "Cross-disciplinary Research Specialist" (1 courses affected)
+284. "Urdu Language Teacher" (1 courses affected)
+285. "Research Scholar" (7 courses affected)
+286. "Media Specialist" (2 courses affected)
+287. "Financial Advisor" (1 courses affected)
+288. "Arabic Language Instructor" (1 courses affected)
+289. "Islamic Studies Researcher" (1 courses affected)
+290. "Cultural Liaison Officer" (1 courses affected)
+291. "Research Assistant" (2 courses affected)
+292. "Physics Teacher" (1 courses affected)
+293. "Biotechnology Specialist" (2 courses affected)
+294. "Pharmaceutical Researcher" (6 courses affected)
+295. "Computer Applications Specialist" (7 courses affected)
+296. "Data Entry Specialist" (1 courses affected)
+297. "Investment Analyst" (3 courses affected)
+298. "Data Analytics Specialist" (2 courses affected)
+299. "Community Development Officer" (2 courses affected)
+300. "Counselor" (1 courses affected)
+301. "Educational Administrator" (8 courses affected)
+302. "Government Relations Specialist" (1 courses affected)
+303. "Administrative Officer" (3 courses affected)
+304. "Customer Service Representative" (3 courses affected)
+305. "Office Assistant" (1 courses affected)
+306. "Science Teacher" (5 courses affected)
+307. "Technical Assistant" (1 courses affected)
+308. "Field Researcher" (1 courses affected)
+309. "Investment Banking Analyst" (3 courses affected)
+310. "Strategy Manager" (1 courses affected)
+311. "HR Business Partner" (1 courses affected)
+312. "Senior Manager" (1 courses affected)
+313. "Business Development Director" (1 courses affected)
+314. "Operations Director" (1 courses affected)
+315. "Innovation Manager" (3 courses affected)
+316. "Chief Executive Officer" (1 courses affected)
+317. "Chief Operating Officer" (1 courses affected)
+318. "Chief Financial Officer" (1 courses affected)
+319. "Vice President - Strategy" (1 courses affected)
+320. "Managing Director" (1 courses affected)
+321. "Digital Transformation Officer" (1 courses affected)
+322. "E-Governance Specialist" (1 courses affected)
+323. "Chief Digital Officer" (1 courses affected)
+324. "Smart Cities Manager" (1 courses affected)
+325. "Educational Quality Manager" (1 courses affected)
+326. "Research Program Director" (1 courses affected)
+327. "Student Affairs Manager" (1 courses affected)
+328. "Institutional Planning Officer" (1 courses affected)
+329. "Research Director" (1 courses affected)
+330. "Think Tank Director" (1 courses affected)
+331. "Chief Strategy Officer" (1 courses affected)
+332. "Senior Research Executive" (1 courses affected)
+333. "Innovation Director" (1 courses affected)
+334. "Corporate Academician" (1 courses affected)
+335. "Board Advisor" (1 courses affected)
+336. "Development Program Manager" (1 courses affected)
+337. "District Collector" (1 courses affected)
+338. "Policy Implementation Specialist" (1 courses affected)
+339. "Rural Development Coordinator" (2 courses affected)
+340. "Social Impact Manager" (1 courses affected)
+341. "Chief Digital & AI Officer" (1 courses affected)
+342. "Business Analytics Manager" (2 courses affected)
+343. "Operations Excellence Director" (1 courses affected)
+344. "Fintech Innovation Manager" (1 courses affected)
+345. "Infrastructure Project Director" (1 courses affected)
+346. "Senior Leadership Executive" (1 courses affected)
+347. "Post-Doctoral Research Fellow" (1 courses affected)
+348. "Senior Research Associate" (1 courses affected)
+349. "Investment Banking Associate" (1 courses affected)
+350. "Healthcare Analytics Manager" (1 courses affected)
+351. "Business Transformation Leader" (1 courses affected)
+352. "Advanced Analytics Director" (1 courses affected)
+353. "Digital Product Manager" (1 courses affected)
+354. "RF Engineer" (1 courses affected)
+355. "Process Safety Engineer" (1 courses affected)
+356. "Aircraft Maintenance Engineer" (1 courses affected)
+357. "Metallurgical Engineer" (3 courses affected)
+358. "Technology Manager" (1 courses affected)
+359. "System Analyst" (1 courses affected)
+360. "Regulatory Affairs Officer" (3 courses affected)
+361. "Pharm.D Practitioner" (1 courses affected)
+362. "Systems Engineer" (2 courses affected)
+363. "Technical Lead" (1 courses affected)
+364. "R&D Director" (3 courses affected)
+365. "Data Analytics Engineer" (10 courses affected)
+366. "Product Development Engineer" (1 courses affected)
+367. "Business Development Associate" (2 courses affected)
+368. "Senior Software Developer" (3 courses affected)
+369. "Subject Matter Expert" (1 courses affected)
+370. "Government Officer" (8 courses affected)
+371. "NGO Program Manager" (1 courses affected)
+372. "Quality Assurance Specialist" (4 courses affected)
+373. "Training and Development Specialist" (1 courses affected)
+374. "Technical Support Specialist" (2 courses affected)
+375. "Biochemist" (6 courses affected)
+376. "Communication Coordinator" (1 courses affected)
+377. "Innovation Consultant" (3 courses affected)
+378. "Banking Officer" (1 courses affected)
+379. "Aerospace Engineer" (4 courses affected)
+380. "VLSI Design Specialist" (2 courses affected)
+381. "Cybersecurity Manager" (2 courses affected)
+382. "IoT Solutions Architect" (2 courses affected)
+383. "Power Electronics Specialist" (2 courses affected)
+384. "Construction Technology Manager" (1 courses affected)
+385. "Game Developer" (1 courses affected)
+386. "Mobile App Developer" (1 courses affected)
+387. "HR Manager" (6 courses affected)
+388. "Operations Coordinator" (2 courses affected)
+389. "Clinical Pharmacy Specialist" (2 courses affected)
+390. "Investment Advisor" (2 courses affected)
+391. "Fintech Specialist" (1 courses affected)
+392. "Financial Controller" (2 courses affected)
+393. "Digital Humanities Specialist" (2 courses affected)
+394. "Business Legal Consultant" (3 courses affected)
+395. "System Engineer" (1 courses affected)
+396. "Business Development Executive" (2 courses affected)
+397. "Medical Doctor" (2 courses affected)
+398. "Medical Specialist" (2 courses affected)
+399. "Chemistry Analyst" (7 courses affected)
+400. "Certified Public Accountant" (1 courses affected)
+401. "English Language Specialist" (3 courses affected)
+402. "Economics Researcher" (6 courses affected)
+403. "Specialized Legal Practitioner" (2 courses affected)
+404. "Language Researcher" (1 courses affected)
+405. "Kannada Language Expert" (1 courses affected)
+406. "Malayalam Language Specialist" (1 courses affected)
+407. "English Language Teacher" (4 courses affected)
+408. "Political Science Researcher" (6 courses affected)
+409. "Philosophy Scholar" (4 courses affected)
+410. "Sanskrit Scholar" (3 courses affected)
+411. "Computer Programmer" (2 courses affected)
+412. "Statistics Analyst" (8 courses affected)
+413. "Physics Researcher" (10 courses affected)
+414. "Tamil Literature Scholar" (1 courses affected)
+415. "Telugu Literature Expert" (2 courses affected)
+416. "Kannada Studies Scholar" (1 courses affected)
+417. "Malayalam Literature Researcher" (1 courses affected)
+418. "English Literature Professor" (5 courses affected)
+419. "Historical Researcher" (4 courses affected)
+420. "Philosophy Researcher" (2 courses affected)
+421. "Rural Development Officer" (5 courses affected)
+422. "Performing Arts Director" (1 courses affected)
+423. "Research Scientist (Biotechnology)" (3 courses affected)
+424. "Statistics Researcher" (4 courses affected)
+425. "Chemistry Researcher" (3 courses affected)
+426. "Environmental Manager" (1 courses affected)
+427. "Zoology Researcher" (4 courses affected)
+428. "Microbiology Researcher" (5 courses affected)
+429. "Mathematics Researcher" (4 courses affected)
+430. "Herbal Science Researcher" (1 courses affected)
+431. "Social Work Manager" (6 courses affected)
+432. "Folkore Researcher" (1 courses affected)
+433. "Tamil Language Teacher" (1 courses affected)
+434. "Telugu Language Teacher" (2 courses affected)
+435. "Malayalam Language Teacher" (1 courses affected)
+436. "Tulu Language Specialist" (1 courses affected)
+437. "Computer Application Developer" (4 courses affected)
+438. "Tulu Cultural Specialist" (1 courses affected)
+439. "Business Research Analyst" (1 courses affected)
+440. "Literature Researcher" (1 courses affected)
+441. "Tamil Research Scholar" (1 courses affected)
+442. "Chemistry Research Scholar" (1 courses affected)
+443. "Historical Research Scholar" (1 courses affected)
+444. "Library Science Researcher" (1 courses affected)
+445. "Physical Education Researcher" (1 courses affected)
+446. "Education Researcher" (1 courses affected)
+447. "English Research Scholar" (1 courses affected)
+448. "Kannada Research Scholar" (1 courses affected)
+449. "Telugu Research Scholar" (1 courses affected)
+450. "Educational Leader" (2 courses affected)
+451. "Cultural Studies Expert" (1 courses affected)
+452. "Business Research Director" (1 courses affected)
+453. "Sports Science Director" (1 courses affected)
+454. "Tamil Studies Professor" (1 courses affected)
+455. "Library Science Director" (1 courses affected)
+456. "Biotechnology Research Director" (1 courses affected)
+457. "Philosophy Professor" (2 courses affected)
+458. "History Professor" (1 courses affected)
+459. "Kannada Studies Professor" (1 courses affected)
+460. "Telugu Studies Professor" (1 courses affected)
+461. "Chemistry Professor" (1 courses affected)
+462. "Cultural Heritage Manager" (2 courses affected)
+463. "Translation Services Manager" (1 courses affected)
+464. "Research Coordinator" (1 courses affected)
+465. "Cultural Consultant" (1 courses affected)
+466. "Language Technology Developer" (1 courses affected)
+467. "Arts Teacher" (1 courses affected)
+468. "Chemistry Analyst (Analytical)" (1 courses affected)
+469. "Chemistry Analyst (Industrial)" (1 courses affected)
+470. "Senior Computer Programmer" (1 courses affected)
+471. "Analytical Chemistry Specialist" (5 courses affected)
+472. "Botany Researcher" (3 courses affected)
+473. "Biochemistry Researcher" (1 courses affected)
+474. "Geology Researcher" (2 courses affected)
+475. "Electronics Researcher" (2 courses affected)
+476. "Geography Specialist" (1 courses affected)
+477. "Hindi Language Teacher" (2 courses affected)
+478. "Islamic Studies Scholar" (1 courses affected)
+479. "Archaeology Specialist" (1 courses affected)
+480. "Telugu Literature Scholar" (5 courses affected)
+481. "Political Science Professor" (3 courses affected)
+482. "Commerce Researcher" (3 courses affected)
+483. "Diploma Graduate" (1 courses affected)
+484. "Educational Researcher" (4 courses affected)
+485. "Social Entrepreneur" (4 courses affected)
+486. "Naval Architect" (1 courses affected)
+487. "Geoinformatics Specialist" (2 courses affected)
+488. "Ceramic Technology Engineer" (1 courses affected)
+489. "Senior Software Engineer" (1 courses affected)
+490. "CAD/CAM Specialist" (2 courses affected)
+491. "Environmental Planner" (1 courses affected)
+492. "Marine Biologist" (1 courses affected)
+493. "Applied Chemistry Specialist" (1 courses affected)
+494. "Mathematics Specialist" (5 courses affected)
+495. "Applied Mathematics Expert" (2 courses affected)
+496. "Electronics Specialist" (2 courses affected)
+497. "Geology Specialist" (2 courses affected)
+498. "Biotechnology Research Scientist" (2 courses affected)
+499. "Marine Biology Researcher" (2 courses affected)
+500. "Applied Chemistry Researcher" (1 courses affected)
+501. "Applied Mathematics Researcher" (1 courses affected)
+502. "Environmental Science Manager" (1 courses affected)
+503. "Geophysics Researcher" (1 courses affected)
+504. "Marine Geophysics Specialist" (1 courses affected)
+505. "Applied Economics Specialist" (1 courses affected)
+506. "Music Professional" (1 courses affected)
+507. "Telugu Language Expert" (1 courses affected)
+508. "French Language Teacher" (1 courses affected)
+509. "Applied Economics Consultant" (1 courses affected)
+510. "Quantitative Economics Analyst" (1 courses affected)
+511. "Archaeological Researcher" (2 courses affected)
+512. "Public Administration Expert" (1 courses affected)
+513. "Sociology Researcher" (2 courses affected)
+514. "Music Director" (1 courses affected)
+515. "Hindi Literature Expert" (2 courses affected)
+516. "Sanskrit Studies Scholar" (2 courses affected)
+517. "Accounting Specialist" (1 courses affected)
+518. "Hospital Administrator" (3 courses affected)
+519. "Special Education Teacher" (2 courses affected)
+520. "Special Education Specialist" (1 courses affected)
+521. "Adult Education Specialist" (1 courses affected)
+522. "Mass Communication Specialist" (1 courses affected)
+523. "Doctor of Pharmacy" (1 courses affected)
+524. "Women" (1 courses affected)
+525. "Integrated Economics Specialist" (1 courses affected)
+526. "Healthcare Professional" (4 courses affected)
+527. "Computer Systems Engineer" (1 courses affected)
+528. "General Science Professional" (2 courses affected)
+529. "Fashion Technology Specialist" (1 courses affected)
+530. "Research Scientist (Aquaculture)" (1 courses affected)
+531. "Applied Chemistry Expert" (1 courses affected)
+532. "Inorganic Chemistry Researcher" (1 courses affected)
+533. "Physical Chemistry Specialist" (1 courses affected)
+534. "Applied Statistics Specialist" (1 courses affected)
+535. "Applied Physics Specialist" (1 courses affected)
+536. "Environmental Botany Specialist" (1 courses affected)
+537. "Environmental Zoology Specialist" (1 courses affected)
+538. "Geography Researcher" (1 courses affected)
+539. "Buddhist Studies Scholar" (1 courses affected)
+540. "History Teacher" (3 courses affected)
+541. "Sociology Specialist" (1 courses affected)
+542. "Sports Administrator" (4 courses affected)
+543. "Technical Specialist" (3 courses affected)
+544. "Distance Education Graduate" (2 courses affected)
+545. "Environmental Consultant" (4 courses affected)
+546. "Professional Specialist" (2 courses affected)
+547. "Certificate Holder" (1 courses affected)
+548. "Statistics Specialist" (1 courses affected)
+549. "Scientific Researcher" (1 courses affected)
+550. "Horticulture Technology Specialist" (1 courses affected)
+551. "Fruit Production Specialist" (1 courses affected)
+552. "Floriculturist" (1 courses affected)
+553. "Fruit Science Researcher" (1 courses affected)
+554. "Vegetable Science Expert" (1 courses affected)
+555. "Floriculture & Landscaping Specialist" (1 courses affected)
+556. "Plantation Crops Manager" (1 courses affected)
+557. "Post Harvest Technology Expert" (1 courses affected)
+558. "Plant Pathologist" (2 courses affected)
+559. "Entomologist" (2 courses affected)
+560. "Soil Science Specialist" (1 courses affected)
+561. "Genetics & Plant Breeding Expert" (1 courses affected)
+562. "Natural Farming Specialist" (1 courses affected)
+563. "Agribusiness Development Officer" (1 courses affected)
+564. "Horticulture Technician" (1 courses affected)
+565. "Agricultural Technician" (2 courses affected)
+566. "Farm Supervisor" (1 courses affected)
+567. "Research Scientist (Fruit Science)" (1 courses affected)
+568. "Research Scientist (Vegetable Science)" (1 courses affected)
+569. "Research Scientist (Floriculture)" (1 courses affected)
+570. "Research Scientist (Plantation Crops)" (1 courses affected)
+571. "Research Scientist (Post Harvest)" (1 courses affected)
+572. "Plant Pathology Researcher" (1 courses affected)
+573. "Entomology Researcher" (1 courses affected)
+574. "Post Harvest Processing Manager" (1 courses affected)
+575. "Crop Protection Specialist" (2 courses affected)
+576. "Agricultural Extension Officer" (2 courses affected)
+577. "Sales Territory Manager" (1 courses affected)
+578. "Junior Sales Officer" (1 courses affected)
+579. "Farm Consultant" (1 courses affected)
+580. "Greenhouse Manager" (1 courses affected)
+581. "Food Processing Technician" (1 courses affected)
+582. "Organic Farming Consultant" (1 courses affected)
+583. "Landscape Designer" (1 courses affected)
+584. "Agricultural Researcher" (1 courses affected)
+585. "Government Agricultural Officer" (2 courses affected)
+586. "Agribusiness Entrepreneur" (2 courses affected)
+587. "Precision Agriculture Specialist" (2 courses affected)
+588. "Biotechnology Research Associate" (1 courses affected)
+589. "Farm Equipment Specialist" (1 courses affected)
+590. "Climate Smart Agriculture Expert" (2 courses affected)
+591. "Value Chain Manager" (2 courses affected)
+592. "Agricultural Data Analyst" (2 courses affected)
+593. "Export-Import Coordinator" (1 courses affected)
+594. "Sustainable Agriculture Consultant" (2 courses affected)
+595. "Agricultural Communication Specialist" (2 courses affected)
+596. "Mushroom Production Specialist" (1 courses affected)
+597. "Agricultural Training Coordinator" (2 courses affected)
+598. "Food Technology Expert" (1 courses affected)
+599. "Commerce Manager" (3 courses affected)
+600. "Psychology Counselor" (2 courses affected)
+601. "Research Specialist" (1 courses affected)
+602. "Research Fellow" (1 courses affected)
+603. "Science Research Specialist" (1 courses affected)
+604. "Quality Analyst" (1 courses affected)
+605. "Lab Technician" (1 courses affected)
+606. "Marine Conservation Specialist" (1 courses affected)
+607. "Tourism Development Officer" (1 courses affected)
+608. "Supply Chain Analyst" (1 courses affected)
+609. "Research Engineer (CSE)" (2 courses affected)
+610. "Medical Imaging Technologist" (1 courses affected)
+611. "Physician Assistant" (1 courses affected)
+612. "Respiratory Therapist" (1 courses affected)
+613. "Health Psychologist" (1 courses affected)
+614. "Genetics Specialist" (1 courses affected)
+615. "Biomedical Scientist" (1 courses affected)
+616. "Public Health Specialist" (1 courses affected)
+617. "Health Informatics Specialist" (1 courses affected)
+618. "Medical Biotechnology Researcher" (1 courses affected)
+619. "Advanced Medical Imaging Specialist" (1 courses affected)
+620. "Guidance Counselor" (1 courses affected)
+621. "Research Methodologist" (1 courses affected)
+622. "International Software Engineer" (1 courses affected)
+623. "SOC Analyst" (1 courses affected)
+624. "Penetration Tester" (1 courses affected)
+625. "Network Security Engineer" (1 courses affected)
+626. "Medical Technology Specialist" (1 courses affected)
+627. "AI/ML Specialist" (3 courses affected)
+628. "Digital Health Specialist" (1 courses affected)
+629. "Startup Entrepreneur" (2 courses affected)
+630. "International Career Professional" (1 courses affected)
+631. "Agricultural Officer" (1 courses affected)
+632. "Community Science Specialist" (1 courses affected)
+633. "Food Technology Engineer" (2 courses affected)
+634. "Plant Biotechnologist" (1 courses affected)
+635. "Plant Physiologist" (1 courses affected)
+636. "Plant Breeder" (1 courses affected)
+637. "Extension Specialist" (1 courses affected)
+638. "Soil and Water Conservation Engineer" (1 courses affected)
+639. "Farm Machinery Specialist" (1 courses affected)
+640. "Processing Technology Specialist" (1 courses affected)
+641. "Family Development Specialist" (1 courses affected)
+642. "Communication Specialist" (2 courses affected)
+643. "Textile Specialist" (1 courses affected)
+644. "Organic Farming Specialist" (1 courses affected)
+645. "Seed Technology Specialist" (1 courses affected)
+646. "Research Scientist (Agriculture)" (1 courses affected)
+647. "Research Scientist (Community Science)" (1 courses affected)
+648. "Agricultural Research Officer" (1 courses affected)
+649. "Farm Manager" (1 courses affected)
+650. "Agricultural Consultant" (1 courses affected)
+651. "Banking Professional (Agriculture)" (1 courses affected)
+652. "Sales Territory Manager (Agriculture)" (1 courses affected)
+653. "Food Processing Manager" (1 courses affected)
+654. "Fertilizer Sales Executive" (1 courses affected)
+655. "Agricultural Machinery Specialist" (1 courses affected)
+656. "Food Safety Officer" (1 courses affected)
+657. "Agricultural Export Coordinator" (1 courses affected)
+658. "IoT Engineer" (2 courses affected)
+659. "Digital Systems Designer" (1 courses affected)
+660. "Forensic Science Expert" (1 courses affected)
+661. "Life Sciences Researcher" (1 courses affected)
+662. "Allied Health Professional" (1 courses affected)
+663. "Nursing Professional" (1 courses affected)
+664. "Advanced Biotechnology Researcher" (1 courses affected)
+665. "Research Scientist (General)" (1 courses affected)
+666. "Visual Communication Specialist" (1 courses affected)
+667. "Advanced English Studies Specialist" (1 courses affected)
+668. "Digital Media Specialist" (1 courses affected)
+669. "Hotel Manager" (1 courses affected)
+670. "Healthcare Technology Specialist" (2 courses affected)
+671. "Content Creator" (1 courses affected)
+672. "English Literature Teacher" (1 courses affected)
+673. "Aquaculture Specialist" (1 courses affected)
+674. "Research Scientist (English)" (1 courses affected)
+675. "Research Scientist (Botany & Microbiology)" (1 courses affected)
+676. "Research Scientist (Zoology & Aquaculture)" (1 courses affected)
+677. "Research Scientist (Mathematics)" (1 courses affected)
+678. "Research Scientist (Environmental Science)" (1 courses affected)
+679. "Research Scientist (History)" (1 courses affected)
+680. "Research Scientist (Physics)" (1 courses affected)
+681. "Research Scientist (Economics)" (1 courses affected)
+682. "Research Scientist (Pharmaceutical Sciences)" (1 courses affected)
+683. "Research Scientist (Chemistry)" (1 courses affected)
+684. "Government Teacher" (1 courses affected)
+685. "Laboratory Analyst" (1 courses affected)
+686. "Chemical Analyst" (1 courses affected)
+687. "Mining Technician" (1 courses affected)
+688. "Educational Content Developer" (1 courses affected)
+689. "Social Development Officer" (1 courses affected)
+690. "Quality Control Officer" (1 courses affected)
+691. "Economics Research Analyst" (1 courses affected)
+692. "Advocate/Litigation Lawyer" (1 courses affected)
+693. "Constitutional Law Expert" (1 courses affected)
+694. "Commercial Law Specialist" (1 courses affected)
+695. "Criminal Law Expert" (1 courses affected)
+696. "Alternative Dispute Resolution Specialist" (1 courses affected)
+697. "Legal Research Scholar" (1 courses affected)
+698. "Senior Legal Academic" (1 courses affected)
+699. "Law Firm Associate" (1 courses affected)
+700. "Corporate Legal Counsel" (1 courses affected)
+701. "Banking Legal Advisor" (1 courses affected)
+702. "Judicial Services Officer" (1 courses affected)
+703. "Public Prosecutor" (1 courses affected)
+704. "Legal Consultant" (1 courses affected)
+705. "Environmental Law Specialist" (1 courses affected)
+706. "Intellectual Property Lawyer" (1 courses affected)
+707. "Tax Law Expert" (1 courses affected)
+708. "Labour Law Specialist" (1 courses affected)
+709. "International Law Expert" (1 courses affected)
+710. "Cyber Law Specialist" (1 courses affected)
+711. "Legal Aid Lawyer" (1 courses affected)
+712. "Contract Law Specialist" (1 courses affected)
+713. "Family Law Practitioner" (1 courses affected)
+714. "Administrative Law Expert" (1 courses affected)
+715. "Securities Law Specialist" (1 courses affected)
+716. "Insurance Law Expert" (1 courses affected)
+717. "Real Estate Lawyer" (1 courses affected)
+718. "Immigration Lawyer" (1 courses affected)
+719. "Sports Law Specialist" (1 courses affected)
+720. "Healthcare Law Expert" (1 courses affected)
+721. "Maritime Law Specialist" (1 courses affected)
+722. "Aviation Law Expert" (1 courses affected)
+723. "Energy Law Specialist" (1 courses affected)
+724. "Competition Law Expert" (1 courses affected)
+725. "Privacy Law Specialist" (1 courses affected)
+726. "International Trade Lawyer" (1 courses affected)
+727. "Arbitration Specialist" (1 courses affected)
+728. "Mediation Expert" (1 courses affected)
+729. "Legal Technology Consultant" (1 courses affected)
+730. "Legal Project Manager" (1 courses affected)
+731. "Law Library Manager" (1 courses affected)
+732. "Legal Education Administrator" (1 courses affected)
+733. "Court Administrator" (1 courses affected)
+734. "Legal Policy Analyst" (1 courses affected)
+735. "Government Legal Advisor" (1 courses affected)
+736. "Legislative Drafter" (1 courses affected)
+737. "Legal Entrepreneur" (1 courses affected)
+738. "International Organization Legal Officer" (1 courses affected)
+739. "Law Firm Partner" (1 courses affected)
+740. "Economic Policy Analyst" (1 courses affected)
+741. "Chemistry Research Analyst" (1 courses affected)
+742. "Music Teacher/Performer" (1 courses affected)
+743. "Education Specialist" (1 courses affected)
+744. "Senior Business Manager" (1 courses affected)
+745. "Senior Economic Advisor" (1 courses affected)
+746. "Philosophical Researcher" (1 courses affected)
+747. "Senior Chemistry Researcher" (1 courses affected)
+748. "Senior Biotechnology Scientist" (2 courses affected)
+749. "Food Science Manager" (1 courses affected)
+750. "Advanced Statistics Consultant" (1 courses affected)
+751. "Optoelectronics Engineer" (1 courses affected)
+752. "Communications Systems Engineer" (1 courses affected)
+753. "Materials Science Engineer" (1 courses affected)
+754. "Senior Research Scientist (Mathematics)" (1 courses affected)
+755. "Senior Research Scientist (Physics)" (1 courses affected)
+756. "Senior Research Scientist (Materials Science)" (1 courses affected)
+757. "Senior Research Scientist (Chemistry)" (1 courses affected)
+758. "Senior Research Scientist (Food Science)" (1 courses affected)
+759. "Senior Research Scientist (Economics)" (1 courses affected)
+760. "Landscape Design Consultant" (1 courses affected)
+761. "Sustainable Development Specialist" (1 courses affected)
+762. "Smart City Planner" (1 courses affected)
+763. "Real Estate Developer" (1 courses affected)
+764. "CAD/Design Specialist" (1 courses affected)
+765. "Structural Consultant" (1 courses affected)
+766. "Municipal Planner" (1 courses affected)
+767. "Green Building Specialist" (1 courses affected)
+768. "Research Analyst (Built Environment)" (1 courses affected)
+769. "Facility Manager" (1 courses affected)
+770. "Project Coordinator (Architecture)" (1 courses affected)
+771. "Building Code Official" (1 courses affected)
+772. "Visualization Specialist" (1 courses affected)
+773. "Housing Policy Analyst" (1 courses affected)
+774. "Climate Change Adaptation Specialist" (1 courses affected)
+775. "Community Development Planner" (1 courses affected)
+776. "Energy Efficiency Consultant" (1 courses affected)
+777. "Parametric Design Specialist" (1 courses affected)
+778. "International Development Consultant" (1 courses affected)
+779. "IT Specialist" (2 courses affected)
+780. "Mechatronics Engineer" (1 courses affected)
+781. "Post Baccalaureate Doctor of Pharmacy" (1 courses affected)
+782. "Advanced Manufacturing Specialist" (1 courses affected)
+783. "Senior Biotechnology Researcher" (1 courses affected)
+784. "Senior Civil Engineer" (1 courses affected)
+785. "Network Security Specialist" (1 courses affected)
+786. "Control Systems Specialist" (1 courses affected)
+787. "Digital Systems Engineer" (1 courses affected)
+788. "Nanotechnology Researcher" (1 courses affected)
+789. "Food Technology Specialist" (1 courses affected)
+790. "Biochemistry Specialist" (1 courses affected)
+791. "Pharmacology Researcher" (1 courses affected)
+792. "Pharmaceutical Chemistry Specialist" (1 courses affected)
+793. "Science Research Scientist" (1 courses affected)
+794. "IT Services Professional" (1 courses affected)
+795. "Banking Technology Specialist" (1 courses affected)
+796. "Healthcare Technology Professional" (1 courses affected)
+797. "Project Engineer" (1 courses affected)
+798. "Business Consultant" (1 courses affected)
+799. "Test Engineer" (1 courses affected)
+800. "Quality Control Manager" (1 courses affected)
+801. "Entrepreneurship Developer" (1 courses affected)
+802. "Information Systems Engineer" (1 courses affected)
+803. "Medical Electronics Engineer" (1 courses affected)
+804. "Telecommunication Engineer" (1 courses affected)
+805. "Applied Scientist" (1 courses affected)
+806. "Advanced Civil Engineer" (1 courses affected)
+807. "Thermal Systems Specialist" (1 courses affected)
+808. "Industrial Drives Specialist" (1 courses affected)
+809. "VLSI Systems Engineer" (1 courses affected)
+810. "Cybersecurity Expert" (1 courses affected)
+811. "Surgical Specialist" (1 courses affected)
+812. "Dental Specialist" (1 courses affected)
+813. "Legal Practitioner" (1 courses affected)
+814. "Medical Research Scientist" (1 courses affected)
+815. "Basic Science Researcher" (1 courses affected)
+816. "Software Developer (Amazon)" (1 courses affected)
+817. "Technology Consultant (PayPal)" (1 courses affected)
+818. "Network Engineer (Cisco)" (1 courses affected)
+819. "Business Analyst (Accenture)" (1 courses affected)
+820. "Telecommunications Engineer (AT&T)" (1 courses affected)
+821. "Wireless Engineer (Verizon)" (1 courses affected)
+822. "IT Services Professional (TCS)" (1 courses affected)
+823. "Software Engineer (Infosys)" (1 courses affected)
+824. "Quality Engineer (Wipro)" (1 courses affected)
+825. "Technology Analyst (Cognizant)" (1 courses affected)
+826. "Systems Engineer (Capgemini)" (1 courses affected)
+827. "Software Developer (Tech Mahindra)" (1 courses affected)
+
+════════════════════════════════════════════════════════════
+✨ Upload process completed!
+════════════════════════════════════════════════════════════
+
+💡 SUGGESTIONS:
+════════════════════════════════════════════════════════════
+• Add missing categories to your database before re-uploading failed courses
+

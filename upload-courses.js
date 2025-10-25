@@ -192,7 +192,7 @@ async function uploadAllCourses() {
   console.log("╚════════════════════════════════════════════════════════════╝\n");
 
   // Load course data from JSON file
-  const jsonFilePath = path.join(process.cwd(), "all-cources-data.json");
+  const jsonFilePath = path.join(process.cwd(), "bulk-upload/courses/courses-data-part-1.json");
   
   console.log(`📂 Reading course data from: ${jsonFilePath}`);
   
