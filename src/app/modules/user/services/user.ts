@@ -125,6 +125,30 @@ class UserService {
     await user.save();
     return userToken;
   }
+
+  async getHomeData(userId: string): Promise<any> {
+    // Get user by ID
+    const user = await this.userRepository.getUserById(userId);
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Get user's selected categories
+    const userCategories = await this.userRepository.getCategoriesByIds(user.categoryIds || []);
+
+    // Get popular universities
+    const popularUniversities = await this.userRepository.getPopularUniversities(10);
+
+    // Get popular courses
+    const popularCourses = await this.userRepository.getPopularCourses(20);
+
+    return {
+      userCategories,
+      popularUniversities,
+      popularCourses
+    };
+  }
 }
 
 export default UserService;

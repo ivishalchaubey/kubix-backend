@@ -18,12 +18,15 @@ import { AppError } from "../../../middlewares/errorHandler.js";
 import logger from "../../../utils/logger.js";
 import { UserCourseLiked } from "../models/usercourseliked.js";
 import { Types } from "mongoose";
+import emailService, { EmailService } from "../../../utils/emailService.js";
 
 class AuthService {
   private authRepository: AuthRepository;
+  private emailService: EmailService;
 
   constructor() {
     this.authRepository = new AuthRepository();
+    this.emailService = new EmailService();
   }
 
   /**
@@ -135,6 +138,19 @@ class AuthService {
 
       // Generate OTP
       const otp = crypto.randomInt(100000, 999999).toString();
+      
+      // Send OTP email with error handling
+      const emailSent = await emailService.sendEmail({
+        to: email,
+        subject: 'OTP for Login',
+        text: `Your OTP for login is ${otp}`,
+        html: `<p>Your OTP for login is <strong>${otp}</strong></p>`
+      });
+
+      if (!emailSent) {
+        throw new Error('Failed to send OTP email');
+      }
+
       return await this.authRepository.setOtp(email, otp);
     } catch (error) {
       logger.error("Send OTP failed:", error);
