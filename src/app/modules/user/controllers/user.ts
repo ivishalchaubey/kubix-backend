@@ -123,6 +123,24 @@ class UserController {
       next(error);
     }
   }
+
+  async getHomeData(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.user || !req.user._id) {
+        ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
+        return;
+      }
+      const UserId = req.user._id;
+      const user = await this.userService.getHomeData(UserId);
+      ResponseUtil.success(res, user, API_MESSAGES.USER.HOME_DATA_FETCHED);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default UserController;

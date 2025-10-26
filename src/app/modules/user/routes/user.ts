@@ -13,6 +13,6 @@ userRouter.get("/likedCourses", AuthMiddleware.authenticate, asyncHandler((req :
 userRouter.get("/bookmarkedCourses", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.bookmarkedCourses(req, res, next)));
 
 userRouter.patch("/update/token", AuthMiddleware.authenticate, asyncHandler((req : Request, res : Response, next : NextFunction) => userController.updateToken(req, res, next)));
-
+userRouter.get("/homedata",AuthMiddleware.authenticate ,asyncHandler((req : Request, res : Response, next : NextFunction) => userController.getHomeData(req, res, next)));
 
 export default userRouter;
