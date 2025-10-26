@@ -34,7 +34,6 @@ class UserRepository {
       role: "university",
       status: "active" 
     })
-    .select('firstName lastName email profileImage collegeName collegeCode location')
     .limit(limit)
     .lean();
   }
