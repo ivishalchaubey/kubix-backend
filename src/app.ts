@@ -12,6 +12,7 @@ import ImageRouter from "./app/modules/auth/routes/imageUploadRoutes.js";
 import notificationRouter from "./app/modules/notifications/routes/notification.routes.js";
 import paymentRouter from "./app/modules/payments/routes/payment.js";
 import stripeRoutes from "./app/modules/stripe/routes/stripe.routes.js";
+import exploreRouter from "./app/modules/explore/routes/exploreRoutes.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -53,6 +54,7 @@ app.use("/api/v1/image", ImageRouter);
 app.use("/api/v1/notifications", notificationRouter);
 app.use("/api/v1/payments", paymentRouter);
 app.use("/api/v1/stripe", stripeRoutes);
+app.use("/api/v1/explore", exploreRouter);
 
 // Handle undefined routes
 app.all("*", (req: Request, res: Response) => {
