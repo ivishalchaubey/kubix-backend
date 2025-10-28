@@ -43,7 +43,10 @@ class CourseRepository {
         query.name = { $regex: search.trim(), $options: "i" };
       }
       
-      return Course.find(query).populate("UniversityId");
+      return Course.find(query).populate({
+        path: "UniversityId",
+        select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+      });
     })
   );
 
@@ -54,15 +57,24 @@ class CourseRepository {
 };
 
   getUserCoursesbyId = async (courseId: string): Promise<any> => {
-    return await Course.findById(courseId).populate("UniversityId");
+    return await Course.findById(courseId).populate({
+      path: "UniversityId",
+      select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+    });
   }
 
   getCoursesByCategory = async (categoryId: string): Promise<any> => {
-    return await Course.find({ categoryId: categoryId }).populate("UniversityId");
+    return await Course.find({ categoryId: categoryId }).populate({
+      path: "UniversityId",
+      select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+    });
   }
 
   getCourses = async (): Promise<any> => {
-    return await Course.find().populate("UniversityId");
+    return await Course.find().populate({
+      path: "UniversityId",
+      select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+    });
   }
 
   getUniversityCourses = async (universityId: string): Promise<any[]> => {

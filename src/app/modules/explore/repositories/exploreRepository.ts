@@ -149,7 +149,10 @@ class ExploreRepository {
     
     for (const categoryId of user.categoryIds) {
       const courses = await Course.find({ categoryId })
-        .populate('UniversityId')
+        .populate({
+          path: 'UniversityId',
+          select: '-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires'
+        })
         .populate('categoryId')
         .populate('parentCategoryId')
         .lean();
@@ -229,7 +232,10 @@ class ExploreRepository {
     }
 
     const course = await Course.findById(courseId)
-      .populate('UniversityId')
+      .populate({
+        path: 'UniversityId',
+        select: '-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires'
+      })
       .populate('categoryId')
       .populate('parentCategoryId')
       .lean();

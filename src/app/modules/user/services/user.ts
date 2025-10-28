@@ -83,7 +83,6 @@ class UserService {
 
   async getLikedCourse(userId: string, filter: any): Promise<any> {
     try {
-      console.log("Getting liked courses for user:", userId);
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         throw new Error("Invalid user ID format");
       }
@@ -91,17 +90,21 @@ class UserService {
       const user = await this.userRepository.getLikedCourse(
         userObjectId.toString()
       );
-      console.log("Found liked courses:", user);
       return user || [];
     } catch (error) {
-      console.error("Error in getLikedCourse:", error);
       throw error;
     }
   }
 
   async getBookmarkedCourses(userId: string): Promise<any> {
     const user = await User.findById(userId)
-      .populate("bookmarkedCourses")
+      .populate({
+        path: "bookmarkedCourses",
+        populate: {
+          path: "UniversityId",
+          select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+        }
+      })
       .lean();
     if (!user) {
       throw new Error("User not found");

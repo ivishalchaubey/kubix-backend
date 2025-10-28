@@ -15,7 +15,15 @@ class UserRepository {
   }
 
   async getLikedCourse(userId: string): Promise<any> {
-    return await UserCourseLiked.find({ userId: userId, status: "active" }).populate('courseId').lean();
+    return await UserCourseLiked.find({ userId: userId, status: "active" })
+      .populate({
+        path: 'courseId',
+        populate: {
+          path: 'UniversityId',
+          select: '-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires'
+        }
+      })
+      .lean();
   }
 
   async getUserById(userId: string): Promise<any> {

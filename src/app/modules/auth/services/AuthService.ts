@@ -136,6 +136,15 @@ class AuthService {
         );
       }
 
+      // Check if email service is available
+      if (!emailService.isAvailable()) {
+        logger.error("Email service is not configured or unavailable");
+        throw new AppError(
+          "Email service is not configured. Please contact administrator.",
+          HttpStatus.SERVICE_UNAVAILABLE
+        );
+      }
+
       // Generate OTP
       const otp = crypto.randomInt(100000, 999999).toString();
       
@@ -148,10 +157,18 @@ class AuthService {
       });
 
       if (!emailSent) {
-        throw new Error('Failed to send OTP email');
+        logger.error(`Failed to send OTP email to ${email}`);
+        throw new AppError(
+          "Failed to send OTP email. Please try again later.",
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
       }
 
-      return await this.authRepository.setOtp(email, otp);
+      // Save OTP to database
+      const updatedUser = await this.authRepository.setOtp(email, otp);
+      logger.info(`OTP sent successfully to ${email}`);
+      
+      return updatedUser;
     } catch (error) {
       logger.error("Send OTP failed:", error);
       throw error;
