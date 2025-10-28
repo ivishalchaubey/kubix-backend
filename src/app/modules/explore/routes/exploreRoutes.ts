@@ -12,4 +12,10 @@ exploreRouter.get(
   exploreController.explore.bind(exploreController)
 );
 
+// Detail endpoint with type and id parameters
+exploreRouter.get(
+  "/detail",
+  exploreController.detail.bind(exploreController)
+);
+
 export default exploreRouter;

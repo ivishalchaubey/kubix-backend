@@ -18,8 +18,8 @@ export interface ICourse extends Document {
 const CourseSchema = new Schema<ICourse>(
   {
     name: { type: String, required: true },
-    categoryId: { type: [mongoose.Schema.Types.ObjectId], required: true },
-    parentCategoryId: { type: [mongoose.Schema.Types.ObjectId], required: true },
+    categoryId: { type: [mongoose.Schema.Types.ObjectId], required: true, ref: "Category" },
+    parentCategoryId: { type: [mongoose.Schema.Types.ObjectId], required: true, ref: "Category" },
     description: { type: String, default: "" },
     image: { type: String, default: "" },
     duration: { type: String, default: "" },

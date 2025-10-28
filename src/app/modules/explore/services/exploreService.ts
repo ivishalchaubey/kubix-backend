@@ -63,6 +63,48 @@ class ExploreService {
       throw error;
     }
   }
+
+  /**
+   * Get career detail by ID
+   */
+  async getCareerDetail(careerId: string): Promise<any> {
+    try {
+      const career = await this.exploreRepository.getCareerDetail(careerId);
+      logger.info(`Career detail retrieved for ID: ${careerId}`);
+      return career;
+    } catch (error) {
+      logger.error("Get career detail failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get college detail by ID
+   */
+  async getCollegeDetail(collegeId: string): Promise<any> {
+    try {
+      const college = await this.exploreRepository.getCollegeDetail(collegeId);
+      logger.info(`College detail retrieved for ID: ${collegeId}`);
+      return college;
+    } catch (error) {
+      logger.error("Get college detail failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get course detail by ID
+   */
+  async getCourseDetail(courseId: string): Promise<any> {
+    try {
+      const course = await this.exploreRepository.getCourseDetail(courseId);
+      logger.info(`Course detail retrieved for ID: ${courseId}`);
+      return course;
+    } catch (error) {
+      logger.error("Get course detail failed:", error);
+      throw error;
+    }
+  }
 }
 
 export default ExploreService;

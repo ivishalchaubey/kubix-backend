@@ -151,6 +151,7 @@ class ExploreRepository {
       const courses = await Course.find({ categoryId })
         .populate('UniversityId')
         .populate('categoryId')
+        .populate('parentCategoryId')
         .lean();
       allCourses.push(...courses);
     }
@@ -176,6 +177,68 @@ class ExploreRepository {
     const courses = uniqueCourses.slice(skip, skip + limit);
 
     return { courses, total };
+  }
+
+  /**
+   * Get career detail by ID with all populated fields
+   */
+  async getCareerDetail(careerId: string): Promise<any> {
+    if (!Types.ObjectId.isValid(careerId)) {
+      throw new AppError("Invalid career ID", HttpStatus.BAD_REQUEST);
+    }
+
+    const career = await CategoryModel.findById(careerId)
+      .populate('parentId')
+      .lean();
+
+    if (!career) {
+      throw new AppError("Career not found", HttpStatus.NOT_FOUND);
+    }
+
+    return career;
+  }
+
+  /**
+   * Get college detail by ID with all populated fields
+   */
+  async getCollegeDetail(collegeId: string): Promise<any> {
+    if (!Types.ObjectId.isValid(collegeId)) {
+      throw new AppError("Invalid college ID", HttpStatus.BAD_REQUEST);
+    }
+
+    const college = await User.findOne({ 
+      _id: collegeId, 
+      role: UserRole.UNIVERSITY 
+    })
+      .select('-password -refreshToken -accessToken -otp -otpExpires')
+      .lean();
+
+    if (!college) {
+      throw new AppError("College not found", HttpStatus.NOT_FOUND);
+    }
+
+    return college;
+  }
+
+  /**
+   * Get course detail by ID with all populated fields
+   */
+  async getCourseDetail(courseId: string): Promise<any> {
+    if (!Types.ObjectId.isValid(courseId)) {
+      throw new AppError("Invalid course ID", HttpStatus.BAD_REQUEST);
+    }
+
+    const course = await Course.findById(courseId)
+      .populate('UniversityId')
+      .populate('categoryId')
+      .populate('parentCategoryId')
+      .lean();
+
+    if (!course) {
+      throw new AppError("Course not found", HttpStatus.NOT_FOUND);
+    }
+
+    return course;
   }
 }
 

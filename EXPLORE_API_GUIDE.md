@@ -4,10 +4,18 @@
 
 The Explore API allows users to browse Careers, Colleges, and Courses with pagination support. The API filters results based on the user's selected categories and provides a unified endpoint with type-based filtering.
 
-## Endpoint
+## Endpoints
+
+### 1. Explore List
 
 ```
 GET /api/v1/explore
+```
+
+### 2. Detail View
+
+```
+GET /api/v1/explore/detail
 ```
 
 ## Authentication
@@ -165,7 +173,7 @@ Returns all courses relevant to the user's selected categories with populated ca
 - Gets the user's selected categories (stored in `categoryIds`)
 - Finds all courses that have at least one matching category
 - Deduplicates courses (in case a course matches multiple user categories)
-- Returns courses with university information and categoryId populated
+- Returns courses with university information, categoryId, and parentCategoryId populated
 
 **Search Fields:**
 
@@ -210,7 +218,14 @@ curl -X GET 'http://localhost:5000/api/v1/explore?type=courses&page=1&limit=10&s
           "order": 3
         }
       ],
-      "parentCategoryId": ["60d5ec49f1b2c72b8c8b4565"],
+      "parentCategoryId": [
+        {
+          "_id": "60d5ec49f1b2c72b8c8b4565",
+          "name": "Engineering",
+          "description": "Engineering field",
+          "order": 2
+        }
+      ],
       "UniversityId": {
         "_id": "60d5ec49f1b2c72b8c8b4564",
         "firstName": "MIT",
@@ -368,7 +383,7 @@ GET /api/v1/explore?type=courses&search=javascript
 
 1. **Careers**: Returns ONLY siblings of user's selected categories, helping discover related career paths to their specific choices
 2. **Colleges**: Does not require user category selection - returns all universities
-3. **Courses**: Returns courses that match any of the user's selected categories, with deduplication and populated categoryId
+3. **Courses**: Returns courses that match any of the user's selected categories, with deduplication and all IDs populated (UniversityId, categoryId, parentCategoryId)
 4. **Type Parameter**: Use lowercase (careers, colleges, courses) - the API automatically converts uppercase to lowercase
 
 ## Integration Example
@@ -421,4 +436,236 @@ curl -X GET 'http://localhost:5000/api/v1/explore?type=colleges&page=1&limit=5&s
 
 curl -X GET 'http://localhost:5000/api/v1/explore?type=courses&page=1&limit=5&search=programming' \
   -H 'Authorization: Bearer YOUR_TOKEN'
+```
+
+---
+
+## Detail Endpoint
+
+The detail endpoint returns comprehensive information about a specific item with all IDs populated.
+
+### Endpoint
+
+```
+GET /api/v1/explore/detail
+```
+
+### Query Parameters
+
+| Parameter | Type   | Required | Description                                          |
+| --------- | ------ | -------- | ---------------------------------------------------- |
+| type      | string | Yes      | Type of content: `careers`, `colleges`, or `courses` |
+| id        | string | Yes      | MongoDB ObjectId of the item                         |
+
+### Response Examples
+
+#### Career Detail (type=careers)
+
+**Request:**
+
+```bash
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=careers&id=60d5ec49f1b2c72b8c8b4567'
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Career detail retrieved successfully",
+  "data": {
+    "_id": "60d5ec49f1b2c72b8c8b4567",
+    "name": "Software Engineer",
+    "description": "Develops software applications and systems",
+    "image": "https://example.com/career-image.jpg",
+    "parentId": {
+      "_id": "60d5ec49f1b2c72b8c8b4566",
+      "name": "Engineering",
+      "description": "Engineering field"
+    },
+    "order": 3,
+    "isLeafNode": true,
+    "a_day_in_life": "Start day with standup meeting...",
+    "core_skills": {
+      "technical": ["JavaScript", "Python", "React"],
+      "soft": ["Communication", "Problem Solving"]
+    },
+    "educational_path": {
+      "ug_courses": ["Computer Science", "Software Engineering"],
+      "pg_courses": ["Advanced Software Engineering", "Data Science"]
+    },
+    "salary_range": "3-8 LPA",
+    "future_outlook": {
+      "demand": "High",
+      "reason": "Digital transformation and increased tech adoption"
+    },
+    "soft_skills": ["Teamwork", "Adaptability"],
+    "checklist": ["Learn programming", "Build projects", "Get internship"],
+    "education_10_2": "Science stream preferred",
+    "education_graduation": "B.Tech/BE in Computer Science",
+    "myth": "You need to be a math genius",
+    "reality": "Problem-solving skills are more important",
+    "pros": ["High salary", "Remote work options", "Creative work"],
+    "cons": ["Long hours", "Constant learning required"],
+    "superstar1": "Sundar Pichai",
+    "superstar2": "Satya Nadella",
+    "superstar3": "Tim Cook",
+    "related_careers": ["Data Scientist", "DevOps Engineer"],
+    "growth_path": "Junior → Senior → Tech Lead → Architect",
+    "qualifying_exams": ["GATE", "JEE"],
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  "statusCode": 200
+}
+```
+
+#### College Detail (type=colleges)
+
+**Request:**
+
+```bash
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=colleges&id=60d5ec49f1b2c72b8c8b4567'
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "College detail retrieved successfully",
+  "data": {
+    "_id": "60d5ec49f1b2c72b8c8b4567",
+    "firstName": "MIT",
+    "lastName": "University",
+    "email": "info@mit.edu",
+    "phoneNumber": "1234567890",
+    "countryCode": "+1",
+    "role": "university",
+    "collegeName": "Massachusetts Institute of Technology",
+    "collegeCode": "MIT001",
+    "location": "Cambridge, MA",
+    "address": "77 Massachusetts Ave, Cambridge, MA 02139",
+    "specialization": "Technology and Engineering",
+    "description": "Leading research university focusing on science and technology",
+    "status": "active",
+    "bannerYoutubeVideoLink": "https://youtube.com/watch?v=...",
+    "profileImage": "https://example.com/mit-logo.jpg",
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  "statusCode": 200
+}
+```
+
+#### Course Detail (type=courses)
+
+**Request:**
+
+```bash
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=courses&id=60d5ec49f1b2c72b8c8b4567'
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Course detail retrieved successfully",
+  "data": {
+    "_id": "60d5ec49f1b2c72b8c8b4567",
+    "name": "Introduction to Computer Science",
+    "description": "Learn the fundamentals of computer science and programming",
+    "image": "https://example.com/course-image.jpg",
+    "duration": "12 weeks",
+    "amount": 4999,
+    "currency": "INR",
+    "chapters": 10,
+    "categoryId": [
+      {
+        "_id": "68d18fe81c39b017056add7a",
+        "name": "Computer Science",
+        "description": "Computer science career path",
+        "parentId": "60d5ec49f1b2c72b8c8b4565",
+        "order": 3,
+        "isLeafNode": true
+      }
+    ],
+    "parentCategoryId": [
+      {
+        "_id": "60d5ec49f1b2c72b8c8b4565",
+        "name": "Engineering",
+        "description": "Engineering field",
+        "order": 2
+      }
+    ],
+    "UniversityId": {
+      "_id": "60d5ec49f1b2c72b8c8b4564",
+      "firstName": "MIT",
+      "lastName": "University",
+      "email": "info@mit.edu",
+      "collegeName": "Massachusetts Institute of Technology",
+      "location": "Cambridge, MA",
+      "profileImage": "https://example.com/mit-logo.jpg"
+    },
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  "statusCode": 200
+}
+```
+
+### Error Responses for Detail Endpoint
+
+#### 400 Bad Request - Missing Type
+
+```json
+{
+  "success": false,
+  "message": "Type parameter is required. Valid types: careers, colleges, courses",
+  "statusCode": 400
+}
+```
+
+#### 400 Bad Request - Missing ID
+
+```json
+{
+  "success": false,
+  "message": "ID parameter is required",
+  "statusCode": 400
+}
+```
+
+#### 400 Bad Request - Invalid ID Format
+
+```json
+{
+  "success": false,
+  "message": "Invalid career ID",
+  "statusCode": 400
+}
+```
+
+#### 404 Not Found - Item Not Found
+
+```json
+{
+  "success": false,
+  "message": "Career not found",
+  "statusCode": 404
+}
+```
+
+### Detail Endpoint Testing
+
+```bash
+# Get career detail
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=careers&id=YOUR_CAREER_ID'
+
+# Get college detail
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=colleges&id=YOUR_COLLEGE_ID'
+
+# Get course detail
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=courses&id=YOUR_COURSE_ID'
 ```

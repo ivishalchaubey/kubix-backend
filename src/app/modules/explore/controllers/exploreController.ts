@@ -79,6 +79,59 @@ class ExploreController {
       next(error);
     }
   }
+
+  /**
+   * Detail API - Get detailed information based on type and ID
+   * Supports: careers, colleges, courses with all populated fields
+   */
+  async detail(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const type = (req.query.type as string)?.toLowerCase();
+      const id = req.query.id as string;
+
+      // Validate type parameter
+      if (!type) {
+        ResponseUtil.badRequest(res, "Type parameter is required. Valid types: careers, colleges, courses");
+        return;
+      }
+
+      // Validate id parameter
+      if (!id) {
+        ResponseUtil.badRequest(res, "ID parameter is required");
+        return;
+      }
+
+      let result: any;
+      let message: string;
+
+      // Get detail based on type (lowercase)
+      switch (type) {
+        case 'careers':
+          result = await this.exploreService.getCareerDetail(id);
+          message = "Career detail retrieved successfully";
+          break;
+
+        case 'colleges':
+          result = await this.exploreService.getCollegeDetail(id);
+          message = "College detail retrieved successfully";
+          break;
+
+        case 'courses':
+          result = await this.exploreService.getCourseDetail(id);
+          message = "Course detail retrieved successfully";
+          break;
+
+        default:
+          ResponseUtil.badRequest(res, "Invalid type parameter. Valid types: careers, colleges, courses");
+          return;
+      }
+
+      // Send response
+      ResponseUtil.success(res, result, message);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default ExploreController;
