@@ -444,6 +444,48 @@ class AuthRepository {
       "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
     );
   }
+
+  /**
+   * Find users by role with pagination and search
+   */
+  async findUsersByRoleWithPagination(
+    role: string,
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<{ users: IUser[]; total: number; page: number; totalPages: number }> {
+    const skip = (page - 1) * limit;
+    
+    // Build search query
+    const query: any = { role };
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { universityName: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Get total count
+    const total = await User.countDocuments(query);
+    
+    // Get paginated results
+    const users = await User.find(query)
+      .select(
+        "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+      )
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    return {
+      users,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
 }
 
 export default AuthRepository;

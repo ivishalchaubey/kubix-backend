@@ -495,7 +495,7 @@ let updateData: any = {};
   }
 
   /**
-   * Get list of universities
+   * Get list of universities with pagination and search
    */
   getUniversities = async (
     req: Request,
@@ -503,9 +503,31 @@ let updateData: any = {};
     next: NextFunction
   ): Promise<void> => {
     try {
-      const universities = await this.authService.getUniversities();
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const search = req.query.search as string | undefined;
 
-      ResponseUtil.success(res, { universities }, "Universities retrieved successfully");
+      // Validate page and limit
+      if (page < 1) {
+        ResponseUtil.badRequest(res, "Page must be greater than 0");
+        return;
+      }
+      if (limit < 1 || limit > 100) {
+        ResponseUtil.badRequest(res, "Limit must be between 1 and 100");
+        return;
+      }
+
+      const result = await this.authService.getUniversitiesWithPagination(
+        page,
+        limit,
+        search
+      );
+
+      ResponseUtil.success(
+        res,
+        result,
+        "Universities retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }

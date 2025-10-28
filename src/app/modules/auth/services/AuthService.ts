@@ -788,6 +788,39 @@ class AuthService {
   }
 
   /**
+   * Get list of universities with pagination and search
+   */
+  async getUniversitiesWithPagination(
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<{ universities: IUser[]; total: number; page: number; totalPages: number; limit: number }> {
+    try {
+      const result = await this.authRepository.findUsersByRoleWithPagination(
+        "university",
+        page,
+        limit,
+        search
+      );
+
+      logger.info(
+        `Retrieved ${result.users.length} universities (Page ${page}/${result.totalPages}, Total: ${result.total})`
+      );
+      
+      return {
+        universities: result.users,
+        total: result.total,
+        page: result.page,
+        totalPages: result.totalPages,
+        limit,
+      };
+    } catch (error) {
+      logger.error("Get universities with pagination failed:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Update user course payment status
    */
   async updateUserCoursePaymentStatus(
