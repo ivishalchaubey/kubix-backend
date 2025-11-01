@@ -93,6 +93,16 @@ export const API_MESSAGES = {
     WEBINAR_PUBLISHED: "Webinar published successfully. 5000 KX coins deducted",
     WEBINAR_NOT_FOUND: "Webinar not found",
   },
+  APPLICATION_SALES:{
+    CREATED: "Application sale created successfully",
+    UPDATED: "Application sale updated successfully",
+    DELETED: "Application sale deleted successfully",
+    FETCHED: "Application sale fetched successfully",
+    FETCHED_ALL: "Application sales fetched successfully",
+    PUBLISHED: "Application sale published successfully",
+    NOT_FOUND: "Application sale not found",
+    APPLICATION_TRACKED: "Application tracked successfully. 3000 KX coins credited",
+  },
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",

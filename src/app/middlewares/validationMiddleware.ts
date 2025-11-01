@@ -583,4 +583,75 @@ export const webinarValidation = {
   })
 };
 
+// Application Sales validation schemas
+export const applicationSalesValidation = {
+  create: Validator.validate({
+    universityName: [
+      { required: true, type: "string" },
+      { minLength: 2, maxLength: 200 }
+    ],
+    applicationFormLink: [
+      { required: true, type: "string" }
+    ],
+    paymentLink: [
+      { required: true, type: "string" }
+    ],
+    pocName: [
+      { required: true, type: "string" }
+    ],
+    pocPhone: [
+      { required: true, type: "string" }
+    ],
+    pocEmail: [
+      { required: true, type: "email" }
+    ],
+    admissionChairperson: [
+      { required: false, type: "string" }
+    ],
+    freebies: [
+      { required: false }
+    ]
+  }),
+
+  update: Validator.validate({
+    universityName: [
+      { required: false, type: "string" },
+      { minLength: 2, maxLength: 200 }
+    ],
+    applicationFormLink: [
+      { required: false, type: "string" }
+    ],
+    paymentLink: [
+      { required: false, type: "string" }
+    ],
+    pocName: [
+      { required: false, type: "string" }
+    ],
+    pocPhone: [
+      { required: false, type: "string" }
+    ],
+    pocEmail: [
+      { required: false, type: "email" }
+    ],
+    admissionChairperson: [
+      { required: false, type: "string" }
+    ],
+    freebies: [
+      { required: false }
+    ],
+    status: [
+      { required: false, type: "string" },
+      {
+        custom: (value: any) => {
+          const validValues = ["draft", "published", "active", "closed"];
+          if (value && !validValues.includes(value)) {
+            return "status must be one of: draft, published, active, closed";
+          }
+          return true;
+        }
+      }
+    ]
+  })
+};
+
 export default Validator;

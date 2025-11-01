@@ -15,6 +15,7 @@ import stripeRoutes from "./app/modules/stripe/routes/stripe.routes.js";
 import exploreRouter from "./app/modules/explore/routes/exploreRoutes.js";
 import inAppBannerRouter from "./app/modules/in-app-banner/routes/inAppBanner.routes.js";
 import webinarRouter from "./app/modules/webinar/routes/webinar.routes.js";
+import applicationSalesRouter from "./app/modules/application-sales/routes/applicationSales.routes.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -59,6 +60,7 @@ app.use("/api/v1/stripe", stripeRoutes);
 app.use("/api/v1/explore", exploreRouter);
 app.use("/api/v1/in-app-banners", inAppBannerRouter);
 app.use("/api/v1/webinars", webinarRouter);
+app.use("/api/v1/application-sales", applicationSalesRouter);
 
 // Handle undefined routes
 app.all("*", (req: Request, res: Response) => {
