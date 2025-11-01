@@ -75,6 +75,15 @@ export const API_MESSAGES = {
     NOTIFICATIONS_FETCHED: "Notifications fetched successfully",
     NOTIFICATION_FETCHED: "Notification fetched successfully",
   },
+  IN_APP_BANNER:{
+    BANNER_CREATED: "Banner created successfully",
+    BANNER_UPDATED: "Banner updated successfully",
+    BANNER_DELETED: "Banner deleted successfully",
+    BANNERS_FETCHED: "Banners fetched successfully",
+    BANNER_FETCHED: "Banner fetched successfully",
+    ACTIVE_BANNERS_FETCHED: "Active banners fetched successfully",
+    BANNER_NOT_FOUND: "Banner not found",
+  },
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",

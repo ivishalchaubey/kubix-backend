@@ -293,4 +293,113 @@ export const notificationValidation = {
   })
 };
 
+// In-app banner validation schemas
+export const inAppBannerValidation = {
+  create: Validator.validate({
+    title: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 200 }
+    ],
+    description: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 1000 }
+    ],
+    imageUrl: [
+      { required: false, type: "string" }
+    ],
+    actionUrl: [
+      { required: false, type: "string" }
+    ],
+    priority: [
+      { required: false, type: "number" },
+      { 
+        custom: (value: any) => {
+          if (value !== undefined && (value < 0 || value > 100)) {
+            return "Priority must be between 0 and 100";
+          }
+          return true;
+        }
+      }
+    ],
+    isActive: [
+      { required: false, type: "boolean" }
+    ],
+    startDate: [
+      { 
+        required: false, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "startDate must be a valid date";
+          }
+          return true;
+        }
+      }
+    ],
+    endDate: [
+      { 
+        required: false, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "endDate must be a valid date";
+          }
+          return true;
+        }
+      }
+    ]
+  }),
+
+  update: Validator.validate({
+    title: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 200 }
+    ],
+    description: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 1000 }
+    ],
+    imageUrl: [
+      { required: false, type: "string" }
+    ],
+    actionUrl: [
+      { required: false, type: "string" }
+    ],
+    priority: [
+      { required: false, type: "number" },
+      { 
+        custom: (value: any) => {
+          if (value !== undefined && (value < 0 || value > 100)) {
+            return "Priority must be between 0 and 100";
+          }
+          return true;
+        }
+      }
+    ],
+    isActive: [
+      { required: false, type: "boolean" }
+    ],
+    startDate: [
+      { 
+        required: false, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "startDate must be a valid date";
+          }
+          return true;
+        }
+      }
+    ],
+    endDate: [
+      { 
+        required: false, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "endDate must be a valid date";
+          }
+          return true;
+        }
+      }
+    ]
+  })
+};
+
 export default Validator;
