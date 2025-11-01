@@ -402,4 +402,185 @@ export const inAppBannerValidation = {
   })
 };
 
+// Webinar validation schemas
+export const webinarValidation = {
+  create: Validator.validate({
+    universityName: [
+      { required: true, type: "string" },
+      { minLength: 2, maxLength: 200 }
+    ],
+    title: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 200 }
+    ],
+    description: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 2000 }
+    ],
+    courseDetails: [
+      { required: true, type: "string" }
+    ],
+    targetAudience: [
+      { required: true, type: "string" }
+    ],
+    tags: [
+      { required: false }
+    ],
+    domains: [
+      { required: false }
+    ],
+    speakerName: [
+      { required: true, type: "string" }
+    ],
+    speakerPhoto: [
+      { required: false, type: "string" }
+    ],
+    speakerBio: [
+      { required: false, type: "string" },
+      { maxLength: 1000 }
+    ],
+    scheduledDate: [
+      { 
+        required: true, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "scheduledDate must be a valid date";
+          }
+          return true;
+        }
+      }
+    ],
+    scheduledTime: [
+      { required: true, type: "string" }
+    ],
+    duration: [
+      { required: true, type: "number" },
+      {
+        custom: (value: any) => {
+          if (value && (value < 15 || value > 300)) {
+            return "Duration must be between 15 and 300 minutes";
+          }
+          return true;
+        }
+      }
+    ],
+    webinarLink: [
+      { required: true, type: "string" }
+    ],
+    pocName: [
+      { required: true, type: "string" }
+    ],
+    pocPhone: [
+      { required: true, type: "string" }
+    ],
+    pocEmail: [
+      { required: true, type: "email" }
+    ],
+    admissionChairperson: [
+      { required: false, type: "string" }
+    ],
+    freebies: [
+      { required: false }
+    ],
+    logo: [
+      { required: false, type: "string" }
+    ]
+  }),
+
+  update: Validator.validate({
+    universityName: [
+      { required: false, type: "string" },
+      { minLength: 2, maxLength: 200 }
+    ],
+    title: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 200 }
+    ],
+    description: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 2000 }
+    ],
+    courseDetails: [
+      { required: false, type: "string" }
+    ],
+    targetAudience: [
+      { required: false, type: "string" }
+    ],
+    tags: [
+      { required: false }
+    ],
+    domains: [
+      { required: false }
+    ],
+    speakerName: [
+      { required: false, type: "string" }
+    ],
+    speakerPhoto: [
+      { required: false, type: "string" }
+    ],
+    speakerBio: [
+      { required: false, type: "string" },
+      { maxLength: 1000 }
+    ],
+    scheduledDate: [
+      { 
+        required: false, 
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "scheduledDate must be a valid date";
+          }
+          return true;
+        }
+      }
+    ],
+    scheduledTime: [
+      { required: false, type: "string" }
+    ],
+    duration: [
+      { required: false, type: "number" },
+      {
+        custom: (value: any) => {
+          if (value && (value < 15 || value > 300)) {
+            return "Duration must be between 15 and 300 minutes";
+          }
+          return true;
+        }
+      }
+    ],
+    webinarLink: [
+      { required: false, type: "string" }
+    ],
+    pocName: [
+      { required: false, type: "string" }
+    ],
+    pocPhone: [
+      { required: false, type: "string" }
+    ],
+    pocEmail: [
+      { required: false, type: "email" }
+    ],
+    admissionChairperson: [
+      { required: false, type: "string" }
+    ],
+    freebies: [
+      { required: false }
+    ],
+    logo: [
+      { required: false, type: "string" }
+    ],
+    status: [
+      { required: false, type: "string" },
+      {
+        custom: (value: any) => {
+          const validValues = ["draft", "published", "live", "completed", "cancelled"];
+          if (value && !validValues.includes(value)) {
+            return "status must be one of: draft, published, live, completed, cancelled";
+          }
+          return true;
+        }
+      }
+    ]
+  })
+};
+
 export default Validator;

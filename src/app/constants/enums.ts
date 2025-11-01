@@ -84,6 +84,15 @@ export const API_MESSAGES = {
     ACTIVE_BANNERS_FETCHED: "Active banners fetched successfully",
     BANNER_NOT_FOUND: "Banner not found",
   },
+  WEBINAR:{
+    WEBINAR_CREATED: "Webinar created successfully",
+    WEBINAR_UPDATED: "Webinar updated successfully",
+    WEBINAR_DELETED: "Webinar deleted successfully",
+    WEBINARS_FETCHED: "Webinars fetched successfully",
+    WEBINAR_FETCHED: "Webinar fetched successfully",
+    WEBINAR_PUBLISHED: "Webinar published successfully. 5000 KX coins deducted",
+    WEBINAR_NOT_FOUND: "Webinar not found",
+  },
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",
