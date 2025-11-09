@@ -312,7 +312,19 @@ class AuthRepository {
     return await User.findOne({
       passwordResetToken: token,
       passwordResetExpires: { $gt: Date.now() },
-    });
+    }).select("+password");
+  }
+
+  async findUserByIdWithPassword(userId: string): Promise<IUser | null> {
+    if (!Types.ObjectId.isValid(userId)) {
+      return null;
+    }
+
+    return await User.findById(userId).select("+password");
+  }
+
+  async findUserByRefreshToken(refreshToken: string): Promise<IUser | null> {
+    return await User.findOne({ refreshToken }).lean();
   }
 
   /**

@@ -169,10 +169,15 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { token, password } = req.body;
+      if (!req.user || !req.user._id) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
 
-      await this.authService.resetPassword(token, password);
+      const { oldPassword, newPassword } = req.body;
 
+      await this.authService.resetPassword(req.user._id, oldPassword, newPassword);
+ 
       ResponseUtil.success(
         res,
         null,

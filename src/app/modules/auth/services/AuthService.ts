@@ -465,16 +465,73 @@ class AuthService {
    */
   async refreshTokens(refreshToken: string): Promise<TokenResponse> {
     try {
-      // TODO: Implement JWT verification when available
-      // For now, mock token refresh
+      if (!refreshToken) {
+        throw new AppError(
+          API_MESSAGES.ERROR.INVALID_TOKEN,
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+
+      const decoded = jwt.verify(
+        refreshToken,
+        config.jwt.refreshSecret as string
+      ) as any;
+
+      const user = await this.authRepository.findUserByRefreshToken(refreshToken);
+
+      if (!user || !decoded?.userId || user._id.toString() !== decoded.userId) {
+        throw new AppError(
+          API_MESSAGES.ERROR.INVALID_REFRESH_TOKEN,
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+
+      const payload = {
+        userId: user._id,
+        role: user.role,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        stream: user.stream,
+        board: user.board,
+      };
+
+      const accessToken = jwt.sign(payload, config.jwt.secret as string, {
+        expiresIn: "15m",
+      });
+
+      const newRefreshToken = jwt.sign(
+        payload,
+        config.jwt.refreshSecret as string,
+        {
+          expiresIn: config.jwt.refreshExpirationDays,
+        }
+      );
+
+      const refreshExpiryDays = parseInt(
+        config.jwt.refreshExpirationDays?.toString() || "7",
+        10
+      );
+ 
+      await this.authRepository.updateRefreshToken(
+        user._id.toString(),
+        newRefreshToken
+      );
+      await this.authRepository.updateAccessToken(
+        user._id.toString(),
+        accessToken
+      );
+ 
       const tokens: TokenResponse = {
         access: {
-          token: "new-mock-access-token",
+          token: accessToken,
           expires: new Date(Date.now() + 15 * 60 * 1000),
         },
         refresh: {
-          token: "new-mock-refresh-token",
-          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          token: newRefreshToken,
+          expires: new Date(
+            Date.now() + refreshExpiryDays * 24 * 60 * 60 * 1000
+          ),
         },
       };
 
@@ -482,8 +539,11 @@ class AuthService {
       return tokens;
     } catch (error) {
       logger.error("Token refresh failed:", error);
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw new AppError(
-        API_MESSAGES.ERROR.INVALID_TOKEN,
+        API_MESSAGES.ERROR.INVALID_REFRESH_TOKEN,
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -578,16 +638,28 @@ class AuthService {
   /**
    * Reset password using token
    */
-  async resetPassword(token: string, newPassword: string): Promise<void> {
+  async resetPassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string
+  ): Promise<void> {
     try {
-      const user = await this.authRepository.findUserByPasswordResetToken(
-        token
-      );
+      const user = await this.authRepository.findUserByIdWithPassword(userId);
       if (!user) {
         throw new AppError(
-          API_MESSAGES.ERROR.INVALID_TOKEN,
-          HttpStatus.BAD_REQUEST
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
+      }
+
+      if (typeof user.isPasswordMatch === "function") {
+        const isMatch = await user.isPasswordMatch(oldPassword);
+        if (!isMatch) {
+          throw new AppError(
+            API_MESSAGES.ERROR.INCORRECT_CURRENT_PASSWORD,
+            HttpStatus.BAD_REQUEST
+          );
+        }
       }
 
       await this.authRepository.updateUserPassword(user._id, newPassword);
@@ -896,3 +968,4 @@ class AuthService {
 }
 
 export default AuthService;
+

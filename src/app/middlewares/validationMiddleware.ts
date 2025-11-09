@@ -219,8 +219,13 @@ export const authValidation = {
   }),
 
   resetPassword: Validator.validate({
-    token: [{ required: true, type: "string" }],
-    password: [
+    oldPassword: [
+      { required: true, type: "string" },
+      { minLength: VALIDATION_RULES.PASSWORD.MIN_LENGTH },
+      { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },
+      { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
+    ],
+    newPassword: [
       { required: true, type: "string" },
       { minLength: VALIDATION_RULES.PASSWORD.MIN_LENGTH },
       { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },

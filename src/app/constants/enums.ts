@@ -124,6 +124,8 @@ export const API_MESSAGES = {
     INVALID_OTP: "Invalid OTP",
     OTP_EXPIRED: "OTP has expired",
     UNIVERSITY_NOT_FOUND: "University not found",
+    INCORRECT_CURRENT_PASSWORD: "Incorrect current password",
+    INVALID_REFRESH_TOKEN: "Invalid refresh token",
   },
   ADMIN_ERROR: {
     CATEGORY_NOT_FOUND: "Category not found",
