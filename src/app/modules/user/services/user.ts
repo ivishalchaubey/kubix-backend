@@ -146,10 +146,14 @@ class UserService {
     // Get popular courses
     const popularCourses = await this.userRepository.getPopularCourses(20);
 
+    // Get top upcoming webinars (nearest dates)
+    const upcomingWebinars = await this.userRepository.getUpcomingWebinars(3);
+
     return {
       userCategories,
       popularUniversities,
-      popularCourses
+      popularCourses,
+      upcomingWebinars
     };
   }
 }

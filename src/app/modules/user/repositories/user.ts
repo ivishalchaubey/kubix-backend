@@ -4,6 +4,7 @@ import User from "../../auth/models/User.js";
 import { UserCourseLiked } from "../../auth/models/usercourseliked.js";
 import { Course } from "../../courses/models/course.js";
 import Category from "../../admin/categories/models/category.js";
+import { Webinar } from "../../webinar/models/webinar.model.js";
 
 class UserRepository {
   async likeCourse(userId: string, courseId: string): Promise<any> {
@@ -115,6 +116,23 @@ class UserRepository {
         }
       }
     ]);
+  }
+
+  async getUpcomingWebinars(limit: number = 3): Promise<any[]> {
+    const now = new Date();
+
+    return await Webinar.find({
+      status: { $in: ["published", "live"] },
+      scheduledDate: { $gte: now }
+    })
+      .populate({
+        path: "universityId",
+        select:
+          "firstName lastName email collegeName location profileImage bannerYoutubeVideoLink"
+      })
+      .sort({ scheduledDate: 1, scheduledTime: 1, createdAt: 1 })
+      .limit(limit)
+      .lean();
   }
 }
 

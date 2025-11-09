@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Explore API allows users to browse Careers, Colleges, and Courses with pagination support. The API filters results based on the user's selected categories and provides a unified endpoint with type-based filtering.
+The Explore API allows users to browse Careers, Colleges, Courses, and Webinars with pagination support. The API filters results based on the user's selected categories and provides a unified endpoint with type-based filtering.
 
 ## Endpoints
 
@@ -28,12 +28,12 @@ Authorization: Bearer <your_jwt_token>
 
 ## Query Parameters
 
-| Parameter | Type   | Required | Default | Description                                                     |
-| --------- | ------ | -------- | ------- | --------------------------------------------------------------- |
-| type      | string | Yes      | -       | Type of content to explore: `careers`, `colleges`, or `courses` |
-| page      | number | No       | 1       | Page number for pagination                                      |
-| limit     | number | No       | 10      | Number of items per page (max: 100)                             |
-| search    | string | No       | -       | Search query to filter results based on type                    |
+| Parameter | Type   | Required | Default | Description                                                                 |
+| --------- | ------ | -------- | ------- | --------------------------------------------------------------------------- |
+| type      | string | Yes      | -       | Type of content to explore: `careers`, `colleges`, `courses`, or `webinars` |
+| page      | number | No       | 1       | Page number for pagination                                                  |
+| limit     | number | No       | 10      | Number of items per page (max: 100)                                         |
+| search    | string | No       | -       | Search query to filter results based on type                                |
 
 ## Type-Based Responses
 
@@ -248,6 +248,82 @@ curl -X GET 'http://localhost:5000/api/v1/explore?type=courses&page=1&limit=10&s
 }
 ```
 
+### 4. Webinars (type=webinars)
+
+Returns published/live webinars with associated university details.
+
+**How it works:**
+
+- Fetches webinars with status `published` or `live`
+- Populates `universityId` with college information
+- Supports search across webinar metadata (title, description, tags, etc.)
+
+**Search Fields:**
+
+- `title`
+- `description`
+- `universityName`
+- `courseDetails`
+- `targetAudience`
+- `speakerName`
+- `tags`
+- `domains`
+
+**Example Request:**
+
+```bash
+# Without search
+curl -X GET 'http://localhost:5000/api/v1/explore?type=webinars&page=1&limit=10' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN'
+
+# With search
+curl -X GET 'http://localhost:5000/api/v1/explore?type=webinars&page=1&limit=10&search=technology' \
+  -H 'Authorization: Bearer YOUR_JWT_TOKEN'
+```
+
+**Example Response:**
+
+```json
+{
+  "success": true,
+  "message": "Webinars retrieved successfully",
+  "data": [
+    {
+      "_id": "60d5ec49f1b2c72b8c8b4568",
+      "title": "Careers in Emerging Technologies",
+      "description": "Discover opportunities in AI, ML, and Robotics",
+      "courseDetails": "B.Tech CS / AI / Robotics",
+      "targetAudience": "12th grade students",
+      "tags": ["AI", "Robotics"],
+      "domains": ["Technology"],
+      "speakerName": "Dr. Jane Doe",
+      "scheduledDate": "2025-01-15T10:00:00.000Z",
+      "scheduledTime": "10:00 AM",
+      "duration": 60,
+      "status": "published",
+      "universityId": {
+        "_id": "60d5ec49f1b2c72b8c8b4564",
+        "collegeName": "MIT",
+        "email": "info@mit.edu",
+        "location": "Cambridge, MA",
+        "profileImage": "https://example.com/mit-logo.jpg"
+      },
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 2,
+    "totalResults": 12,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  },
+  "statusCode": 200
+}
+```
+
 ## Response Structure
 
 All responses follow this structure:
@@ -276,7 +352,7 @@ All responses follow this structure:
 ```json
 {
   "success": false,
-  "message": "Type parameter is required. Valid types: careers, colleges, courses",
+  "message": "Type parameter is required. Valid types: careers, colleges, courses, webinars",
   "statusCode": 400
 }
 ```
@@ -286,7 +362,7 @@ All responses follow this structure:
 ```json
 {
   "success": false,
-  "message": "Invalid type parameter. Valid types: careers, colleges, courses",
+  "message": "Invalid type parameter. Valid types: careers, colleges, courses, webinars",
   "statusCode": 400
 }
 ```
@@ -366,6 +442,12 @@ The search parameter filters results based on the type:
 - Case-insensitive partial matching
 - Example: `search=programming` will find courses with "Programming", "Web Programming", etc.
 
+### For Webinars (type=webinars):
+
+- Searches in: `title`, `description`, `universityName`, `courseDetails`, `targetAudience`, `speakerName`, `tags`, `domains`
+- Case-insensitive partial matching
+- Example: `search=technology` will find webinars related to technology topics
+
 **Usage Examples:**
 
 ```bash
@@ -384,7 +466,7 @@ GET /api/v1/explore?type=courses&search=javascript
 1. **Careers**: Returns ONLY siblings of user's selected categories, helping discover related career paths to their specific choices
 2. **Colleges**: Does not require user category selection - returns all universities
 3. **Courses**: Returns courses that match any of the user's selected categories, with deduplication and all IDs populated (UniversityId, categoryId, parentCategoryId)
-4. **Type Parameter**: Use lowercase (careers, colleges, courses) - the API automatically converts uppercase to lowercase
+4. **Type Parameter**: Use lowercase (careers, colleges, courses, webinars) - the API automatically converts uppercase to lowercase
 
 ## Integration Example
 
@@ -408,6 +490,7 @@ async function fetchExploreData(type, page = 1, limit = 10) {
 const careers = await fetchExploreData("Careers", 1, 20);
 const colleges = await fetchExploreData("Colleges");
 const courses = await fetchExploreData("Courses", 1, 15);
+const webinars = await fetchExploreData("Webinars", 1, 10);
 ```
 
 ## Testing
@@ -425,6 +508,10 @@ curl -X GET 'http://localhost:5000/api/v1/explore?type=colleges&page=1&limit=5' 
 
 # Test Courses (lowercase)
 curl -X GET 'http://localhost:5000/api/v1/explore?type=courses&page=1&limit=5' \
+  -H 'Authorization: Bearer YOUR_TOKEN'
+
+# Test Webinars (lowercase)
+curl -X GET 'http://localhost:5000/api/v1/explore?type=webinars&page=1&limit=5' \
   -H 'Authorization: Bearer YOUR_TOKEN'
 
 # Test with Search
@@ -449,6 +536,10 @@ The detail endpoint returns comprehensive information about a specific item with
 ```
 GET /api/v1/explore/detail
 ```
+
+### Authentication
+
+This endpoint requires authentication. Include a Bearer token in the Authorization header.
 
 ### Query Parameters
 
@@ -615,6 +706,53 @@ curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=courses&id=60d5ec4
 }
 ```
 
+#### Webinar Detail (type=webinars)
+
+**Request:**
+
+```bash
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=webinars&id=60d5ec49f1b2c72b8c8b4568'
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "message": "Webinar detail retrieved successfully",
+  "data": {
+    "_id": "60d5ec49f1b2c72b8c8b4568",
+    "title": "Careers in Emerging Technologies",
+    "description": "Discover opportunities in AI, ML, and Robotics",
+    "courseDetails": "B.Tech CS / AI / Robotics",
+    "targetAudience": "12th grade students",
+    "tags": ["AI", "Robotics"],
+    "domains": ["Technology"],
+    "speakerName": "Dr. Jane Doe",
+    "speakerBio": "Head of AI Research at MIT",
+    "scheduledDate": "2025-01-15T10:00:00.000Z",
+    "scheduledTime": "10:00 AM",
+    "duration": 60,
+    "status": "published",
+    "webinarLink": "https://example.com/webinar-link",
+    "pocName": "John Smith",
+    "pocEmail": "john.smith@mit.edu",
+    "pocPhone": "+1-555-123-4567",
+    "universityId": {
+      "_id": "60d5ec49f1b2c72b8c8b4564",
+      "collegeName": "MIT",
+      "email": "info@mit.edu",
+      "location": "Cambridge, MA",
+      "profileImage": "https://example.com/mit-logo.jpg",
+      "bannerYoutubeVideoLink": "https://youtube.com/watch?v=..."
+    },
+    "createdAt": "2025-01-01T00:00:00.000Z",
+    "updatedAt": "2025-01-01T00:00:00.000Z"
+  },
+  "statusCode": 200
+}
+```
+
 ### Error Responses for Detail Endpoint
 
 #### 400 Bad Request - Missing Type
@@ -622,7 +760,7 @@ curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=courses&id=60d5ec4
 ```json
 {
   "success": false,
-  "message": "Type parameter is required. Valid types: careers, colleges, courses",
+  "message": "Type parameter is required. Valid types: careers, colleges, courses, webinars",
   "statusCode": 400
 }
 ```
@@ -668,4 +806,7 @@ curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=colleges&id=YOUR_C
 
 # Get course detail
 curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=courses&id=YOUR_COURSE_ID'
+
+# Get webinar detail
+curl -X GET 'http://localhost:5000/api/v1/explore/detail?type=webinars&id=YOUR_WEBINAR_ID'
 ```

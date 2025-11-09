@@ -65,6 +65,24 @@ class ExploreService {
   }
 
   /**
+   * Get webinars (published/live)
+   */
+  async getWebinars(
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<{ webinars: any[]; total: number }> {
+    try {
+      const result = await this.exploreRepository.getWebinars(page, limit, search);
+      logger.info(`Webinars retrieved, page: ${page}, limit: ${limit}, search: ${search || 'none'}`);
+      return result;
+    } catch (error) {
+      logger.error("Get webinars failed:", error);
+      throw error;
+    }
+  }
+
+  /**
    * Get career detail by ID
    */
   async getCareerDetail(careerId: string): Promise<any> {
@@ -102,6 +120,20 @@ class ExploreService {
       return course;
     } catch (error) {
       logger.error("Get course detail failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get webinar detail by ID
+   */
+  async getWebinarDetail(webinarId: string): Promise<any> {
+    try {
+      const webinar = await this.exploreRepository.getWebinarDetail(webinarId);
+      logger.info(`Webinar detail retrieved for ID: ${webinarId}`);
+      return webinar;
+    } catch (error) {
+      logger.error("Get webinar detail failed:", error);
       throw error;
     }
   }

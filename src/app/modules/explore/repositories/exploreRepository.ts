@@ -1,8 +1,8 @@
 import { Types } from "mongoose";
-import mongoose from "mongoose";
 import User from "../../auth/models/User.js";
 import { Course } from "../../courses/models/course.js";
 import CategoryModel from "../../admin/categories/models/category.js";
+import { Webinar } from "../../webinar/models/webinar.model.js";
 import {
   HttpStatus,
   API_MESSAGES,
@@ -183,6 +183,50 @@ class ExploreRepository {
   }
 
   /**
+   * Get webinars (published/live) with pagination and search
+   */
+  async getWebinars(
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<{ webinars: any[]; total: number }> {
+    const skip = (page - 1) * limit;
+
+    const query: any = {
+      status: { $in: ["published", "live"] },
+    };
+
+    if (search && search.trim()) {
+      const searchRegex = { $regex: search.trim(), $options: "i" };
+      query.$or = [
+        { title: searchRegex },
+        { description: searchRegex },
+        { universityName: searchRegex },
+        { courseDetails: searchRegex },
+        { targetAudience: searchRegex },
+        { speakerName: searchRegex },
+        { tags: searchRegex },
+        { domains: searchRegex },
+      ];
+    }
+
+    const webinars = await Webinar.find(query)
+      .populate({
+        path: "universityId",
+        select:
+          "firstName lastName email collegeName location profileImage bannerYoutubeVideoLink",
+      })
+      .sort({ scheduledDate: 1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const total = await Webinar.countDocuments(query);
+
+    return { webinars, total };
+  }
+
+  /**
    * Get career detail by ID with all populated fields
    */
   async getCareerDetail(careerId: string): Promise<any> {
@@ -245,6 +289,29 @@ class ExploreRepository {
     }
 
     return course;
+  }
+
+  /**
+   * Get webinar detail by ID with populated university
+   */
+  async getWebinarDetail(webinarId: string): Promise<any> {
+    if (!Types.ObjectId.isValid(webinarId)) {
+      throw new AppError("Invalid webinar ID", HttpStatus.BAD_REQUEST);
+    }
+
+    const webinar = await Webinar.findById(webinarId)
+      .populate({
+        path: "universityId",
+        select:
+          "firstName lastName email collegeName location profileImage bannerYoutubeVideoLink",
+      })
+      .lean();
+
+    if (!webinar) {
+      throw new AppError("Webinar not found", HttpStatus.NOT_FOUND);
+    }
+
+    return webinar;
   }
 }
 

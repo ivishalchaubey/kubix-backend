@@ -30,7 +30,7 @@ class ExploreController {
 
       // Validate type parameter
       if (!type) {
-        ResponseUtil.badRequest(res, "Type parameter is required. Valid types: careers, colleges, courses");
+        ResponseUtil.badRequest(res, "Type parameter is required. Valid types: careers, colleges, courses, webinars");
         return;
       }
 
@@ -57,8 +57,14 @@ class ExploreController {
           message = "Courses retrieved successfully";
           break;
 
+        case 'webinars':
+          const webinarsResult = await this.exploreService.getWebinars(page, limit, search);
+          result = { data: webinarsResult.webinars, total: webinarsResult.total };
+          message = "Webinars retrieved successfully";
+          break;
+
         default:
-          ResponseUtil.badRequest(res, "Invalid type parameter. Valid types: careers, colleges, courses");
+          ResponseUtil.badRequest(res, "Invalid type parameter. Valid types: careers, colleges, courses, webinars");
           return;
       }
 
@@ -82,7 +88,7 @@ class ExploreController {
 
   /**
    * Detail API - Get detailed information based on type and ID
-   * Supports: careers, colleges, courses with all populated fields
+   * Supports: careers, colleges, courses, webinars with all populated fields
    */
   async detail(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -91,7 +97,7 @@ class ExploreController {
 
       // Validate type parameter
       if (!type) {
-        ResponseUtil.badRequest(res, "Type parameter is required. Valid types: careers, colleges, courses");
+        ResponseUtil.badRequest(res, "Type parameter is required. Valid types: careers, colleges, courses, webinars");
         return;
       }
 
@@ -121,8 +127,13 @@ class ExploreController {
           message = "Course detail retrieved successfully";
           break;
 
+        case 'webinars':
+          result = await this.exploreService.getWebinarDetail(id);
+          message = "Webinar detail retrieved successfully";
+          break;
+
         default:
-          ResponseUtil.badRequest(res, "Invalid type parameter. Valid types: careers, colleges, courses");
+          ResponseUtil.badRequest(res, "Invalid type parameter. Valid types: careers, colleges, courses, webinars");
           return;
       }
 

@@ -15,6 +15,7 @@ exploreRouter.get(
 // Detail endpoint with type and id parameters
 exploreRouter.get(
   "/detail",
+  AuthMiddleware.authenticate,
   exploreController.detail.bind(exploreController)
 );
 
