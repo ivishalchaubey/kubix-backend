@@ -62,12 +62,20 @@ Simple API for universities to list their application forms. Universities earn *
 
 #### 1. Get Published Application Sales
 
-Get all published application sales for students.
+Get all published application sales for students (supports pagination).
+
+**Query Parameters**
+
+- `page` (optional, default `1`): Page number (1-indexed)
+- `limit` (optional, default `10`, max `100`): Number of records per page
+- `search` (optional): Search term to filter by university name, POC name, or POC email
+
+**Example Request**
 
 ```bash
-GET /api/v1/application-sales/published
+GET /api/v1/application-sales/published?page=1&limit=10&search=iit
 
-curl http://localhost:3000/api/v1/application-sales/published
+curl "http://localhost:3000/api/v1/application-sales/published?page=1&limit=10&search=iit"
 ```
 
 **Response:**
@@ -89,7 +97,16 @@ curl http://localhost:3000/api/v1/application-sales/published
       "coinsPerApplication": 3000,
       "applicationCount": 45
     }
-  ]
+  ],
+  "meta": {
+    "page": 1,
+    "limit": 10,
+    "totalPages": 5,
+    "totalResults": 45,
+    "hasNextPage": true,
+    "hasPrevPage": false
+  },
+  "statusCode": 200
 }
 ```
 

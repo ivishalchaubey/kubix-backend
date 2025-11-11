@@ -57,10 +57,21 @@ class ApplicationSalesService {
     }
   }
 
-  // Get published
-  async getPublishedApplicationSales(): Promise<any[]> {
+  // Get published with pagination
+  async getPublishedApplicationSales(
+    page: number,
+    limit: number,
+    search?: string
+  ): Promise<{
+    applicationSales: any[];
+    total: number;
+  }> {
     try {
-      return await this.applicationSalesRepository.getPublishedApplicationSales();
+      return await this.applicationSalesRepository.getPublishedApplicationSales(
+        page,
+        limit,
+        search
+      );
     } catch (error) {
       logger.error("Get published application sales failed:", error);
       throw error;

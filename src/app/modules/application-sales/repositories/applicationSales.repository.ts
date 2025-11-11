@@ -46,16 +46,49 @@ class ApplicationSalesRepository {
       .sort({ createdAt: -1 });
   };
 
-  // Get published application sales
-  getPublishedApplicationSales = async (): Promise<any[]> => {
-    return await ApplicationSales.find({ 
-      status: { $in: ["published", "active"] }
-    })
-      .populate({
-        path: "universityId",
-        select: "firstName lastName email collegeName"
-      })
-      .sort({ createdAt: -1 });
+  // Get published application sales with pagination
+  getPublishedApplicationSales = async (
+    page: number,
+    limit: number,
+    search?: string
+  ): Promise<{
+    applicationSales: any[];
+    total: number;
+  }> => {
+    const skip = (page - 1) * limit;
+
+    const searchQuery = search
+      ? {
+          $or: [
+            { universityName: { $regex: search, $options: "i" } },
+            { pocName: { $regex: search, $options: "i" } },
+            { pocEmail: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const query = {
+      status: "published",
+      ...searchQuery,
+    };
+
+    const [applicationSales, total] = await Promise.all([
+      ApplicationSales.find(query)
+        .populate({
+          path: "universityId",
+          select: "firstName lastName email collegeName",
+        })
+        .sort({ publishedAt: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      ApplicationSales.countDocuments(query),
+    ]);
+
+    return {
+      applicationSales,
+      total,
+    };
   };
 
   // Update

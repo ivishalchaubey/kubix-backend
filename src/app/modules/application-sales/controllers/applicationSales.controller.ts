@@ -1,7 +1,7 @@
 import { Response, NextFunction } from 'express';
-import { AuthRequest } from "../../../types/global.js";
+import { AuthRequest, PaginationMeta } from "../../../types/global.js";
 import ResponseUtil from "../../../utils/response.js";
-import { API_MESSAGES } from '../../../constants/enums.js';
+import { API_MESSAGES, PAGINATION } from '../../../constants/enums.js';
 import ApplicationSalesService from '../services/applicationSales.service.js';
 
 class ApplicationSalesController {
@@ -63,8 +63,31 @@ class ApplicationSalesController {
     // Get published (Students)
     async getPublishedApplicationSales(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
         try {
-            const result = await this.applicationSalesService.getPublishedApplicationSales();
-            ResponseUtil.success(res, result, API_MESSAGES.APPLICATION_SALES.FETCHED_ALL);
+            const pageParam = parseInt(req.query.page as string, 10);
+            const limitParam = parseInt(req.query.limit as string, 10);
+            const searchParam = (req.query.search as string)?.trim();
+
+            const page = Number.isNaN(pageParam) || pageParam < 1 ? PAGINATION.DEFAULT_PAGE : pageParam;
+            const rawLimit = Number.isNaN(limitParam) || limitParam < 1 ? PAGINATION.DEFAULT_LIMIT : limitParam;
+            const limit = Math.min(rawLimit, PAGINATION.MAX_LIMIT);
+
+            const { applicationSales, total } = await this.applicationSalesService.getPublishedApplicationSales(
+                page,
+                limit,
+                searchParam || undefined
+            );
+
+            const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
+            const meta: PaginationMeta = {
+                page,
+                limit,
+                totalPages,
+                totalResults: total,
+                hasNextPage: page < totalPages,
+                hasPrevPage: page > 1 && totalPages > 0,
+            };
+
+            ResponseUtil.paginated(res, applicationSales, meta, API_MESSAGES.APPLICATION_SALES.FETCHED_ALL);
         } catch (error) {
             next(error);
         }
