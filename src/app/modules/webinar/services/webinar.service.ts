@@ -26,6 +26,7 @@ class WebinarService {
   // Get webinar by ID
   async getWebinarById(webinarId: string): Promise<any> {
     try {
+      await this.webinarRepository.markCompletedWebinars();
       const webinar = await this.webinarRepository.getWebinarById(webinarId);
       if (!webinar) {
         throw new AppError(API_MESSAGES.WEBINAR.WEBINAR_NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -49,6 +50,7 @@ class WebinarService {
   // Get all webinars
   async getAllWebinars(): Promise<any[]> {
     try {
+      await this.webinarRepository.markCompletedWebinars();
       return await this.webinarRepository.getAllWebinars();
     } catch (error) {
       logger.error("Get all webinars failed:", error);
@@ -59,6 +61,7 @@ class WebinarService {
   // Get webinars by university
   async getWebinarsByUniversity(universityId: string): Promise<any[]> {
     try {
+      await this.webinarRepository.markCompletedWebinars();
       return await this.webinarRepository.getWebinarsByUniversity(universityId);
     } catch (error) {
       logger.error("Get webinars by university failed:", error);
@@ -69,6 +72,7 @@ class WebinarService {
   // Get published webinars
   async getPublishedWebinars(): Promise<any[]> {
     try {
+      await this.webinarRepository.markCompletedWebinars();
       return await this.webinarRepository.getPublishedWebinars();
     } catch (error) {
       logger.error("Get published webinars failed:", error);
@@ -79,6 +83,7 @@ class WebinarService {
   // Get upcoming webinars
   async getUpcomingWebinars(): Promise<any[]> {
     try {
+      await this.webinarRepository.markCompletedWebinars();
       return await this.webinarRepository.getUpcomingWebinars();
     } catch (error) {
       logger.error("Get upcoming webinars failed:", error);

@@ -5,6 +5,24 @@ import { AppError } from "../../../middlewares/errorHandler.js";
 
 class WebinarRepository {
   
+  // Mark past webinars as completed if their schedule has ended
+  markCompletedWebinars = async (): Promise<void> => {
+    const now = new Date();
+    await Webinar.updateMany(
+      {
+        status: { $in: ["published", "live", "expired"] },
+        $expr: {
+          $lt: [
+            { $add: ["$scheduledDate", { $multiply: ["$duration", 60000] }] },
+            now
+          ]
+        }
+      },
+      { $set: { status: "completed" } }
+    );
+    await Webinar.updateMany({ status: "expired" }, { $set: { status: "completed" } });
+  };
+  
   // Create a new webinar
   createWebinar = async (webinarData: any): Promise<any> => {
     return await Webinar.create(webinarData);

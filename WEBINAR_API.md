@@ -641,6 +641,7 @@ src/app/modules/webinar/
 4. **Access Control**: Universities can edit/delete their own webinars. Admins can edit/delete any webinar
 5. **Status Workflow**: Draft → Published → Live → Completed (linear flow)
 6. **Cannot Unpublish**: Once published, can only cancel or complete
+7. **Auto Complete**: Published/live webinars automatically move to `completed` after their scheduled time plus duration passes
 
 ---
 
