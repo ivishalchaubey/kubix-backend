@@ -54,9 +54,19 @@ class InAppBannerController {
     // Get active banners with pagination
     async getActiveBannersPaginated(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { page = "1", limit = "10" } = req.query;
-            const pageNumber = parseInt(Array.isArray(page) ? page[0] : page, 10);
-            const limitNumber = parseInt(Array.isArray(limit) ? limit[0] : limit, 10);
+            const pageParam = req.query.page ?? "1";
+            const limitParam = req.query.limit ?? "10";
+            
+            // Safely convert to string, handling arrays and ParsedQs
+            const pageStr = Array.isArray(pageParam) 
+                ? String(pageParam[0]) 
+                : String(pageParam);
+            const limitStr = Array.isArray(limitParam) 
+                ? String(limitParam[0]) 
+                : String(limitParam);
+            
+            const pageNumber = parseInt(pageStr, 10);
+            const limitNumber = parseInt(limitStr, 10);
             const result = await this.inAppBannerService.getActiveBannersPaginated(pageNumber, limitNumber);
             ResponseUtil.success(res, result, API_MESSAGES.IN_APP_BANNER.ACTIVE_BANNERS_FETCHED);
         } catch (error) {

@@ -111,13 +111,21 @@ class InAppBannerRepository {
   getTopPublishedBanners = async (limit: number): Promise<any[]> => {
     await this.markExpiredBannersCompleted();
     const currentDate = new Date();
+    const dateFilters = this.buildDateFilters(currentDate);
     return await InAppBanner.find({
       isActive: true,
-      $or: [
-        { status: "published" },
-        { status: { $exists: false } }
-      ],
-      ...this.buildDateFilters(currentDate)
+      $and: [
+        {
+          $or: [
+            { status: "published" },
+            { status: { $exists: false } }
+          ]
+        },
+        {
+          $or: dateFilters.$or
+        },
+        ...dateFilters.$and
+      ]
     })
       .sort({ priority: -1, createdAt: -1 })
       .limit(limit)

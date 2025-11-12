@@ -69,7 +69,7 @@ const handleMulterError = (
 ImageRouter.post(
   "/upload",
   AuthMiddleware.authenticate,
-  upload.single("file"),
+  upload.single("file") as any,
   handleMulterError,
   imageUploadController.imageUploader
 );
