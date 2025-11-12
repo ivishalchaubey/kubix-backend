@@ -65,6 +65,20 @@ class InAppBannerService {
     }
   }
 
+  // Get active banners with pagination
+  async getActiveBannersPaginated(page: number, limit: number): Promise<any> {
+    try {
+      if (!Number.isInteger(page) || page < 1 || !Number.isInteger(limit) || limit < 1) {
+        throw new AppError("Invalid pagination parameters", HttpStatus.BAD_REQUEST);
+      }
+
+      return await this.inAppBannerRepository.getActiveBannersPaginated(page, limit);
+    } catch (error) {
+      logger.error("Get active banners paginated failed:", error);
+      throw error;
+    }
+  }
+
   // Update banner
   async updateBanner(bannerId: string, updateData: any): Promise<any> {
     try {

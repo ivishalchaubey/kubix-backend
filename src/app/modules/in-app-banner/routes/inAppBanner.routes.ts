@@ -8,6 +8,7 @@ const inAppBannerController = new InAppBannerController();
 
 // Public route - Get active banners
 inAppBannerRouter.get("/active", inAppBannerController.getActiveBanners.bind(inAppBannerController));
+inAppBannerRouter.get("/active/paginated", inAppBannerController.getActiveBannersPaginated.bind(inAppBannerController));
 
 // Admin routes - Require authentication
 inAppBannerRouter.post("/", AuthMiddleware.authenticate, inAppBannerValidation.create, inAppBannerController.createBanner.bind(inAppBannerController));

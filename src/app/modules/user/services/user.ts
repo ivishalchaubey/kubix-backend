@@ -3,10 +3,13 @@ import User from "../../auth/models/User.js";
 import mongoose from "mongoose";
 import { UserToken } from "../../auth/models/usertoken.js";
 import UserRepository from "../repositories/user.js";
+import InAppBannerRepository from "../../in-app-banner/repositories/inAppBanner.repository.js";
 class UserService {
   private userRepository: UserRepository;
+  private inAppBannerRepository: InAppBannerRepository;
   constructor() {
     this.userRepository = new UserRepository();
+    this.inAppBannerRepository = new InAppBannerRepository();
   }
 
   async updateUser(userId: string, userData: any): Promise<any> {
@@ -149,11 +152,15 @@ class UserService {
     // Get top upcoming webinars (nearest dates)
     const upcomingWebinars = await this.userRepository.getUpcomingWebinars(3);
 
+    // Get top published banners
+    const bannerSection = await this.inAppBannerRepository.getTopPublishedBanners(5);
+
     return {
       userCategories,
       popularUniversities,
       popularCourses,
-      upcomingWebinars
+      upcomingWebinars,
+      bannerSection
     };
   }
 }

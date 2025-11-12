@@ -8,6 +8,7 @@ export interface IInAppBanner extends Document {
   actionUrl?: string;
   priority: number;
   isActive: boolean;
+  status: "draft" | "scheduled" | "published" | "completed";
   startDate?: Date;
   endDate?: Date;
   createdAt: Date;
@@ -49,6 +50,11 @@ const InAppBannerSchema = new Schema<IInAppBanner>(
       type: Boolean, 
       default: true 
     },
+    status: {
+      type: String,
+      enum: ["draft", "scheduled", "published", "completed"],
+      default: "published"
+    },
     startDate: { 
       type: Date, 
       required: false 
@@ -63,6 +69,7 @@ const InAppBannerSchema = new Schema<IInAppBanner>(
 
 // Add index for better query performance
 InAppBannerSchema.index({ isActive: 1, priority: -1 });
+InAppBannerSchema.index({ status: 1, priority: -1 });
 
 // Create & Export Model
 export const InAppBanner = model<IInAppBanner>("InAppBanner", InAppBannerSchema);

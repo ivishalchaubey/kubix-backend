@@ -4,6 +4,40 @@ import { HttpStatus, API_MESSAGES } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
 
 class InAppBannerRepository {
+  private buildDateFilters(currentDate: Date) {
+    return {
+      $or: [
+        { startDate: { $exists: false } },
+        { startDate: null },
+        { startDate: { $lte: currentDate } }
+      ],
+      $and: [
+        {
+          $or: [
+            { endDate: { $exists: false } },
+            { endDate: null },
+            { endDate: { $gte: currentDate } }
+          ]
+        }
+      ]
+    };
+  }
+
+  private async markExpiredBannersCompleted(): Promise<void> {
+    const currentDate = new Date();
+    await InAppBanner.updateMany(
+      {
+        endDate: { $exists: true, $ne: null, $lt: currentDate },
+        status: { $ne: "completed" }
+      },
+      {
+        $set: {
+          status: "completed",
+          isActive: false
+        }
+      }
+    );
+  }
   
   // Create a new banner
   createBanner = async (bannerData: any): Promise<any> => {
@@ -28,25 +62,66 @@ class InAppBannerRepository {
 
   // Get active banners
   getActiveBanners = async (): Promise<any[]> => {
+    await this.markExpiredBannersCompleted();
     const currentDate = new Date();
     
     return await InAppBanner.find({
       isActive: true,
-      $or: [
-        { startDate: { $exists: false } },
-        { startDate: null },
-        { startDate: { $lte: currentDate } }
-      ],
-      $and: [
-        {
-          $or: [
-            { endDate: { $exists: false } },
-            { endDate: null },
-            { endDate: { $gte: currentDate } }
-          ]
-        }
-      ]
+      status: { $ne: "completed" },
+      ...this.buildDateFilters(currentDate)
     }).sort({ priority: -1, createdAt: -1 });
+  };
+
+  // Get active banners with pagination
+  getActiveBannersPaginated = async (page: number, limit: number): Promise<any> => {
+    await this.markExpiredBannersCompleted();
+    const currentDate = new Date();
+    const filter = {
+      isActive: true,
+      status: { $ne: "completed" },
+      ...this.buildDateFilters(currentDate)
+    };
+
+    const skip = (page - 1) * limit;
+
+    const [total, banners] = await Promise.all([
+      InAppBanner.countDocuments(filter),
+      InAppBanner.find(filter)
+        .sort({ priority: -1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+    ]);
+
+    const totalPages = total > 0 ? Math.ceil(total / limit) : 0;
+
+    return {
+      data: banners,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+        hasNextPage: totalPages > 0 && page < totalPages,
+        hasPrevPage: page > 1 && total > 0
+      }
+    };
+  };
+
+  // Get top published banners for home data
+  getTopPublishedBanners = async (limit: number): Promise<any[]> => {
+    await this.markExpiredBannersCompleted();
+    const currentDate = new Date();
+    return await InAppBanner.find({
+      isActive: true,
+      $or: [
+        { status: "published" },
+        { status: { $exists: false } }
+      ],
+      ...this.buildDateFilters(currentDate)
+    })
+      .sort({ priority: -1, createdAt: -1 })
+      .limit(limit)
+      .lean();
   };
 
   // Update banner
