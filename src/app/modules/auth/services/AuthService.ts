@@ -500,12 +500,13 @@ class AuthService {
         expiresIn: "15m",
       });
 
+      const refreshTokenOptions: jwt.SignOptions = {
+        expiresIn: config.jwt.refreshExpirationDays as any,
+      };
       const newRefreshToken = jwt.sign(
         payload,
         config.jwt.refreshSecret as string,
-        {
-          expiresIn: config.jwt.refreshExpirationDays,
-        }
+        refreshTokenOptions
       );
 
       const refreshExpiryDays = parseInt(
@@ -652,8 +653,9 @@ class AuthService {
         );
       }
 
-      if (typeof user.isPasswordMatch === "function") {
-        const isMatch = await user.isPasswordMatch(oldPassword);
+      const userWithMethods = user as IUser & IUserMethods;
+      if (typeof userWithMethods.isPasswordMatch === "function") {
+        const isMatch = await userWithMethods.isPasswordMatch(oldPassword);
         if (!isMatch) {
           throw new AppError(
             API_MESSAGES.ERROR.INCORRECT_CURRENT_PASSWORD,
