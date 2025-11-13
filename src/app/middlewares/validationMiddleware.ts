@@ -135,6 +135,24 @@ class Validator {
         }
       }
 
+      // Conditional validation: otherBoardName is required if board is "OTHER"
+      if (data.board === "OTHER" && (!data.otherBoardName || data.otherBoardName.trim() === "")) {
+        errors.push({
+          field: "otherBoardName",
+          message: "otherBoardName is required when board is OTHER",
+          value: data.otherBoardName,
+        });
+      }
+
+      // Conditional validation: otherStreamName is required if stream is "Other"
+      if (data.stream === "Other" && (!data.otherStreamName || data.otherStreamName.trim() === "")) {
+        errors.push({
+          field: "otherStreamName",
+          message: "otherStreamName is required when stream is Other",
+          value: data.otherStreamName,
+        });
+      }
+
       if (errors.length > 0) {
         const errorMessage = errors.map((err) => err.message).join(", ");
         ResponseUtil.validationError(res, errorMessage, JSON.stringify(errors));
@@ -172,7 +190,14 @@ export const authValidation = {
     role: [{ required: true, type: "string" }], // Assuming role is a string
     phoneNumber: [{ required: true, type: "string" }],
     board: [{ required: false, type: "string" }],
+    otherBoardName: [{ required: false, type: "string" }, { maxLength: 100 }],
     stream: [{ required: false, type: "string" }],
+    otherStreamName: [{ required: false, type: "string" }, { maxLength: 100 }],
+    grade: [{ required: false, type: "string" }],
+    yearOfPassing: [
+      { required: false, type: "string" },
+      { pattern: /^\d{4}$/ },
+    ],
     collegeCode: [{ required: false, type: "string" }],
     profileImage: [{ type: "string" }],
 

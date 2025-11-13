@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUser, IUserMethods, IUserModel } from "../../../types/global.js";
 import { UserRole } from "../../../constants/enums.js";
-import jwt from "jsonwebtoken";
 import config from "../../../config/env.js";
 import bcrypt from "bcryptjs";
 
@@ -19,7 +18,8 @@ const comparePassword = async (
 };
 
 // User schema
-const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
+// Removing generic type parameters to avoid TypeScript complexity issues
+const userSchema = new Schema(
   {
     firstName: {
       type: String,
@@ -81,10 +81,29 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       trim: true,
       enum: ["CBSE", "ICSE", "State", "IB", "Other"], // Example boards
     },
+    otherBoardName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Other board name cannot exceed 100 characters"],
+    },
     stream: {
       type: String,
        trim: true,
       enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
+    },
+    otherStreamName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Other stream name cannot exceed 100 characters"],
+    },
+    grade: {
+      type: String,
+      trim: true,
+    },
+    yearOfPassing: {
+      type: String,
+      trim: true,
+      match: [/^\d{4}$/, "Year of passing must be a 4-digit year"],
     },
     password: {
       type: String,

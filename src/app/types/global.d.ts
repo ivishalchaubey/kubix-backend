@@ -16,8 +16,12 @@ export interface IUser {
   categoryIds: ObjectId[];
   likedCourses: ObjectId[];
   bookmarkedCourses: ObjectId[];
-  board: string;
-  stream: string;
+  board?: string;
+  otherBoardName?: string;
+  stream?: string;
+  otherStreamName?: string;
+  grade?: string;
+  yearOfPassing?: string;
   password: string;
   role: UserRole;
   isEmailVerified: boolean;

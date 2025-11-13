@@ -22,13 +22,25 @@ class AuthRepository {
     firstName: string;
     lastName: string;
     email: string;
-    dob: string;
+    dob?: string;
     countryCode: string;
     phoneNumber: string;
-    board: string;
-    stream: string;
+    board?: string;
+    otherBoardName?: string;
+    stream?: string;
+    otherStreamName?: string;
+    grade?: string;
+    yearOfPassing?: string;
     password: string;
     role: UserRole;
+    profileImage?: string;
+    collegeName?: string;
+    collegeCode?: string;
+    location?: string;
+    address?: string;
+    specialization?: string;
+    description?: string;
+    bannerYoutubeVideoLink?: string;
   }): Promise<IUser> {
     // Check if email is already taken
     const isEmailTaken = await User.isEmailTaken(userData.email);

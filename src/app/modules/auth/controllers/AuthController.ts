@@ -33,7 +33,11 @@ class AuthController {
         countryCode, 
         phoneNumber, 
         board, 
+        otherBoardName,
         stream,
+        otherStreamName,
+        grade,
+        yearOfPassing,
         profileImage,
         collegeName,
         collegeCode,
@@ -59,7 +63,11 @@ class AuthController {
       if (countryCode) registrationData.countryCode = countryCode;
       if (phoneNumber) registrationData.phoneNumber = phoneNumber;
       if (board) registrationData.board = board;
+      if (otherBoardName) registrationData.otherBoardName = otherBoardName;
       if (stream) registrationData.stream = stream;
+      if (otherStreamName) registrationData.otherStreamName = otherStreamName;
+      if (grade) registrationData.grade = grade;
+      if (yearOfPassing) registrationData.yearOfPassing = yearOfPassing;
       if (profileImage) registrationData.profileImage = profileImage;
       if (collegeName) registrationData.collegeName = collegeName;
       if (collegeCode) registrationData.collegeCode = collegeCode;
