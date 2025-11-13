@@ -31,11 +31,15 @@ class UserRepository {
     return await User.findById(userId).lean();
   }
 
-  async getCategoriesByIds(categoryIds: any[]): Promise<any> {
+  async getCategoriesByIds(categoryIds: any[], limit?: number): Promise<any> {
     if (!categoryIds || categoryIds.length === 0) {
       return [];
     }
-    return await Category.find({ _id: { $in: categoryIds } }).lean();
+    const query = Category.find({ _id: { $in: categoryIds } });
+    if (limit) {
+      query.limit(limit);
+    }
+    return await query.lean();
   }
 
   async getPopularUniversities(limit: number = 10): Promise<any> {

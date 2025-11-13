@@ -133,27 +133,26 @@ class UserService {
   }
 
   async getHomeData(userId: string): Promise<any> {
-    // Get user by ID
+    // Get user by ID first (required for categoryIds)
     const user = await this.userRepository.getUserById(userId);
     
     if (!user) {
       throw new Error("User not found");
     }
 
-    // Get user's selected categories
-    const userCategories = await this.userRepository.getCategoriesByIds(user.categoryIds || []);
-
-    // Get popular universities
-    const popularUniversities = await this.userRepository.getPopularUniversities(10);
-
-    // Get popular courses
-    const popularCourses = await this.userRepository.getPopularCourses(20);
-
-    // Get top upcoming webinars (nearest dates)
-    const upcomingWebinars = await this.userRepository.getUpcomingWebinars(3);
-
-    // Get top published banners
-    const bannerSection = await this.inAppBannerRepository.getTopPublishedBanners(5);
+    // Fetch all independent data in parallel for better performance
+    const [userCategories, popularUniversities, popularCourses, upcomingWebinars, bannerSection] = await Promise.all([
+      // Get user's selected categories (max 10)
+      this.userRepository.getCategoriesByIds(user.categoryIds || [], 10),
+      // Get popular universities (max 10)
+      this.userRepository.getPopularUniversities(10),
+      // Get popular courses (max 10)
+      this.userRepository.getPopularCourses(10),
+      // Get top upcoming webinars (max 10)
+      this.userRepository.getUpcomingWebinars(10),
+      // Get top published banners (max 10)
+      this.inAppBannerRepository.getTopPublishedBanners(10)
+    ]);
 
     return {
       userCategories,
