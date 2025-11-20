@@ -17,8 +17,15 @@ class AdminController {
     next: NextFunction
   ): Promise<any> {
     try {
+      // Handle both array and single object requests
+      const categoryData = Array.isArray(req.body) ? req.body[0] : req.body;
+      
+      if (!categoryData) {
+        return ResponseUtil.badRequest(res, "Category data is required");
+      }
+
       const result = await this.adminRepositories.createSingleCategory(
-        req.body
+        categoryData
       );
       ResponseUtil.created(
         res,
