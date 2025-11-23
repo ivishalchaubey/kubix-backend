@@ -170,7 +170,7 @@ class ExploreRepository {
       uniqueCourses = uniqueCourses.filter(course =>
         course.name?.toLowerCase().includes(searchLower) ||
         course.description?.toLowerCase().includes(searchLower) ||
-        course.duration?.toLowerCase().includes(searchLower)
+        (course.duration !== undefined && course.duration !== null && String(course.duration).includes(searchLower))
       );
     }
 

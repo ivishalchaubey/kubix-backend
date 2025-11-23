@@ -1,20 +1,39 @@
-import mongoose,{ Schema, model, Document , ObjectId } from "mongoose";
+import mongoose, { Schema, model, Document, ObjectId } from "mongoose";
 
-// 1️⃣ Define the TypeScript interface
+// Semester interface
+export interface ISemester {
+  title: string;
+  description: string;
+}
+
+// Course interface
 export interface ICourse extends Document {
   name: string;
   categoryId: ObjectId[];
   parentCategoryId: ObjectId[];
   description: string;
   image: string;
-  duration: string;
+  duration: number;
   UniversityId: ObjectId;
-  amount: number;
   currency: string;
-  chapters: number;
+  course_fees_low: string;
+  course_fees_high: string;
+  course_type: string;
+  semesters: ISemester[];
+  eligibility_criteria: string;
+  is_this_course_right_for_you: string;
 }
 
-// 2️⃣ Define the Mongoose Schema
+// Semester schema
+const SemesterSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+// Course schema
 const CourseSchema = new Schema<ICourse>(
   {
     name: { type: String, required: true },
@@ -22,14 +41,18 @@ const CourseSchema = new Schema<ICourse>(
     parentCategoryId: { type: [mongoose.Schema.Types.ObjectId], required: true, ref: "Category" },
     description: { type: String, default: "" },
     image: { type: String, default: "" },
-    duration: { type: String, default: "" },
-    UniversityId: { type: mongoose.Schema.Types.ObjectId, default: null , ref: "User" },
-    amount: { type: Number, default: 0 },
+    duration: { type: Number, default: 0 },
+    UniversityId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
     currency: { type: String, default: "INR" },
-    chapters: { type: Number, default: 0 },
+    course_fees_low: { type: String, default: "" },
+    course_fees_high: { type: String, default: "" },
+    course_type: { type: String, default: "" },
+    semesters: { type: [SemesterSchema], default: [] },
+    eligibility_criteria: { type: String, default: "" },
+    is_this_course_right_for_you: { type: String, default: "" },
   },
   { timestamps: true }
 );
 
-// 3️⃣ Create & Export Model
+// Create & Export Model
 export const Course = model<ICourse>("Course", CourseSchema);
