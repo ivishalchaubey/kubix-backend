@@ -41,6 +41,15 @@ export interface IUser {
   specialization?: string;
   description?: string;
   bannerYoutubeVideoLink?: string;
+  website?: string;
+  bannerImage?: string;
+  state?: string;
+  city?: string;
+  foundedYear?: string;
+  courses?: Array<{
+    courseName: string;
+    courseDuration: string;
+  }>;
   status: string;
   createdAt: Date;
   updatedAt: Date;

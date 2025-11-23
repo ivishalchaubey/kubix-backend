@@ -56,6 +56,15 @@ class AuthService {
     specialization?: string;
     description?: string;
     bannerYoutubeVideoLink?: string;
+    website?: string;
+    bannerImage?: string;
+    state?: string;
+    city?: string;
+    foundedYear?: string;
+    courses?: Array<{
+      courseName: string;
+      courseDuration: string;
+    }>;
   }): Promise<{ user: IUser; tokens: TokenResponse }> {
     try {
       // Check if user already exists and role is not admin
@@ -747,7 +756,7 @@ class AuthService {
    */
   async updateUserProfile(
     userId: string,
-    updateData: { firstName?: string; lastName?: string; email?: string }
+    updateData: Partial<IUser>
   ): Promise<IUser> {
     try {
       // Check if new email is already taken

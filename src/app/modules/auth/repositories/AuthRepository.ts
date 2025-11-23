@@ -41,6 +41,15 @@ class AuthRepository {
     specialization?: string;
     description?: string;
     bannerYoutubeVideoLink?: string;
+    website?: string;
+    bannerImage?: string;
+    state?: string;
+    city?: string;
+    foundedYear?: string;
+    courses?: Array<{
+      courseName: string;
+      courseDuration: string;
+    }>;
   }): Promise<IUser> {
     // Check if email is already taken
     const isEmailTaken = await User.isEmailTaken(userData.email);

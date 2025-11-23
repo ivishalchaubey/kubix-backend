@@ -191,6 +191,49 @@ const userSchema = new Schema(
         "Invalid YouTube URL",
       ],
     },
+    website: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Website URL cannot exceed 500 characters"],
+    },
+    bannerImage: {
+      type: String,
+      trim: true,
+    },
+    state: {
+      type: String,
+      trim: true,
+      maxlength: [100, "State cannot exceed 100 characters"],
+    },
+    city: {
+      type: String,
+      trim: true,
+      maxlength: [100, "City cannot exceed 100 characters"],
+    },
+    foundedYear: {
+      type: String,
+      trim: true,
+      match: [/^\d{4}$/, "Founded year must be a 4-digit year"],
+    },
+    courses: {
+      type: [
+        {
+          courseName: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [200, "Course name cannot exceed 200 characters"],
+          },
+          courseDuration: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [50, "Course duration cannot exceed 50 characters"],
+          },
+        },
+      ],
+      default: [],
+    },
 
   },
   {

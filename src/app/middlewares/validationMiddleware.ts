@@ -231,6 +231,46 @@ export const authValidation = {
       { type: "string" },
       { pattern: /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/ },
     ],
+    website: [
+      { type: "string" },
+      { maxLength: 500 },
+    ],
+    bannerImage: [
+      { type: "string" },
+    ],
+    state: [
+      { type: "string" },
+      { maxLength: 100 },
+    ],
+    city: [
+      { type: "string" },
+      { maxLength: 100 },
+    ],
+    foundedYear: [
+      { type: "string" },
+      { pattern: /^\d{4}$/ },
+    ],
+    courses: [
+      { required: false },
+      {
+        custom: (value: any) => {
+          if (value !== undefined && value !== null) {
+            if (!Array.isArray(value)) {
+              return "courses must be an array";
+            }
+            for (const course of value) {
+              if (!course.courseName || typeof course.courseName !== "string") {
+                return "Each course must have a courseName (string)";
+              }
+              if (!course.courseDuration || typeof course.courseDuration !== "string") {
+                return "Each course must have a courseDuration (string)";
+              }
+            }
+          }
+          return true;
+        },
+      },
+    ],
 
    }),
 

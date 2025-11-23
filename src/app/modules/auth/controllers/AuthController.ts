@@ -15,6 +15,15 @@ class AuthController {
   }
 
   /**
+   * Helper method to include field only if it exists
+   */
+  private includeIfExists(obj: any, key: string, value: any): void {
+    if (value !== undefined && value !== null && value !== "") {
+      obj[key] = value;
+    }
+  }
+
+  /**
    * Register a new user
    */
   register = async (
@@ -23,16 +32,16 @@ class AuthController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { 
-        firstName, 
-        lastName, 
-        email, 
-        password, 
-        role, 
-        dob, 
-        countryCode, 
-        phoneNumber, 
-        board, 
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        dob,
+        countryCode,
+        phoneNumber,
+        board,
         otherBoardName,
         stream,
         otherStreamName,
@@ -45,11 +54,16 @@ class AuthController {
         address,
         specialization,
         description,
-        bannerYoutubeVideoLink
+        bannerYoutubeVideoLink,
+        website,
+        bannerImage,
+        state,
+        city,
+        foundedYear,
+        courses,
       } = req.body;
 
- 
-      // Create registration data object with optional fields
+      // Create registration data object
       const registrationData: any = {
         firstName,
         lastName,
@@ -58,24 +72,30 @@ class AuthController {
         role,
       };
 
-      // Add optional fields only if they exist
-      if (dob) registrationData.dob = dob;
-      if (countryCode) registrationData.countryCode = countryCode;
-      if (phoneNumber) registrationData.phoneNumber = phoneNumber;
-      if (board) registrationData.board = board;
-      if (otherBoardName) registrationData.otherBoardName = otherBoardName;
-      if (stream) registrationData.stream = stream;
-      if (otherStreamName) registrationData.otherStreamName = otherStreamName;
-      if (grade) registrationData.grade = grade;
-      if (yearOfPassing) registrationData.yearOfPassing = yearOfPassing;
-      if (profileImage) registrationData.profileImage = profileImage;
-      if (collegeName) registrationData.collegeName = collegeName;
-      if (collegeCode) registrationData.collegeCode = collegeCode;
-      if (location) registrationData.location = location;
-      if (address) registrationData.address = address;
-      if (specialization) registrationData.specialization = specialization;
-      if (description) registrationData.description = description;
-      if (bannerYoutubeVideoLink) registrationData.bannerYoutubeVideoLink = bannerYoutubeVideoLink;
+      // Add optional fields using helper method
+      this.includeIfExists(registrationData, "dob", dob);
+      this.includeIfExists(registrationData, "countryCode", countryCode);
+      this.includeIfExists(registrationData, "phoneNumber", phoneNumber);
+      this.includeIfExists(registrationData, "board", board);
+      this.includeIfExists(registrationData, "otherBoardName", otherBoardName);
+      this.includeIfExists(registrationData, "stream", stream);
+      this.includeIfExists(registrationData, "otherStreamName", otherStreamName);
+      this.includeIfExists(registrationData, "grade", grade);
+      this.includeIfExists(registrationData, "yearOfPassing", yearOfPassing);
+      this.includeIfExists(registrationData, "profileImage", profileImage);
+      this.includeIfExists(registrationData, "collegeName", collegeName);
+      this.includeIfExists(registrationData, "collegeCode", collegeCode);
+      this.includeIfExists(registrationData, "location", location);
+      this.includeIfExists(registrationData, "address", address);
+      this.includeIfExists(registrationData, "specialization", specialization);
+      this.includeIfExists(registrationData, "description", description);
+      this.includeIfExists(registrationData, "bannerYoutubeVideoLink", bannerYoutubeVideoLink);
+      this.includeIfExists(registrationData, "website", website);
+      this.includeIfExists(registrationData, "bannerImage", bannerImage);
+      this.includeIfExists(registrationData, "state", state);
+      this.includeIfExists(registrationData, "city", city);
+      this.includeIfExists(registrationData, "foundedYear", foundedYear);
+      this.includeIfExists(registrationData, "courses", courses);
 
       const result = await this.authService.register(registrationData);
 
@@ -417,7 +437,29 @@ let updateData: any = {};
       }
 
 
-      const { userId, status, firstName, lastName, email, phoneNumber, countryCode, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink } = req.body;
+      const {
+        userId,
+        status,
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        countryCode,
+        profileImage,
+        collegeName,
+        collegeCode,
+        location,
+        address,
+        specialization,
+        description,
+        bannerYoutubeVideoLink,
+        website,
+        bannerImage,
+        state,
+        city,
+        foundedYear,
+        courses,
+      } = req.body;
 
       // Validate required fields
       if (!userId) {
@@ -438,22 +480,28 @@ let updateData: any = {};
       let updateData: any = {};
       
       // Add status if provided
-      if (status) updateData.status = status;
+      this.includeIfExists(updateData, "status", status);
       
       // Add other fields if provided
-      if (firstName) updateData.firstName = firstName;
-      if (lastName) updateData.lastName = lastName;
-      if (email) updateData.email = email;
-      if (phoneNumber) updateData.phoneNumber = phoneNumber;
-      if (countryCode) updateData.countryCode = countryCode;
-      if (profileImage) updateData.profileImage = profileImage;
-      if (collegeName) updateData.collegeName = collegeName;
-      if (collegeCode) updateData.collegeCode = collegeCode;
-      if (location) updateData.location = location;
-      if (address) updateData.address = address;
-      if (specialization) updateData.specialization = specialization;
-      if (description) updateData.description = description;
-      if (bannerYoutubeVideoLink) updateData.bannerYoutubeVideoLink = bannerYoutubeVideoLink;
+      this.includeIfExists(updateData, "firstName", firstName);
+      this.includeIfExists(updateData, "lastName", lastName);
+      this.includeIfExists(updateData, "email", email);
+      this.includeIfExists(updateData, "phoneNumber", phoneNumber);
+      this.includeIfExists(updateData, "countryCode", countryCode);
+      this.includeIfExists(updateData, "profileImage", profileImage);
+      this.includeIfExists(updateData, "collegeName", collegeName);
+      this.includeIfExists(updateData, "collegeCode", collegeCode);
+      this.includeIfExists(updateData, "location", location);
+      this.includeIfExists(updateData, "address", address);
+      this.includeIfExists(updateData, "specialization", specialization);
+      this.includeIfExists(updateData, "description", description);
+      this.includeIfExists(updateData, "bannerYoutubeVideoLink", bannerYoutubeVideoLink);
+      this.includeIfExists(updateData, "website", website);
+      this.includeIfExists(updateData, "bannerImage", bannerImage);
+      this.includeIfExists(updateData, "state", state);
+      this.includeIfExists(updateData, "city", city);
+      this.includeIfExists(updateData, "foundedYear", foundedYear);
+      this.includeIfExists(updateData, "courses", courses);
 
       // Check if any update data is provided
       if (Object.keys(updateData).length === 0) {
