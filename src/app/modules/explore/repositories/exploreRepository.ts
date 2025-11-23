@@ -234,12 +234,106 @@ class ExploreRepository {
       throw new AppError("Invalid career ID", HttpStatus.BAD_REQUEST);
     }
 
-    const career = await CategoryModel.findById(careerId)
+    // First, get the career without lean to use populate
+    const careerDoc = await CategoryModel.findById(careerId)
       .populate('parentId')
-      .lean();
+      .populate({
+        path: 'related_careers',
+        model: 'Category',
+        options: { strictPopulate: false } // Don't throw error if some IDs are invalid
+      });
 
-    if (!career) {
+    if (!careerDoc) {
       throw new AppError("Career not found", HttpStatus.NOT_FOUND);
+    }
+
+    // Convert to plain object
+    const career = careerDoc.toObject();
+
+    // Manually populate related_careers if Mongoose populate didn't work (fallback)
+    if (career.related_careers && Array.isArray(career.related_careers) && career.related_careers.length > 0) {
+      // Check if already populated (has category properties like name, description)
+      const firstItem = career.related_careers[0] as any;
+      const isAlreadyPopulated = firstItem && typeof firstItem === 'object' && firstItem.name;
+
+      if (!isAlreadyPopulated) {
+        try {
+          // Filter valid ObjectIds
+          const validIds = career.related_careers
+            .map((id: any) => {
+              if (typeof id === 'string' && Types.ObjectId.isValid(id)) {
+                return new Types.ObjectId(id);
+              }
+              if (id && id._id) {
+                return id._id;
+              }
+              if (id instanceof Types.ObjectId) {
+                return id;
+              }
+              return null;
+            })
+            .filter((id: any) => id !== null);
+
+          if (validIds.length > 0) {
+            const populatedCategories = await CategoryModel.find({ _id: { $in: validIds } }).lean();
+            (career as any).related_careers = populatedCategories;
+          } else {
+            (career as any).related_careers = [];
+          }
+        } catch (error) {
+          // If population fails, set to empty array
+          (career as any).related_careers = [];
+        }
+      }
+    } else {
+      (career as any).related_careers = [];
+    }
+
+    // Ensure array fields are arrays (handle legacy data where they might be strings)
+    const ensureArray = (value: any): string[] => {
+      if (Array.isArray(value)) return value;
+      if (typeof value === 'string' && value.trim()) {
+        // Try to parse if it looks like JSON array
+        try {
+          const parsed = JSON.parse(value);
+          if (Array.isArray(parsed)) return parsed;
+        } catch {
+          // If not JSON, return as single item array
+          return [value];
+        }
+      }
+      return [];
+    };
+
+    // Normalize array fields for the career
+    if (career.pros !== undefined) {
+      (career as any).pros = ensureArray(career.pros);
+    }
+    if (career.cons !== undefined) {
+      (career as any).cons = ensureArray(career.cons);
+    }
+    if (career.technical_skills !== undefined) {
+      (career as any).technical_skills = ensureArray(career.technical_skills);
+    }
+    if (career.soft_skills !== undefined) {
+      (career as any).soft_skills = ensureArray(career.soft_skills);
+    }
+
+    // Normalize array fields for the parent category if it exists
+    if (career.parentId && typeof career.parentId === 'object') {
+      const parent = career.parentId as any;
+      if (parent.pros !== undefined) {
+        parent.pros = ensureArray(parent.pros);
+      }
+      if (parent.cons !== undefined) {
+        parent.cons = ensureArray(parent.cons);
+      }
+      if (parent.technical_skills !== undefined) {
+        parent.technical_skills = ensureArray(parent.technical_skills);
+      }
+      if (parent.soft_skills !== undefined) {
+        parent.soft_skills = ensureArray(parent.soft_skills);
+      }
     }
 
     return career;

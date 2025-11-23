@@ -62,7 +62,7 @@ Required Qualifications -> qualifying_exams[]
 A Day in the Life -> a_day_in_life
 Education Pathway -> checklist
 Growth Path -> growth_path
-Future Growth and Oppurtunities -> future_growth
+Future Growth and Opportunities -> future_growth
 Pros -> pros
 Cons -> cons
 Myth -> myth
