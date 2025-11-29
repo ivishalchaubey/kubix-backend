@@ -19,6 +19,7 @@ import webinarRouter from "./app/modules/webinar/routes/webinar.routes.js";
 import applicationSalesRouter from "./app/modules/application-sales/routes/applicationSales.routes.js";
 import categoryRouter from "./app/modules/categories/routes/categoryRoutes.js";
 import shortlistRouter from "./app/modules/shortlist/routes/shortlist.routes.js";
+import applicationFormRouter from "./app/modules/application-form/routes/applicationForm.routes.js";
 import globalErrorHandler from "./app/middlewares/errorHandler.js";
 import logger from "./app/utils/logger.js";
 
@@ -67,6 +68,7 @@ app.use("/api/v1/webinars", webinarRouter);
 app.use("/api/v1/application-sales", applicationSalesRouter);
 app.use("/api/v1", categoryRouter);
 app.use("/api/v1/shortlist", shortlistRouter);
+app.use("/api/v1/application-form", applicationFormRouter);
 
 // Handle undefined routes
 app.all("*", (req: Request, res: Response) => {

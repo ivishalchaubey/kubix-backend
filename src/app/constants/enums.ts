@@ -116,6 +116,17 @@ export const API_MESSAGES = {
     INVALID_ITEM_TYPE: "Invalid item type. Must be 'career', 'colleges', or 'course'",
     CHECK_SUCCESS: "Shortlist status checked successfully",
   },
+  APPLICATION_FORM:{
+    APPLICATION_CREATED_OR_UPDATED: "Application form created/updated successfully",
+    APPLICATION_FETCHED: "Application form fetched successfully",
+    APPLICATIONS_FETCHED: "Applications fetched successfully",
+    APPLICATION_DELETED: "Application form deleted successfully",
+    APPLICATION_NOT_FOUND: "Application form not found",
+    COLLEGE_NOT_FOUND: "College not found",
+    TWELFTH_FIELDS_REQUIRED: "If twelfthStatus is provided, twelfthPercentage, twelfthSchoolName, passingYear, and twelfthMarksheet are required",
+    INVALID_EMAIL: "Invalid email format",
+    INVALID_DATE_FORMAT: "Invalid date format. Use YYYY-MM-DD format",
+  },
   ERROR: {
     USER_NOT_FOUND: "User not found",
     INVALID_CREDENTIALS: "Invalid email or password",
