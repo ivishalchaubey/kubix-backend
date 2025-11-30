@@ -45,6 +45,9 @@ export interface IUser {
   bannerImage?: string;
   state?: string;
   city?: string;
+  pincode?: string;
+  parentGuardianName?: string;
+  schoolName?: string;
   foundedYear?: string;
   courses?: Array<{
     courseName: string;

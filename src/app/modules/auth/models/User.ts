@@ -52,7 +52,10 @@ const userSchema = new Schema(
     },
     dob: {
       type: String,
-      match: [/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"],
+      match: [
+        /^\d{4}-\d{2}-\d{2}$/,
+        "Date of birth must be in YYYY-MM-DD format",
+      ],
     },
     likedCourses: {
       type: [Schema.Types.ObjectId],
@@ -68,7 +71,10 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Country code is required"],
       trim: true,
-      match: [/^\+\d{1,3}$/, "Country code must start with '+' followed by digits"],
+      match: [
+        /^\+\d{1,3}$/,
+        "Country code must start with '+' followed by digits",
+      ],
     },
     phoneNumber: {
       type: String,
@@ -88,7 +94,7 @@ const userSchema = new Schema(
     },
     stream: {
       type: String,
-       trim: true,
+      trim: true,
       enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
     },
     otherStreamName: {
@@ -139,7 +145,7 @@ const userSchema = new Schema(
     },
     refreshToken: {
       type: String,
-         },
+    },
     accessToken: {
       type: String,
     },
@@ -210,6 +216,21 @@ const userSchema = new Schema(
       trim: true,
       maxlength: [100, "City cannot exceed 100 characters"],
     },
+    pincode: {
+      type: String,
+      trim: true,
+      maxlength: [10, "Pincode cannot exceed 10 characters"],
+    },
+    parentGuardianName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Parent/Guardian name cannot exceed 100 characters"],
+    },
+    schoolName: {
+      type: String,
+      trim: true,
+      maxlength: [200, "School name cannot exceed 200 characters"],
+    },
     foundedYear: {
       type: String,
       trim: true,
@@ -234,7 +255,6 @@ const userSchema = new Schema(
       ],
       default: [],
     },
-
   },
   {
     timestamps: true,
@@ -303,7 +323,6 @@ userSchema.methods.isPasswordMatch = async function (
 ): Promise<boolean> {
   return comparePassword(password, this.password);
 };
-
 
 // Static methods
 userSchema.statics.isEmailTaken = async function (
