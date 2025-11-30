@@ -79,7 +79,11 @@ class AuthController {
       this.includeIfExists(registrationData, "board", board);
       this.includeIfExists(registrationData, "otherBoardName", otherBoardName);
       this.includeIfExists(registrationData, "stream", stream);
-      this.includeIfExists(registrationData, "otherStreamName", otherStreamName);
+      this.includeIfExists(
+        registrationData,
+        "otherStreamName",
+        otherStreamName
+      );
       this.includeIfExists(registrationData, "grade", grade);
       this.includeIfExists(registrationData, "yearOfPassing", yearOfPassing);
       this.includeIfExists(registrationData, "profileImage", profileImage);
@@ -89,7 +93,11 @@ class AuthController {
       this.includeIfExists(registrationData, "address", address);
       this.includeIfExists(registrationData, "specialization", specialization);
       this.includeIfExists(registrationData, "description", description);
-      this.includeIfExists(registrationData, "bannerYoutubeVideoLink", bannerYoutubeVideoLink);
+      this.includeIfExists(
+        registrationData,
+        "bannerYoutubeVideoLink",
+        bannerYoutubeVideoLink
+      );
       this.includeIfExists(registrationData, "website", website);
       this.includeIfExists(registrationData, "bannerImage", bannerImage);
       this.includeIfExists(registrationData, "state", state);
@@ -105,8 +113,6 @@ class AuthController {
     }
   };
   // send otp
-
-
 
   /**
    * Login user
@@ -179,10 +185,13 @@ class AuthController {
     try {
       const { email, password } = req.body;
 
-
       let result = await this.authService.forgotPassword(email, password);
 
-      ResponseUtil.success(res, result, API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS);
+      ResponseUtil.success(
+        res,
+        result,
+        API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS
+      );
     } catch (error) {
       next(error);
     }
@@ -204,8 +213,12 @@ class AuthController {
 
       const { oldPassword, newPassword } = req.body;
 
-      await this.authService.resetPassword(req.user._id, oldPassword, newPassword);
- 
+      await this.authService.resetPassword(
+        req.user._id,
+        oldPassword,
+        newPassword
+      );
+
       ResponseUtil.success(
         res,
         null,
@@ -249,14 +262,14 @@ class AuthController {
       // Generate OTP
       // Save OTP to user
       // if (type == 'email') {
-        const user = await this.authService.sendOtp(email);
+      const user = await this.authService.sendOtp(email);
 
-        if (!user) {
-          ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-          return;
-        }
+      if (!user) {
+        ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+        return;
+      }
 
-        // ResponseUtil.success(res, null, "OTP sent successfully");
+      // ResponseUtil.success(res, null, "OTP sent successfully");
       // }
       // else if (type == 'phone') {
       //   const user = await this.authService.sendPhoneOtp(phone);
@@ -281,7 +294,6 @@ class AuthController {
     }
   };
 
-
   verifyOtp = async (
     req: Request,
     res: Response,
@@ -291,7 +303,7 @@ class AuthController {
       const { email, otp, type, phone } = req.body;
 
       // Verify OTP
-      if (type == 'email') {
+      if (type == "email") {
         const user = await this.authService.verifyOtp(email, otp);
 
         if (!user) {
@@ -300,8 +312,7 @@ class AuthController {
         }
 
         ResponseUtil.success(res, user, "OTP verified successfully");
-      }
-      else if (type == 'phone') {
+      } else if (type == "phone") {
         const user = await this.authService.verifyPhoneOtp(phone, otp);
 
         if (!user) {
@@ -351,19 +362,19 @@ class AuthController {
         return;
       }
 
-
-     const {categoryIds , name , email , } = req.body;
-let updateData: any = {};
+      const { categoryIds, name, email } = req.body;
+      let updateData: any = {};
       if (name) updateData.name = name;
       if (email) updateData.email = email;
 
-      
       if (categoryIds && Array.isArray(categoryIds) && categoryIds.length > 0) {
         updateData.categoryIds = categoryIds; // overwrite existing
       }
 
-      const updatedUser = await this.authService.updateUserProfile(req.user._id, updateData);
-
+      const updatedUser = await this.authService.updateUserProfile(
+        req.user._id,
+        updateData
+      );
 
       ResponseUtil.success(
         res,
@@ -416,11 +427,15 @@ let updateData: any = {};
       const userId = req.user._id;
       const courses = await this.authService.getUserCourses(userId);
 
-      ResponseUtil.success(res, { courses }, "User courses retrieved successfully");
+      ResponseUtil.success(
+        res,
+        { courses },
+        "User courses retrieved successfully"
+      );
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Change user status (activate, deactivate, etc.)
@@ -435,7 +450,6 @@ let updateData: any = {};
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
-
 
       const {
         userId,
@@ -469,19 +483,22 @@ let updateData: any = {};
 
       // Validate status values if provided
       if (status) {
-        const validStatuses = ['active', 'inactive'];
+        const validStatuses = ["active", "inactive"];
         if (!validStatuses.includes(status)) {
-          ResponseUtil.badRequest(res, `Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+          ResponseUtil.badRequest(
+            res,
+            `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+          );
           return;
         }
       }
 
       // Build update data object
       let updateData: any = {};
-      
+
       // Add status if provided
       this.includeIfExists(updateData, "status", status);
-      
+
       // Add other fields if provided
       this.includeIfExists(updateData, "firstName", firstName);
       this.includeIfExists(updateData, "lastName", lastName);
@@ -495,7 +512,11 @@ let updateData: any = {};
       this.includeIfExists(updateData, "address", address);
       this.includeIfExists(updateData, "specialization", specialization);
       this.includeIfExists(updateData, "description", description);
-      this.includeIfExists(updateData, "bannerYoutubeVideoLink", bannerYoutubeVideoLink);
+      this.includeIfExists(
+        updateData,
+        "bannerYoutubeVideoLink",
+        bannerYoutubeVideoLink
+      );
       this.includeIfExists(updateData, "website", website);
       this.includeIfExists(updateData, "bannerImage", bannerImage);
       this.includeIfExists(updateData, "state", state);
@@ -509,13 +530,16 @@ let updateData: any = {};
         return;
       }
 
-      const result = await this.authService.updateUserProfile(userId, updateData);
+      const result = await this.authService.updateUserProfile(
+        userId,
+        updateData
+      );
 
       ResponseUtil.success(res, { user: result }, "User updated successfully");
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Change user status (activate, deactivate, etc.)
@@ -532,7 +556,7 @@ let updateData: any = {};
       }
 
       // Check if user has admin privileges
-      
+
       const { userId, status } = req.body;
 
       if (!userId || !status) {
@@ -541,19 +565,26 @@ let updateData: any = {};
       }
 
       // Validate status values
-      const validStatuses = ['active', 'inactive'];
+      const validStatuses = ["active", "inactive"];
       if (!validStatuses.includes(status)) {
-        ResponseUtil.badRequest(res, `Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+        ResponseUtil.badRequest(
+          res,
+          `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+        );
         return;
       }
 
       const result = await this.authService.changeUserStatus(userId, status);
 
-      ResponseUtil.success(res, { user: result }, `User status changed to ${status} successfully`);
+      ResponseUtil.success(
+        res,
+        { user: result },
+        `User status changed to ${status} successfully`
+      );
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Get list of universities with pagination and search
@@ -584,15 +615,11 @@ let updateData: any = {};
         search
       );
 
-      ResponseUtil.success(
-        res,
-        result,
-        "Universities retrieved successfully"
-      );
+      ResponseUtil.success(res, result, "Universities retrieved successfully");
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   /**
    * Update user course payment status
@@ -611,13 +638,48 @@ let updateData: any = {};
         return;
       }
 
-      const result = await this.authService.updateUserCoursePaymentStatus(userId, courseId);
+      const result = await this.authService.updateUserCoursePaymentStatus(
+        userId,
+        courseId
+      );
 
-      ResponseUtil.success(res, { userCourseLiked: result }, "User course payment status updated successfully");
+      ResponseUtil.success(
+        res,
+        { userCourseLiked: result },
+        "User course payment status updated successfully"
+      );
     } catch (error) {
       next(error);
     }
-  }
+  };
+
+  /**
+   * Check email availability
+   */
+  checkEmailAvailability = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        ResponseUtil.badRequest(res, "Email is required");
+        return;
+      }
+
+      const result = await this.authService.checkEmailAvailability(email);
+
+      ResponseUtil.success(
+        res,
+        result,
+        result.available ? "Email is available" : "Email is already taken"
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default AuthController;

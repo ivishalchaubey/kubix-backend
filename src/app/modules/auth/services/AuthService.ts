@@ -30,6 +30,27 @@ class AuthService {
   }
 
   /**
+   * Check if email is available for registration
+   */
+  async checkEmailAvailability(email: string): Promise<{ available: boolean }> {
+    if (!email || typeof email !== "string" || !email.trim()) {
+      throw new AppError("Email is required", HttpStatus.BAD_REQUEST);
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    if (!emailRegex.test(normalizedEmail)) {
+      throw new AppError("Invalid email format", HttpStatus.BAD_REQUEST);
+    }
+
+    const isAvailable = await this.authRepository.checkEmailAvailability(
+      normalizedEmail
+    );
+    return { available: isAvailable };
+  }
+
+  /**
    * Register a new user
    */
 
@@ -168,13 +189,13 @@ class AuthService {
 
       // Generate OTP
       const otp = crypto.randomInt(100000, 999999).toString();
-      
+
       // Send OTP email with error handling
       const emailSent = await emailService.sendEmail({
         to: email,
-        subject: 'OTP for Login',
+        subject: "OTP for Login",
         text: `Your OTP for login is ${otp}`,
-        html: `<p>Your OTP for login is <strong>${otp}</strong></p>`
+        html: `<p>Your OTP for login is <strong>${otp}</strong></p>`,
       });
 
       if (!emailSent) {
@@ -188,7 +209,7 @@ class AuthService {
       // Save OTP to database
       const updatedUser = await this.authRepository.setOtp(email, otp);
       logger.info(`OTP sent successfully to ${email}`);
-      
+
       return updatedUser;
     } catch (error) {
       logger.error("Send OTP failed:", error);
@@ -498,7 +519,9 @@ class AuthService {
         config.jwt.refreshSecret as string
       ) as any;
 
-      const user = await this.authRepository.findUserByRefreshToken(refreshToken);
+      const user = await this.authRepository.findUserByRefreshToken(
+        refreshToken
+      );
 
       if (!user || !decoded?.userId || user._id.toString() !== decoded.userId) {
         throw new AppError(
@@ -534,7 +557,7 @@ class AuthService {
         config.jwt.refreshExpirationDays?.toString() || "7",
         10
       );
- 
+
       await this.authRepository.updateRefreshToken(
         user._id.toString(),
         newRefreshToken
@@ -543,7 +566,7 @@ class AuthService {
         user._id.toString(),
         accessToken
       );
- 
+
       const tokens: TokenResponse = {
         access: {
           token: accessToken,
@@ -906,7 +929,13 @@ class AuthService {
     page: number = 1,
     limit: number = 10,
     search?: string
-  ): Promise<{ universities: IUser[]; total: number; page: number; totalPages: number; limit: number }> {
+  ): Promise<{
+    universities: IUser[];
+    total: number;
+    page: number;
+    totalPages: number;
+    limit: number;
+  }> {
     try {
       const result = await this.authRepository.findUsersByRoleWithPagination(
         "university",
@@ -918,7 +947,7 @@ class AuthService {
       logger.info(
         `Retrieved ${result.users.length} universities (Page ${page}/${result.totalPages}, Total: ${result.total})`
       );
-      
+
       return {
         universities: result.users,
         total: result.total,
@@ -991,4 +1020,3 @@ class AuthService {
 }
 
 export default AuthService;
-
