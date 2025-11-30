@@ -1,7 +1,7 @@
 import { Request } from "express";
 import { Model } from "mongoose";
 import { UserRole, TokenType, HttpStatus } from "../constants/enums.js";
-import { ObjectId } from "mongodb";   
+import { ObjectId } from "mongodb";
 // User related types
 export interface IUser {
   _id: string;
@@ -57,7 +57,6 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
 }
-
 
 export interface IUserToken {
   _id: string;
@@ -153,75 +152,75 @@ export interface ValidationError {
 export interface IPayment {
   _id: string;
   userId: ObjectId;
-  
+
   // Stripe IDs
   stripePaymentId: string;
   stripeSessionId: string;
   stripePaymentIntentId?: string;
   stripeCustomerId?: string;
   stripePaymentMethodId?: string;
-  
+
   // Payment amount and currency
   amount: number; // in cents
-  currency: 'inr' | 'usd' | 'eur' | 'gbp';
+  currency: "inr" | "usd" | "eur" | "gbp";
   netAmount: number; // amount after processing fees
-  
+
   // Token allocation
   tokens: number; // calculated based on price
-  
+
   // Payment status and processing
-  status: 'succeeded' | 'failed' | 'pending' | 'canceled' | 'refunded';
-  
+  status: "succeeded" | "failed" | "pending" | "canceled" | "refunded";
+
   // Payment method details
   paymentMethod?: {
-    type: 'card' | 'bank_transfer' | 'wallet' | 'upi' | 'netbanking';
+    type: "card" | "bank_transfer" | "wallet" | "upi" | "netbanking";
     last4?: string;
     brand?: string;
     expMonth?: number;
     expYear?: number;
   };
-  
+
   // Customer information
   customerEmail?: string;
   customerName?: string;
   customerPhone?: string;
-  
+
   // Transaction details
   transactionId?: string;
   receiptNumber?: string;
   receiptUrl?: string;
-  
+
   // Payment processing details
   processingFee: number;
-  
+
   // Payment timing
   paidAt?: Date;
   failedAt?: Date;
   refundedAt?: Date;
-  
+
   // Additional metadata
   description?: string;
   metadata?: Map<string, string> | Record<string, string>;
-  
+
   // Refund information
   refundAmount: number;
   refundReason?: string;
-  
+
   // IP and location tracking
   ipAddress?: string;
   userAgent?: string;
-  
+
   // Risk assessment
   riskScore?: number;
-  riskLevel: 'low' | 'medium' | 'high';
-  
+  riskLevel: "low" | "medium" | "high";
+
   // Payment source tracking
-  source: 'web' | 'mobile' | 'api' | 'admin';
-  
+  source: "web" | "mobile" | "api" | "admin";
+
   // Related entities
   courseId?: ObjectId;
   subscriptionId?: ObjectId;
-  
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
