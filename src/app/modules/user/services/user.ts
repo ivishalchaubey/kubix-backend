@@ -105,8 +105,9 @@ class UserService {
         path: "bookmarkedCourses",
         populate: {
           path: "UniversityId",
-          select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
-        }
+          select:
+            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
+        },
       })
       .lean();
     if (!user) {
@@ -135,23 +136,29 @@ class UserService {
   async getHomeData(userId: string): Promise<any> {
     // Get user by ID first (required for categoryIds)
     const user = await this.userRepository.getUserById(userId);
-    
+
     if (!user) {
       throw new Error("User not found");
     }
 
     // Fetch all independent data in parallel for better performance
-    const [userCategories, popularUniversities, popularCourses, upcomingWebinars, bannerSection] = await Promise.all([
+    const [
+      userCategories,
+      popularUniversities,
+      popularCourses,
+      upcomingWebinars,
+      bannerSection,
+    ] = await Promise.all([
       // Get user's selected categories (max 10)
       this.userRepository.getCategoriesByIds(user.categoryIds || [], 10),
-      // Get popular universities (max 10)
-      this.userRepository.getPopularUniversities(10),
-      // Get popular courses (max 10)
-      this.userRepository.getPopularCourses(10),
+      // Get popular universities (only 3)
+      this.userRepository.getPopularUniversities(3),
+      // Get popular courses (only 3)
+      this.userRepository.getPopularCourses(3),
       // Get top upcoming webinars (max 10)
       this.userRepository.getUpcomingWebinars(10),
       // Get top published banners (max 10)
-      this.inAppBannerRepository.getTopPublishedBanners(10)
+      this.inAppBannerRepository.getTopPublishedBanners(10),
     ]);
 
     return {
@@ -159,7 +166,7 @@ class UserService {
       popularUniversities,
       popularCourses,
       upcomingWebinars,
-      bannerSection
+      bannerSection,
     };
   }
 }
