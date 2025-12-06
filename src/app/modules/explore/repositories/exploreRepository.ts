@@ -3,15 +3,11 @@ import User from "../../auth/models/User.js";
 import { Course } from "../../courses/models/course.js";
 import CategoryModel from "../../admin/categories/models/category.js";
 import { Webinar } from "../../webinar/models/webinar.model.js";
-import {
-  HttpStatus,
-  API_MESSAGES,
-} from "../../../constants/enums.js";
+import { HttpStatus, API_MESSAGES } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
 import { UserRole } from "../../../constants/enums.js";
 
 class ExploreRepository {
-  
   /**
    * Get careers - siblings of ONLY user's selected categories
    * Only returns siblings of the specific categories user selected
@@ -24,12 +20,18 @@ class ExploreRepository {
   ): Promise<{ careers: any[]; total: number }> {
     // Validate user
     if (!Types.ObjectId.isValid(userId)) {
-      throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
     }
 
     const user = await User.findById(userId).lean();
     if (!user) {
-      throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
     }
 
     if (!user.categoryIds || user.categoryIds.length === 0) {
@@ -38,8 +40,10 @@ class ExploreRepository {
 
     // Get user's selected categories with their parentId
     const userCategories = await CategoryModel.find({
-      _id: { $in: user.categoryIds }
-    }).select('_id parentId').lean();
+      _id: { $in: user.categoryIds },
+    })
+      .select("_id parentId")
+      .lean();
 
     if (userCategories.length === 0) {
       return { careers: [], total: 0 };
@@ -47,15 +51,15 @@ class ExploreRepository {
 
     // For each user category, get all its siblings (categories with same parentId)
     const allSiblings: any[] = [];
-    
+
     for (const userCategory of userCategories) {
       if (userCategory.parentId) {
         const siblings = await CategoryModel.find({
-          parentId: userCategory.parentId
+          parentId: userCategory.parentId,
         }).lean();
-        
+
         // Add siblings (but exclude the user's own selected category)
-        siblings.forEach(sibling => {
+        siblings.forEach((sibling) => {
           if (sibling._id.toString() !== userCategory._id.toString()) {
             allSiblings.push(sibling);
           }
@@ -65,15 +69,16 @@ class ExploreRepository {
 
     // Remove duplicates
     let uniqueSiblings: any[] = Array.from(
-      new Map(allSiblings.map(item => [item._id.toString(), item])).values()
+      new Map(allSiblings.map((item) => [item._id.toString(), item])).values()
     );
 
     // Apply search filter if provided
     if (search && search.trim()) {
       const searchLower = search.trim().toLowerCase();
-      uniqueSiblings = uniqueSiblings.filter(item => 
-        item.name?.toLowerCase().includes(searchLower) ||
-        item.description?.toLowerCase().includes(searchLower)
+      uniqueSiblings = uniqueSiblings.filter(
+        (item) =>
+          item.name?.toLowerCase().includes(searchLower) ||
+          item.description?.toLowerCase().includes(searchLower)
       );
     }
 
@@ -104,12 +109,12 @@ class ExploreRepository {
         { lastName: searchRegex },
         { collegeName: searchRegex },
         { email: searchRegex },
-        { location: searchRegex }
+        { location: searchRegex },
       ];
     }
 
     const colleges = await User.find(searchQuery)
-      .select('-password -refreshToken -accessToken -otp -otpExpires')
+      .select("-password -refreshToken -accessToken -otp -otpExpires")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -132,12 +137,18 @@ class ExploreRepository {
   ): Promise<{ courses: any[]; total: number }> {
     // Validate user
     if (!Types.ObjectId.isValid(userId)) {
-      throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
     }
 
     const user = await User.findById(userId).lean();
     if (!user) {
-      throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+      throw new AppError(
+        API_MESSAGES.ERROR.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND
+      );
     }
 
     if (!user.categoryIds || user.categoryIds.length === 0) {
@@ -146,31 +157,37 @@ class ExploreRepository {
 
     // Find all courses that match user's categoryIds
     const allCourses = [];
-    
+
     for (const categoryId of user.categoryIds) {
       const courses = await Course.find({ categoryId })
         .populate({
-          path: 'UniversityId',
-          select: '-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires'
+          path: "UniversityId",
+          select:
+            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
         })
-        .populate('categoryId')
-        .populate('parentCategoryId')
+        .populate("categoryId")
+        .populate("parentCategoryId")
         .lean();
       allCourses.push(...courses);
     }
 
     // Remove duplicates
     let uniqueCourses = Array.from(
-      new Map(allCourses.map(course => [course._id.toString(), course])).values()
+      new Map(
+        allCourses.map((course) => [course._id.toString(), course])
+      ).values()
     );
 
     // Apply search filter if provided
     if (search && search.trim()) {
       const searchLower = search.trim().toLowerCase();
-      uniqueCourses = uniqueCourses.filter(course =>
-        course.name?.toLowerCase().includes(searchLower) ||
-        course.description?.toLowerCase().includes(searchLower) ||
-        (course.duration !== undefined && course.duration !== null && String(course.duration).includes(searchLower))
+      uniqueCourses = uniqueCourses.filter(
+        (course) =>
+          course.name?.toLowerCase().includes(searchLower) ||
+          course.description?.toLowerCase().includes(searchLower) ||
+          (course.duration !== undefined &&
+            course.duration !== null &&
+            String(course.duration).includes(searchLower))
       );
     }
 
@@ -227,6 +244,79 @@ class ExploreRepository {
   }
 
   /**
+   * Get top 3 courses for a category
+   * First tries categoryId, then parentCategoryId, then parent category's courses
+   */
+  async getTopCoursesForCategory(
+    categoryId: string,
+    parentId: string | null
+  ): Promise<any[]> {
+    const categoryObjectId = new Types.ObjectId(categoryId);
+    const courses: any[] = [];
+
+    // First, try to find courses with this categoryId in the categoryId array
+    const categoryCourses = await Course.find({
+      categoryId: { $in: [categoryObjectId] },
+    })
+      .populate({
+        path: "UniversityId",
+        select:
+          "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
+      })
+      .populate("categoryId")
+      .populate("parentCategoryId")
+      .limit(3)
+      .lean();
+
+    courses.push(...categoryCourses);
+
+    // If we don't have 3 courses yet, try parentCategoryId
+    if (courses.length < 3) {
+      const parentCategoryCourses = await Course.find({
+        parentCategoryId: { $in: [categoryObjectId] },
+        _id: { $nin: courses.map((c) => c._id) }, // Exclude already found courses
+      })
+        .populate({
+          path: "UniversityId",
+          select:
+            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
+        })
+        .populate("categoryId")
+        .populate("parentCategoryId")
+        .limit(3 - courses.length)
+        .lean();
+
+      courses.push(...parentCategoryCourses);
+    }
+
+    // If still less than 3 and we have a parentId, try parent category's courses
+    if (courses.length < 3 && parentId) {
+      const parentObjectId = new Types.ObjectId(parentId);
+      const parentCategoryCourses = await Course.find({
+        $or: [
+          { categoryId: { $in: [parentObjectId] } },
+          { parentCategoryId: { $in: [parentObjectId] } },
+        ],
+        _id: { $nin: courses.map((c) => c._id) }, // Exclude already found courses
+      })
+        .populate({
+          path: "UniversityId",
+          select:
+            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
+        })
+        .populate("categoryId")
+        .populate("parentCategoryId")
+        .limit(3 - courses.length)
+        .lean();
+
+      courses.push(...parentCategoryCourses);
+    }
+
+    // Return only top 3
+    return courses.slice(0, 3);
+  }
+
+  /**
    * Get career detail by ID with all populated fields
    */
   async getCareerDetail(careerId: string): Promise<any> {
@@ -236,11 +326,11 @@ class ExploreRepository {
 
     // First, get the career without lean to use populate
     const careerDoc = await CategoryModel.findById(careerId)
-      .populate('parentId')
+      .populate("parentId")
       .populate({
-        path: 'related_careers',
-        model: 'Category',
-        options: { strictPopulate: false } // Don't throw error if some IDs are invalid
+        path: "related_careers",
+        model: "Category",
+        options: { strictPopulate: false }, // Don't throw error if some IDs are invalid
       });
 
     if (!careerDoc) {
@@ -251,17 +341,22 @@ class ExploreRepository {
     const career = careerDoc.toObject();
 
     // Manually populate related_careers if Mongoose populate didn't work (fallback)
-    if (career.related_careers && Array.isArray(career.related_careers) && career.related_careers.length > 0) {
+    if (
+      career.related_careers &&
+      Array.isArray(career.related_careers) &&
+      career.related_careers.length > 0
+    ) {
       // Check if already populated (has category properties like name, description)
       const firstItem = career.related_careers[0] as any;
-      const isAlreadyPopulated = firstItem && typeof firstItem === 'object' && firstItem.name;
+      const isAlreadyPopulated =
+        firstItem && typeof firstItem === "object" && firstItem.name;
 
       if (!isAlreadyPopulated) {
         try {
           // Filter valid ObjectIds
           const validIds = career.related_careers
             .map((id: any) => {
-              if (typeof id === 'string' && Types.ObjectId.isValid(id)) {
+              if (typeof id === "string" && Types.ObjectId.isValid(id)) {
                 return new Types.ObjectId(id);
               }
               if (id && id._id) {
@@ -275,7 +370,9 @@ class ExploreRepository {
             .filter((id: any) => id !== null);
 
           if (validIds.length > 0) {
-            const populatedCategories = await CategoryModel.find({ _id: { $in: validIds } }).lean();
+            const populatedCategories = await CategoryModel.find({
+              _id: { $in: validIds },
+            }).lean();
             (career as any).related_careers = populatedCategories;
           } else {
             (career as any).related_careers = [];
@@ -292,7 +389,7 @@ class ExploreRepository {
     // Ensure array fields are arrays (handle legacy data where they might be strings)
     const ensureArray = (value: any): string[] => {
       if (Array.isArray(value)) return value;
-      if (typeof value === 'string' && value.trim()) {
+      if (typeof value === "string" && value.trim()) {
         // Try to parse if it looks like JSON array
         try {
           const parsed = JSON.parse(value);
@@ -320,7 +417,7 @@ class ExploreRepository {
     }
 
     // Normalize array fields for the parent category if it exists
-    if (career.parentId && typeof career.parentId === 'object') {
+    if (career.parentId && typeof career.parentId === "object") {
       const parent = career.parentId as any;
       if (parent.pros !== undefined) {
         parent.pros = ensureArray(parent.pros);
@@ -336,6 +433,17 @@ class ExploreRepository {
       }
     }
 
+    // Get top 3 courses for this category
+    const parentId =
+      career.parentId && typeof career.parentId === "object"
+        ? (career.parentId as any)._id?.toString() || null
+        : null;
+
+    const topCourses = await this.getTopCoursesForCategory(careerId, parentId);
+
+    // Add coursesAvailable section to response
+    (career as any).coursesAvailable = topCourses;
+
     return career;
   }
 
@@ -347,11 +455,11 @@ class ExploreRepository {
       throw new AppError("Invalid college ID", HttpStatus.BAD_REQUEST);
     }
 
-    const college = await User.findOne({ 
-      _id: collegeId, 
-      role: UserRole.UNIVERSITY 
+    const college = await User.findOne({
+      _id: collegeId,
+      role: UserRole.UNIVERSITY,
     })
-      .select('-password -refreshToken -accessToken -otp -otpExpires')
+      .select("-password -refreshToken -accessToken -otp -otpExpires")
       .lean();
 
     if (!college) {
@@ -371,11 +479,12 @@ class ExploreRepository {
 
     const course = await Course.findById(courseId)
       .populate({
-        path: 'UniversityId',
-        select: '-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires'
+        path: "UniversityId",
+        select:
+          "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
       })
-      .populate('categoryId')
-      .populate('parentCategoryId')
+      .populate("categoryId")
+      .populate("parentCategoryId")
       .lean();
 
     if (!course) {
