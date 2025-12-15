@@ -141,6 +141,24 @@ class UserController {
       next(error);
     }
   }
+
+  async getUserCategories(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.user || !req.user._id) {
+        ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
+        return;
+      }
+      const UserId = req.user._id;
+      const categories = await this.userService.getUserCategories(UserId);
+      ResponseUtil.success(res, categories, API_MESSAGES.USER.UserS_FETCHED);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default UserController;

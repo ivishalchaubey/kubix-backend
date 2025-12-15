@@ -149,8 +149,8 @@ class UserService {
       upcomingWebinars,
       bannerSection,
     ] = await Promise.all([
-      // Get user's selected categories (max 10)
-      this.userRepository.getCategoriesByIds(user.categoryIds || [], 10),
+      // Get user's selected categories (max 3 for home page)
+      this.userRepository.getCategoriesByIds(user.categoryIds || [], 3),
       // Get popular universities (only 3)
       this.userRepository.getPopularUniversities(3),
       // Get popular courses (only 3)
@@ -168,6 +168,22 @@ class UserService {
       upcomingWebinars,
       bannerSection,
     };
+  }
+
+  async getUserCategories(userId: string): Promise<any> {
+    // Get user by ID
+    const user = await this.userRepository.getUserById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Get all user's selected categories without limit
+    const userCategories = await this.userRepository.getCategoriesByIds(
+      user.categoryIds || []
+    );
+
+    return userCategories;
   }
 }
 
