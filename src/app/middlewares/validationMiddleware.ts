@@ -135,6 +135,30 @@ class Validator {
         }
       }
 
+      // Conditional validation: otherBoardName is required if board is "OTHER"
+      if (
+        data.board === "OTHER" &&
+        (!data.otherBoardName || data.otherBoardName.trim() === "")
+      ) {
+        errors.push({
+          field: "otherBoardName",
+          message: "otherBoardName is required when board is OTHER",
+          value: data.otherBoardName,
+        });
+      }
+
+      // Conditional validation: otherStreamName is required if stream is "Other"
+      if (
+        data.stream === "Other" &&
+        (!data.otherStreamName || data.otherStreamName.trim() === "")
+      ) {
+        errors.push({
+          field: "otherStreamName",
+          message: "otherStreamName is required when stream is Other",
+          value: data.otherStreamName,
+        });
+      }
+
       if (errors.length > 0) {
         const errorMessage = errors.map((err) => err.message).join(", ");
         ResponseUtil.validationError(res, errorMessage, JSON.stringify(errors));
@@ -159,20 +183,27 @@ export const authValidation = {
     ],
     email: [
       { required: true, type: "email" },
-      { maxLength: VALIDATION_RULES.EMAIL.MAX_LENGTH },
+      // { maxLength: VALIDATION_RULES.EMAIL.MAX_LENGTH },
     ],
     password: [
       { required: true, type: "string" },
-      { minLength: VALIDATION_RULES.PASSWORD.MIN_LENGTH },
-      { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },
-      { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
+      // { minLength: VALIDATION_RULES.PASSWORD.MIN_LENGTH },
+      // { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },
+      // { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
     ],
     dob: [{ required: false, type: "string" }], // Assuming dob is a string in ISO format
     countryCode: [{ required: true, type: "string" }],
     role: [{ required: true, type: "string" }], // Assuming role is a string
     phoneNumber: [{ required: true, type: "string" }],
     board: [{ required: false, type: "string" }],
+    otherBoardName: [{ required: false, type: "string" }, { maxLength: 100 }],
     stream: [{ required: false, type: "string" }],
+    otherStreamName: [{ required: false, type: "string" }, { maxLength: 100 }],
+    grade: [{ required: false, type: "string" }],
+    yearOfPassing: [
+      { required: false, type: "string" },
+      { pattern: /^\d{4}$/ },
+    ],
     collegeCode: [{ required: false, type: "string" }],
     profileImage: [{ type: "string" }],
 
@@ -182,25 +213,13 @@ export const authValidation = {
       { maxLength: VALIDATION_RULES.NAME.MAX_LENGTH },
     ],
 
-    location: [
-      { type: "string" },
-      { maxLength: 255 },
-    ],
+    location: [{ type: "string" }, { maxLength: 255 }],
 
-    address: [
-      { type: "string" },
-      { maxLength: 500 },
-    ],
+    address: [{ type: "string" }, { maxLength: 500 }],
 
-    specialization: [
-      { type: "string" },
-      { maxLength: 100 },
-    ],
+    specialization: [{ type: "string" }, { maxLength: 100 }],
 
-    description: [
-      { type: "string" },
-      { maxLength: 2000 },
-    ],
+    description: [{ type: "string" }, { maxLength: 2000 }],
 
     bannerYoutubeVideoLink: [
       { type: "string" },
@@ -211,8 +230,36 @@ export const authValidation = {
       { type: "string" },
       { maxLength: 200 },
     ],
-
-   }),
+    website: [{ type: "string" }, { maxLength: 500 }],
+    bannerImage: [{ type: "string" }],
+    state: [{ type: "string" }, { maxLength: 100 }],
+    city: [{ type: "string" }, { maxLength: 100 }],
+    foundedYear: [{ type: "string" }, { pattern: /^\d{4}$/ }],
+    courses: [
+      { required: false },
+      {
+        custom: (value: any) => {
+          if (value !== undefined && value !== null) {
+            if (!Array.isArray(value)) {
+              return "courses must be an array";
+            }
+            for (const course of value) {
+              if (!course.courseName || typeof course.courseName !== "string") {
+                return "Each course must have a courseName (string)";
+              }
+              if (
+                !course.courseDuration ||
+                typeof course.courseDuration !== "string"
+              ) {
+                return "Each course must have a courseDuration (string)";
+              }
+            }
+          }
+          return true;
+        },
+      },
+    ],
+  }),
 
   login: Validator.validate({
     email: [{ required: true, type: "email" }],
@@ -224,8 +271,13 @@ export const authValidation = {
   }),
 
   resetPassword: Validator.validate({
-    token: [{ required: true, type: "string" }],
-    password: [
+    oldPassword: [
+      { required: true, type: "string" },
+      { minLength: VALIDATION_RULES.PASSWORD.MIN_LENGTH },
+      { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },
+      { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
+    ],
+    newPassword: [
       { required: true, type: "string" },
       { minLength: VALIDATION_RULES.PASSWORD.MIN_LENGTH },
       { maxLength: VALIDATION_RULES.PASSWORD.MAX_LENGTH },
@@ -244,58 +296,315 @@ export const notificationValidation = {
   create: Validator.validate({
     title: [
       { required: true, type: "string" },
-      { minLength: 1, maxLength: 200 }
+      { minLength: 1, maxLength: 200 },
     ],
     content: [
       { required: true, type: "string" },
-      { minLength: 1, maxLength: 1000 }
+      { minLength: 1, maxLength: 1000 },
     ],
     datetime: [
-      { 
-        required: false, 
+      {
+        required: false,
         custom: (value: any) => {
           if (value && isNaN(Date.parse(value))) {
             return "datetime must be a valid date";
           }
           return true;
-        }
-      }
+        },
+      },
     ],
-    isSentToAll: [
-      { required: false, type: "boolean" }
-    ],
-    userId: [
-      { required: false, type: "string" }
-    ]
+    isSentToAll: [{ required: false, type: "boolean" }],
+    userId: [{ required: false, type: "string" }],
   }),
 
   update: Validator.validate({
     title: [
       { required: false, type: "string" },
-      { minLength: 1, maxLength: 200 }
+      { minLength: 1, maxLength: 200 },
     ],
     content: [
       { required: false, type: "string" },
-      { minLength: 1, maxLength: 1000 }
+      { minLength: 1, maxLength: 1000 },
     ],
     datetime: [
-      { 
-        required: false, 
+      {
+        required: false,
         custom: (value: any) => {
           if (value && isNaN(Date.parse(value))) {
             return "datetime must be a valid date";
           }
           return true;
-        }
-      }
+        },
+      },
     ],
-    isSentToAll: [
-      { required: false, type: "boolean" }
+    isSentToAll: [{ required: false, type: "boolean" }],
+    userId: [{ required: false, type: "string" }],
+  }),
+};
+
+// In-app banner validation schemas
+export const inAppBannerValidation = {
+  create: Validator.validate({
+    title: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 200 },
     ],
-    userId: [
-      { required: false, type: "string" }
-    ]
-  })
+    description: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 1000 },
+    ],
+    imageUrl: [{ required: false, type: "string" }],
+    actionUrl: [{ required: false, type: "string" }],
+    priority: [
+      { required: false, type: "number" },
+      {
+        custom: (value: any) => {
+          if (value !== undefined && (value < 0 || value > 100)) {
+            return "Priority must be between 0 and 100";
+          }
+          return true;
+        },
+      },
+    ],
+    isActive: [{ required: false, type: "boolean" }],
+    startDate: [
+      {
+        required: false,
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "startDate must be a valid date";
+          }
+          return true;
+        },
+      },
+    ],
+    endDate: [
+      {
+        required: false,
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "endDate must be a valid date";
+          }
+          return true;
+        },
+      },
+    ],
+  }),
+
+  update: Validator.validate({
+    title: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 200 },
+    ],
+    description: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 1000 },
+    ],
+    imageUrl: [{ required: false, type: "string" }],
+    actionUrl: [{ required: false, type: "string" }],
+    priority: [
+      { required: false, type: "number" },
+      {
+        custom: (value: any) => {
+          if (value !== undefined && (value < 0 || value > 100)) {
+            return "Priority must be between 0 and 100";
+          }
+          return true;
+        },
+      },
+    ],
+    isActive: [{ required: false, type: "boolean" }],
+    startDate: [
+      {
+        required: false,
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "startDate must be a valid date";
+          }
+          return true;
+        },
+      },
+    ],
+    endDate: [
+      {
+        required: false,
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "endDate must be a valid date";
+          }
+          return true;
+        },
+      },
+    ],
+  }),
+};
+
+// Webinar validation schemas
+export const webinarValidation = {
+  create: Validator.validate({
+    universityName: [
+      { required: true, type: "string" },
+      { minLength: 2, maxLength: 200 },
+    ],
+    title: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 200 },
+    ],
+    description: [
+      { required: true, type: "string" },
+      { minLength: 1, maxLength: 2000 },
+    ],
+    courseDetails: [{ required: true, type: "string" }],
+    targetAudience: [{ required: true, type: "string" }],
+    tags: [{ required: false }],
+    domains: [{ required: false }],
+    speakerName: [{ required: true, type: "string" }],
+    speakerPhoto: [{ required: false, type: "string" }],
+    speakerBio: [{ required: false, type: "string" }, { maxLength: 1000 }],
+    scheduledDate: [
+      {
+        required: true,
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "scheduledDate must be a valid date";
+          }
+          return true;
+        },
+      },
+    ],
+    scheduledTime: [{ required: true, type: "string" }],
+    duration: [
+      { required: true, type: "number" },
+      {
+        custom: (value: any) => {
+          if (value && (value < 15 || value > 300)) {
+            return "Duration must be between 15 and 300 minutes";
+          }
+          return true;
+        },
+      },
+    ],
+    webinarLink: [{ required: true, type: "string" }],
+    pocName: [{ required: true, type: "string" }],
+    pocPhone: [{ required: true, type: "string" }],
+    pocEmail: [{ required: true, type: "email" }],
+    admissionChairperson: [{ required: false, type: "string" }],
+    freebies: [{ required: false }],
+    logo: [{ required: false, type: "string" }],
+  }),
+
+  update: Validator.validate({
+    universityName: [
+      { required: false, type: "string" },
+      { minLength: 2, maxLength: 200 },
+    ],
+    title: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 200 },
+    ],
+    description: [
+      { required: false, type: "string" },
+      { minLength: 1, maxLength: 2000 },
+    ],
+    courseDetails: [{ required: false, type: "string" }],
+    targetAudience: [{ required: false, type: "string" }],
+    tags: [{ required: false }],
+    domains: [{ required: false }],
+    speakerName: [{ required: false, type: "string" }],
+    speakerPhoto: [{ required: false, type: "string" }],
+    speakerBio: [{ required: false, type: "string" }, { maxLength: 1000 }],
+    scheduledDate: [
+      {
+        required: false,
+        custom: (value: any) => {
+          if (value && isNaN(Date.parse(value))) {
+            return "scheduledDate must be a valid date";
+          }
+          return true;
+        },
+      },
+    ],
+    scheduledTime: [{ required: false, type: "string" }],
+    duration: [
+      { required: false, type: "number" },
+      {
+        custom: (value: any) => {
+          if (value && (value < 15 || value > 300)) {
+            return "Duration must be between 15 and 300 minutes";
+          }
+          return true;
+        },
+      },
+    ],
+    webinarLink: [{ required: false, type: "string" }],
+    pocName: [{ required: false, type: "string" }],
+    pocPhone: [{ required: false, type: "string" }],
+    pocEmail: [{ required: false, type: "email" }],
+    admissionChairperson: [{ required: false, type: "string" }],
+    freebies: [{ required: false }],
+    logo: [{ required: false, type: "string" }],
+    status: [
+      { required: false, type: "string" },
+      {
+        custom: (value: any) => {
+          const validValues = [
+            "draft",
+            "published",
+            "live",
+            "completed",
+            "cancelled",
+          ];
+          if (value && !validValues.includes(value)) {
+            return "status must be one of: draft, published, live, completed, cancelled";
+          }
+          return true;
+        },
+      },
+    ],
+  }),
+};
+
+// Application Sales validation schemas
+export const applicationSalesValidation = {
+  create: Validator.validate({
+    universityName: [
+      { required: true, type: "string" },
+      { minLength: 2, maxLength: 200 },
+    ],
+    applicationFormLink: [{ required: true, type: "string" }],
+    paymentLink: [{ required: true, type: "string" }],
+    pocName: [{ required: true, type: "string" }],
+    pocPhone: [{ required: true, type: "string" }],
+    pocEmail: [{ required: true, type: "email" }],
+    admissionChairperson: [{ required: false, type: "string" }],
+    freebies: [{ required: false }],
+  }),
+
+  update: Validator.validate({
+    universityName: [
+      { required: false, type: "string" },
+      { minLength: 2, maxLength: 200 },
+    ],
+    applicationFormLink: [{ required: false, type: "string" }],
+    paymentLink: [{ required: false, type: "string" }],
+    pocName: [{ required: false, type: "string" }],
+    pocPhone: [{ required: false, type: "string" }],
+    pocEmail: [{ required: false, type: "email" }],
+    admissionChairperson: [{ required: false, type: "string" }],
+    freebies: [{ required: false }],
+    status: [
+      { required: false, type: "string" },
+      {
+        custom: (value: any) => {
+          const validValues = ["draft", "published", "active", "closed"];
+          if (value && !validValues.includes(value)) {
+            return "status must be one of: draft, published, active, closed";
+          }
+          return true;
+        },
+      },
+    ],
+  }),
 };
 
 export default Validator;

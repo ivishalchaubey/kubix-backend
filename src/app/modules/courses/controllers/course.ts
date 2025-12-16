@@ -9,10 +9,17 @@ class CourseController {
     }
     async createCourse(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { name, description, categoryId, Image, duration, amount, university, currency, chapters } = req.body;
+            if (!req.user) {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+                return;
+            }
 
-            // Assuming there's a service method to handle course creation
-            const result = await this.courseService.createCourse(req.body);
+            const courseData = {
+                ...req.body,
+                UniversityId: req.user._id,
+            };
+
+            const result = await this.courseService.createCourse(courseData);
 
             ResponseUtil.created(res, result, API_MESSAGES.COURSE.COURSE_CREATED);
         } catch (error) {

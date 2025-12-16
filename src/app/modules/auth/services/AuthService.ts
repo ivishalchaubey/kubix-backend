@@ -18,12 +18,36 @@ import { AppError } from "../../../middlewares/errorHandler.js";
 import logger from "../../../utils/logger.js";
 import { UserCourseLiked } from "../models/usercourseliked.js";
 import { Types } from "mongoose";
+import emailService, { EmailService } from "../../../utils/emailService.js";
 
 class AuthService {
   private authRepository: AuthRepository;
+  private emailService: EmailService;
 
   constructor() {
     this.authRepository = new AuthRepository();
+    this.emailService = new EmailService();
+  }
+
+  /**
+   * Check if email is available for registration
+   */
+  async checkEmailAvailability(email: string): Promise<{ available: boolean }> {
+    if (!email || typeof email !== "string" || !email.trim()) {
+      throw new AppError("Email is required", HttpStatus.BAD_REQUEST);
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    if (!emailRegex.test(normalizedEmail)) {
+      throw new AppError("Invalid email format", HttpStatus.BAD_REQUEST);
+    }
+
+    const isAvailable = await this.authRepository.checkEmailAvailability(
+      normalizedEmail
+    );
+    return { available: isAvailable };
   }
 
   /**
@@ -31,13 +55,17 @@ class AuthService {
    */
 
   async register(userData: {
-    firstName?: string;
-    lastName?: string;
+    firstName: string;
+    lastName: string;
     dob?: string;
     countryCode: string;
     phoneNumber: string;
     board?: string;
+    otherBoardName?: string;
     stream?: string;
+    otherStreamName?: string;
+    grade?: string;
+    yearOfPassing?: string;
     email: string;
     password: string;
     role: UserRole;
@@ -50,7 +78,14 @@ class AuthService {
     description?: string;
     bannerYoutubeVideoLink?: string;
     website?: string;
-    [key: string]: any; // Allow additional fields
+    bannerImage?: string;
+    state?: string;
+    city?: string;
+    foundedYear?: string;
+    courses?: Array<{
+      courseName: string;
+      courseDuration: string;
+    }>;
   }): Promise<{ user: IUser; tokens: TokenResponse }> {
     try {
       // Check if user already exists and role is not admin
@@ -143,9 +178,39 @@ class AuthService {
         );
       }
 
+      // Check if email service is available
+      if (!emailService.isAvailable()) {
+        logger.error("Email service is not configured or unavailable");
+        throw new AppError(
+          "Email service is not configured. Please contact administrator.",
+          HttpStatus.SERVICE_UNAVAILABLE
+        );
+      }
+
       // Generate OTP
       const otp = crypto.randomInt(100000, 999999).toString();
-      return await this.authRepository.setOtp(email, otp);
+
+      // Send OTP email with error handling
+      const emailSent = await emailService.sendEmail({
+        to: email,
+        subject: "OTP for Login",
+        text: `Your OTP for login is ${otp}`,
+        html: `<p>Your OTP for login is <strong>${otp}</strong></p>`,
+      });
+
+      if (!emailSent) {
+        logger.error(`Failed to send OTP email to ${email}`);
+        throw new AppError(
+          "Failed to send OTP email. Please try again later.",
+          HttpStatus.INTERNAL_SERVER_ERROR
+        );
+      }
+
+      // Save OTP to database
+      const updatedUser = await this.authRepository.setOtp(email, otp);
+      logger.info(`OTP sent successfully to ${email}`);
+
+      return updatedUser;
     } catch (error) {
       logger.error("Send OTP failed:", error);
       throw error;
@@ -442,16 +507,76 @@ class AuthService {
    */
   async refreshTokens(refreshToken: string): Promise<TokenResponse> {
     try {
-      // TODO: Implement JWT verification when available
-      // For now, mock token refresh
+      if (!refreshToken) {
+        throw new AppError(
+          API_MESSAGES.ERROR.INVALID_TOKEN,
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+
+      const decoded = jwt.verify(
+        refreshToken,
+        config.jwt.refreshSecret as string
+      ) as any;
+
+      const user = await this.authRepository.findUserByRefreshToken(
+        refreshToken
+      );
+
+      if (!user || !decoded?.userId || user._id.toString() !== decoded.userId) {
+        throw new AppError(
+          API_MESSAGES.ERROR.INVALID_REFRESH_TOKEN,
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+
+      const payload = {
+        userId: user._id,
+        role: user.role,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        stream: user.stream,
+        board: user.board,
+      };
+
+      const accessToken = jwt.sign(payload, config.jwt.secret as string, {
+        expiresIn: "15m",
+      });
+
+      const refreshTokenOptions: jwt.SignOptions = {
+        expiresIn: config.jwt.refreshExpirationDays as any,
+      };
+      const newRefreshToken = jwt.sign(
+        payload,
+        config.jwt.refreshSecret as string,
+        refreshTokenOptions
+      );
+
+      const refreshExpiryDays = parseInt(
+        config.jwt.refreshExpirationDays?.toString() || "7",
+        10
+      );
+
+      await this.authRepository.updateRefreshToken(
+        user._id.toString(),
+        newRefreshToken
+      );
+      await this.authRepository.updateAccessToken(
+        user._id.toString(),
+        accessToken
+      );
+
       const tokens: TokenResponse = {
         access: {
-          token: "new-mock-access-token",
+          token: accessToken,
           expires: new Date(Date.now() + 15 * 60 * 1000),
         },
         refresh: {
-          token: "new-mock-refresh-token",
-          expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          token: newRefreshToken,
+          expires: new Date(
+            Date.now() + refreshExpiryDays * 24 * 60 * 60 * 1000
+          ),
         },
       };
 
@@ -459,8 +584,11 @@ class AuthService {
       return tokens;
     } catch (error) {
       logger.error("Token refresh failed:", error);
+      if (error instanceof AppError) {
+        throw error;
+      }
       throw new AppError(
-        API_MESSAGES.ERROR.INVALID_TOKEN,
+        API_MESSAGES.ERROR.INVALID_REFRESH_TOKEN,
         HttpStatus.UNAUTHORIZED
       );
     }
@@ -555,16 +683,29 @@ class AuthService {
   /**
    * Reset password using token
    */
-  async resetPassword(token: string, newPassword: string): Promise<void> {
+  async resetPassword(
+    userId: string,
+    oldPassword: string,
+    newPassword: string
+  ): Promise<void> {
     try {
-      const user = await this.authRepository.findUserByPasswordResetToken(
-        token
-      );
+      const user = await this.authRepository.findUserByIdWithPassword(userId);
       if (!user) {
         throw new AppError(
-          API_MESSAGES.ERROR.INVALID_TOKEN,
-          HttpStatus.BAD_REQUEST
+          API_MESSAGES.ERROR.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND
         );
+      }
+
+      const userWithMethods = user as IUser & IUserMethods;
+      if (typeof userWithMethods.isPasswordMatch === "function") {
+        const isMatch = await userWithMethods.isPasswordMatch(oldPassword);
+        if (!isMatch) {
+          throw new AppError(
+            API_MESSAGES.ERROR.INCORRECT_CURRENT_PASSWORD,
+            HttpStatus.BAD_REQUEST
+          );
+        }
       }
 
       await this.authRepository.updateUserPassword(user._id, newPassword);
@@ -638,7 +779,7 @@ class AuthService {
    */
   async updateUserProfile(
     userId: string,
-    updateData: { firstName?: string; lastName?: string; email?: string }
+    updateData: Partial<IUser>
   ): Promise<IUser> {
     try {
       // Check if new email is already taken
@@ -777,6 +918,45 @@ class AuthService {
       return universities;
     } catch (error) {
       logger.error("Get universities failed:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get list of universities with pagination and search
+   */
+  async getUniversitiesWithPagination(
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<{
+    universities: IUser[];
+    total: number;
+    page: number;
+    totalPages: number;
+    limit: number;
+  }> {
+    try {
+      const result = await this.authRepository.findUsersByRoleWithPagination(
+        "university",
+        page,
+        limit,
+        search
+      );
+
+      logger.info(
+        `Retrieved ${result.users.length} universities (Page ${page}/${result.totalPages}, Total: ${result.total})`
+      );
+
+      return {
+        universities: result.users,
+        total: result.total,
+        page: result.page,
+        totalPages: result.totalPages,
+        limit,
+      };
+    } catch (error) {
+      logger.error("Get universities with pagination failed:", error);
       throw error;
     }
   }

@@ -56,7 +56,7 @@ adminRouter.get(
 
 adminRouter.post(
   "/categories/upload-csv",
-  upload.single("csvFile"),
+  upload.single("csvFile") as any,
   asyncHandler((req: Request, res: Response, next: NextFunction) =>
     adminController.uploadCategoriesFromCSV(req, res, next)
   )
@@ -64,7 +64,7 @@ adminRouter.post(
 
 adminRouter.post(
   "/categories/upload-csv-under-parent",
-  upload.single("csvFile"),
+  upload.single("csvFile") as any,
   asyncHandler((req: Request, res: Response, next: NextFunction) =>
     adminController.uploadCategoriesFromCSVUnderParent(req, res, next)
   )

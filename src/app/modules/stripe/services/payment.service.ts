@@ -178,8 +178,6 @@ export class PaymentService {
           const paymentIntent = await stripe.paymentIntents.retrieve(paymentData.paymentIntentId, {
             expand: ['charges', 'payment_method']
           });
-
-          console.log(paymentIntent , "paymentIntent <>><><><><><><><><><><><");
           
           // Extract payment method details
           if (paymentIntent.payment_method) {

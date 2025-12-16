@@ -26,7 +26,11 @@ class AuthRepository {
     countryCode: string;
     phoneNumber: string;
     board?: string;
+    otherBoardName?: string;
     stream?: string;
+    otherStreamName?: string;
+    grade?: string;
+    yearOfPassing?: string;
     password: string;
     role: UserRole;
     profileImage?: string;
@@ -38,7 +42,14 @@ class AuthRepository {
     description?: string;
     bannerYoutubeVideoLink?: string;
     website?: string;
-    [key: string]: any; // Allow additional fields
+    bannerImage?: string;
+    state?: string;
+    city?: string;
+    foundedYear?: string;
+    courses?: Array<{
+      courseName: string;
+      courseDuration: string;
+    }>;
   }): Promise<IUser> {
     // Check if email is already taken
     const isEmailTaken = await User.isEmailTaken(userData.email);
@@ -54,8 +65,13 @@ class AuthRepository {
   }
 
   /**
-   * Find user by email
+   * Check if email is available (not already taken)
    */
+  async checkEmailAvailability(email: string): Promise<boolean> {
+    const isTaken = await User.isEmailTaken(email);
+    return !isTaken;
+  }
+
   async findUserByEmail(
     email: string,
     includePassword = false,
@@ -322,7 +338,19 @@ class AuthRepository {
     return await User.findOne({
       passwordResetToken: token,
       passwordResetExpires: { $gt: Date.now() },
-    });
+    }).select("+password");
+  }
+
+  async findUserByIdWithPassword(userId: string): Promise<IUser | null> {
+    if (!Types.ObjectId.isValid(userId)) {
+      return null;
+    }
+
+    return await User.findById(userId).select("+password");
+  }
+
+  async findUserByRefreshToken(refreshToken: string): Promise<IUser | null> {
+    return await User.findOne({ refreshToken }).lean();
   }
 
   /**
@@ -453,6 +481,53 @@ class AuthRepository {
     return await User.find({ role }).select(
       "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
     );
+  }
+
+  /**
+   * Find users by role with pagination and search
+   */
+  async findUsersByRoleWithPagination(
+    role: string,
+    page: number = 1,
+    limit: number = 10,
+    search?: string
+  ): Promise<{
+    users: IUser[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const skip = (page - 1) * limit;
+
+    // Build search query
+    const query: any = { role };
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { universityName: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    // Get total count
+    const total = await User.countDocuments(query);
+
+    // Get paginated results
+    const users = await User.find(query)
+      .select(
+        "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+      )
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    return {
+      users,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 }
 

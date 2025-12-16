@@ -21,7 +21,10 @@ class NotificationRepository {
         HttpStatus.NOT_FOUND
       );
     }
-    return await Notification.findById(notificationId).populate("userId");
+    return await Notification.findById(notificationId).populate({
+      path: "userId",
+      select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+    });
   };
 
   // Get all notifications with optional userId filter
@@ -42,7 +45,10 @@ class NotificationRepository {
     }
     
     return await Notification.find(query)
-      .populate("userId")
+      .populate({
+        path: "userId",
+        select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+      })
       .sort({ datetime: -1, createdAt: -1 });
   };
 
@@ -58,7 +64,10 @@ class NotificationRepository {
       notificationId,
       updateData,
       { new: true, runValidators: true }
-    ).populate("userId");
+    ).populate({
+      path: "userId",
+      select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+    });
   };
 
   // Delete notification by ID
@@ -87,7 +96,10 @@ class NotificationRepository {
         { isSentToAll: true }
       ]
     })
-    .populate("userId")
+    .populate({
+      path: "userId",
+      select: "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+    })
     .sort({ datetime: -1, createdAt: -1 });
   };
 }

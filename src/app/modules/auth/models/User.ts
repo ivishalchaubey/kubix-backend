@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUser, IUserMethods, IUserModel } from "../../../types/global.js";
 import { UserRole } from "../../../constants/enums.js";
-import jwt from "jsonwebtoken";
 import config from "../../../config/env.js";
 import bcrypt from "bcryptjs";
 
@@ -19,7 +18,8 @@ const comparePassword = async (
 };
 
 // User schema
-const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
+// Removing generic type parameters to avoid TypeScript complexity issues
+const userSchema = new Schema(
   {
     firstName: {
       type: String,
@@ -50,7 +50,10 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     dob: {
       type: String,
-      // Removed date format validation for bulk upload flexibility
+      match: [
+        /^\d{4}-\d{2}-\d{2}$/,
+        "Date of birth must be in YYYY-MM-DD format",
+      ],
     },
     likedCourses: {
       type: [Schema.Types.ObjectId],
@@ -66,7 +69,10 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       type: String,
       required: [true, "Country code is required"],
       trim: true,
-      // Removed regex validation for bulk upload flexibility
+      match: [
+        /^\+\d{1,3}$/,
+        "Country code must start with '+' followed by digits",
+      ],
     },
     phoneNumber: {
       type: String,
@@ -79,10 +85,29 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       trim: true,
       enum: ["CBSE", "ICSE", "State", "IB", "Other"], // Example boards
     },
+    otherBoardName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Other board name cannot exceed 100 characters"],
+    },
     stream: {
       type: String,
-       trim: true,
+      trim: true,
       enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
+    },
+    otherStreamName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Other stream name cannot exceed 100 characters"],
+    },
+    grade: {
+      type: String,
+      trim: true,
+    },
+    yearOfPassing: {
+      type: String,
+      trim: true,
+      match: [/^\d{4}$/, "Year of passing must be a 4-digit year"],
     },
     password: {
       type: String,
@@ -118,7 +143,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     refreshToken: {
       type: String,
-         },
+    },
     accessToken: {
       type: String,
     },
@@ -164,17 +189,69 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     bannerYoutubeVideoLink: {
       type: String,
       trim: true,
-      // match: [
-      //   /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
-      //   "Invalid YouTube URL",
-      // ],
+      match: [
+        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+        "Invalid YouTube URL",
+      ],
     },
     website: {
       type: String,
       trim: true,
-      // Removed maxlength for bulk upload
+      maxlength: [500, "Website URL cannot exceed 500 characters"],
     },
-
+    bannerImage: {
+      type: String,
+      trim: true,
+    },
+    state: {
+      type: String,
+      trim: true,
+      maxlength: [100, "State cannot exceed 100 characters"],
+    },
+    city: {
+      type: String,
+      trim: true,
+      maxlength: [100, "City cannot exceed 100 characters"],
+    },
+    pincode: {
+      type: String,
+      trim: true,
+      maxlength: [10, "Pincode cannot exceed 10 characters"],
+    },
+    parentGuardianName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Parent/Guardian name cannot exceed 100 characters"],
+    },
+    schoolName: {
+      type: String,
+      trim: true,
+      maxlength: [200, "School name cannot exceed 200 characters"],
+    },
+    foundedYear: {
+      type: String,
+      trim: true,
+      match: [/^\d{4}$/, "Founded year must be a 4-digit year"],
+    },
+    courses: {
+      type: [
+        {
+          courseName: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [200, "Course name cannot exceed 200 characters"],
+          },
+          courseDuration: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [50, "Course duration cannot exceed 50 characters"],
+          },
+        },
+      ],
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -243,7 +320,6 @@ userSchema.methods.isPasswordMatch = async function (
 ): Promise<boolean> {
   return comparePassword(password, this.password);
 };
-
 
 // Static methods
 userSchema.statics.isEmailTaken = async function (

@@ -24,6 +24,10 @@ class AuthMiddleware {
         }
 
       let token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      if (!token || token === "undefined") {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
       // decode token
           const decoded = jwt.verify(token, config.jwt.secret) as any;
 
@@ -41,7 +45,7 @@ class AuthMiddleware {
         next();
       
     } catch (error) {
-      next(error);
+      ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
     }
   };
 
@@ -60,6 +64,10 @@ class AuthMiddleware {
         }
 
       let token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      if (!token || token === "undefined") {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
       // decode token
           const decoded = jwt.verify(token, config.jwt.secret) as any;
 
@@ -80,7 +88,7 @@ class AuthMiddleware {
         next();
       
     } catch (error) {
-      next(error);
+      ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
     }
   };
 

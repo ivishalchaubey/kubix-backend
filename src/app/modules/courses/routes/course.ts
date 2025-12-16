@@ -5,7 +5,7 @@ const courseRouter = Router();
 import AuthMiddleware from "../../../middlewares/auth.js";
 const courseController = new CourseController();
 
-courseRouter.post("/", courseController.createCourse.bind(courseController));
+courseRouter.post("/", AuthMiddleware.universityauthenticate, courseController.createCourse.bind(courseController));
 courseRouter.put("/:id", courseController.updateCourse.bind(courseController));
 courseRouter.delete("/:id", courseController.deleteCourse.bind(courseController));
 courseRouter.get("/", courseController.getCourses.bind(courseController));

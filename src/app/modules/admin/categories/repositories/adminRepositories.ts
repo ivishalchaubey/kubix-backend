@@ -16,32 +16,66 @@ class AdminRepositories {
         name,
         children = [],
         image,
-        stream,
-        board,
         description,
         isLeafNode,
-        a_day_in_life,
-        core_skills,
-        educational_path,
         salary_range,
-        future_outlook,
+        qualifying_exams,
+        pros,
+        cons,
+        myth,
+        superstar1,
+        superstar2,
+        superstar3,
+        reality,
+        related_careers,
+        checklist,
+        technical_skills,
+        soft_skills,
+        potential_earnings,
+        future_growth,
+        a_day_in_life,
+        growth_path,
       } = node;
+
+      // Convert related_careers to ObjectIds if they are strings
+      const relatedCareersIds = related_careers
+        ? related_careers
+            .filter((id: any) => mongoose.Types.ObjectId.isValid(id))
+            .map((id: string) => new mongoose.Types.ObjectId(id))
+        : [];
+
+      // Ensure array fields are arrays
+      const ensureArray = (value: any): string[] => {
+        if (Array.isArray(value)) return value;
+        if (typeof value === 'string' && value.trim()) return [value];
+        return [];
+      };
 
       // Save current node
       const newNode = new CategoryModel({
         name,
         parentId,
-        description,
-        image,
-        stream,
-        board,
+        description: description || "",
+        image: image || "",
         order,
-        isLeafNode,
-        a_day_in_life,
-        core_skills,
-        educational_path,
-        salary_range,
-        future_outlook,
+        isLeafNode: isLeafNode || false,
+        salary_range: salary_range || "",
+        qualifying_exams: ensureArray(qualifying_exams),
+        pros: ensureArray(pros),
+        cons: ensureArray(cons),
+        myth: myth || "",
+        superstar1: superstar1 || "",
+        superstar2: superstar2 || "",
+        superstar3: superstar3 || "",
+        reality: reality || "",
+        related_careers: relatedCareersIds,
+        checklist: ensureArray(checklist),
+        technical_skills: ensureArray(technical_skills),
+        soft_skills: ensureArray(soft_skills),
+        potential_earnings: ensureArray(potential_earnings),
+        future_growth: future_growth || "",
+        a_day_in_life: a_day_in_life || "",
+        growth_path: growth_path || "",
       });
 
       const savedNode = await newNode.save();
@@ -61,63 +95,63 @@ class AdminRepositories {
       parentId,
       order,
       isLeafNode,
-      a_day_in_life,
-      core_skills,
-      stream,
-      board,
-      educational_path,
       salary_range,
-      future_outlook,
-      // New fields
-      soft_skills,
-      checklist,
-      education_10_2,
-      education_diploma,
-      education_graduation,
-      education_post_graduation,
-      myth,
-      reality,
+      qualifying_exams,
       pros,
       cons,
+      myth,
       superstar1,
       superstar2,
       superstar3,
+      reality,
       related_careers,
+      checklist,
+      technical_skills,
+      soft_skills,
+      potential_earnings,
+      future_growth,
+      a_day_in_life,
       growth_path,
-      qualifying_exams,
     } = categoryData;
+
+    // Convert related_careers to ObjectIds if they are strings
+    const relatedCareersIds = related_careers
+      ? related_careers
+          .filter((id: any) => mongoose.Types.ObjectId.isValid(id))
+          .map((id: string) => new mongoose.Types.ObjectId(id))
+      : [];
+
+    // Ensure array fields are arrays
+    const ensureArray = (value: any): string[] => {
+      if (Array.isArray(value)) return value;
+      if (typeof value === 'string' && value.trim()) return [value];
+      return [];
+    };
 
     const newCategory = new CategoryModel({
       name,
       parentId: parentId ? new mongoose.Types.ObjectId(parentId) : null,
-      description,
-      image,
+      description: description || "",
+      image: image || "",
       order: order || 1,
       isLeafNode: isLeafNode || false,
-      a_day_in_life,
-      core_skills,
-      educational_path,
-      stream,
-      board,
-      salary_range,
-      future_outlook,
-      // New fields
-      soft_skills: soft_skills || [],
-      checklist: checklist || [],
-      education_10_2: education_10_2 || "",
-      education_diploma: education_diploma || "",
-      education_graduation: education_graduation || "",
-      education_post_graduation: education_post_graduation || "",
+      salary_range: salary_range || "",
+      qualifying_exams: ensureArray(qualifying_exams),
+      pros: ensureArray(pros),
+      cons: ensureArray(cons),
       myth: myth || "",
-      reality: reality || "",
-      pros: pros || [],
-      cons: cons || [],
       superstar1: superstar1 || "",
       superstar2: superstar2 || "",
       superstar3: superstar3 || "",
-      related_careers: related_careers || [],
+      reality: reality || "",
+      related_careers: relatedCareersIds,
+      checklist: ensureArray(checklist),
+      technical_skills: ensureArray(technical_skills),
+      soft_skills: ensureArray(soft_skills),
+      potential_earnings: ensureArray(potential_earnings),
+      future_growth: future_growth || "",
+      a_day_in_life: a_day_in_life || "",
       growth_path: growth_path || "",
-      qualifying_exams: qualifying_exams || [],
     });
 
     const savedCategory = await newCategory.save();
@@ -159,16 +193,23 @@ class AdminRepositories {
           description = "",
           image = "",
           isLeafNode = false,
-          a_day_in_life = "",
-          stream = "",
-          board = "",
-          core_skills_technical = "",
-          core_skills_soft = "",
-          educational_path_ug = "",
-          educational_path_pg = "",
           salary_range = "",
-          future_outlook_demand = "",
-          future_outlook_reason = "",
+          qualifying_exams = "",
+          pros = "",
+          cons = "",
+          myth = "",
+          reality = "",
+          superstar1 = "",
+          superstar2 = "",
+          superstar3 = "",
+          related_careers = "",
+          checklist = "",
+          technical_skills = "",
+          soft_skills = "",
+          potential_earnings = "",
+          future_growth = "",
+          a_day_in_life = "",
+          growth_path = "",
         } = record;
 
         // Skip records with missing required fields
@@ -184,43 +225,40 @@ class AdminRepositories {
           continue; // Skip invalid levels
         }
 
-        // Parse core skills
-        const core_skills = {
-          technical: core_skills_technical
-            ? core_skills_technical.split(",").map((s: string) => s.trim())
-            : [],
-          soft: core_skills_soft
-            ? core_skills_soft.split(",").map((s: string) => s.trim())
-            : [],
+        // Parse array fields from CSV (comma-separated)
+        const parseArray = (value: string): string[] => {
+          if (!value || !value.trim()) return [];
+          return value.split(",").map((s: string) => s.trim()).filter(Boolean);
         };
 
-        // Parse educational path
-        const educational_path = {
-          ug_courses: educational_path_ug
-            ? educational_path_ug.split(",").map((s: string) => s.trim())
-            : [],
-          pg_courses: educational_path_pg
-            ? educational_path_pg.split(",").map((s: string) => s.trim())
-            : [],
-        };
-
-        // Parse future outlook
-        const future_outlook = {
-          demand: future_outlook_demand || "",
-          reason: future_outlook_reason || "",
-        };
+        // Parse related_careers (category IDs) and convert to ObjectIds, filter invalid ones
+        const relatedCareersIds = parseArray(related_careers)
+          .filter((id: string) => mongoose.Types.ObjectId.isValid(id))
+          .map((id: string) => new mongoose.Types.ObjectId(id));
 
         const categoryData = {
           name,
           level: levelNum,
-          description,
-          image,
+          description: description || "",
+          image: image || "",
           isLeafNode: isLeafNode === "true" || isLeafNode === "1",
-          a_day_in_life,
-          core_skills,
-          educational_path,
-          salary_range,
-          future_outlook,
+          salary_range: salary_range || "",
+          qualifying_exams: parseArray(qualifying_exams),
+          pros: parseArray(pros),
+          cons: parseArray(cons),
+          myth: myth || "",
+          reality: reality || "",
+          superstar1: superstar1 || "",
+          superstar2: superstar2 || "",
+          superstar3: superstar3 || "",
+          related_careers: relatedCareersIds,
+          checklist: parseArray(checklist),
+          technical_skills: parseArray(technical_skills),
+          soft_skills: parseArray(soft_skills),
+          potential_earnings: parseArray(potential_earnings),
+          future_growth: future_growth || "",
+          a_day_in_life: a_day_in_life || "",
+          growth_path: growth_path || "",
         };
 
         if (!hierarchyMap.has(levelNum)) {
@@ -262,11 +300,23 @@ class AdminRepositories {
             image: categoryData.image,
             order: level,
             isLeafNode: categoryData.isLeafNode,
-            a_day_in_life: categoryData.a_day_in_life,
-            core_skills: categoryData.core_skills,
-            educational_path: categoryData.educational_path,
             salary_range: categoryData.salary_range,
-            future_outlook: categoryData.future_outlook,
+            qualifying_exams: categoryData.qualifying_exams,
+            pros: categoryData.pros,
+            cons: categoryData.cons,
+            soft_skills: categoryData.soft_skills,
+            a_day_in_life: categoryData.a_day_in_life,
+            growth_path: categoryData.growth_path,
+            myth: categoryData.myth,
+            reality: categoryData.reality,
+            superstar1: categoryData.superstar1,
+            superstar2: categoryData.superstar2,
+            superstar3: categoryData.superstar3,
+            related_careers: categoryData.related_careers,
+            checklist: categoryData.checklist,
+            technical_skills: categoryData.technical_skills,
+            potential_earnings: categoryData.potential_earnings,
+            future_growth: categoryData.future_growth,
           });
 
           const savedCategory = await newCategory.save();
@@ -298,6 +348,28 @@ class AdminRepositories {
       {
         $match: {
           $or: [{ parentId: { $exists: false } }, { parentId: null }],
+        },
+      },
+      // Filter related_careers to only include valid ObjectIds (exclude strings)
+      {
+        $addFields: {
+          related_careers: {
+            $filter: {
+              input: { $ifNull: ["$related_careers", []] },
+              as: "career",
+              cond: {
+                $ne: [{ $type: "$$career" }, "string"]
+              }
+            }
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "related_careers",
+          foreignField: "_id",
+          as: "related_careers",
         },
       },
       {
@@ -469,10 +541,31 @@ class AdminRepositories {
   // }
 
   async getUserCategories(stream: string, board: string): Promise<ICategory[]> {
+    // Note: stream and board fields removed from model, returning all categories
     const categories = await CategoryModel.aggregate([
       {
-        $match: {
-          $or: [{ stream: stream }, { board: board }],
+        $match: {},
+      },
+      // Filter related_careers to only include valid ObjectIds (exclude strings)
+      {
+        $addFields: {
+          related_careers: {
+            $filter: {
+              input: { $ifNull: ["$related_careers", []] },
+              as: "career",
+              cond: {
+                $ne: [{ $type: "$$career" }, "string"]
+              }
+            }
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "related_careers",
+          foreignField: "_id",
+          as: "related_careers",
         },
       },
       {
@@ -686,31 +779,23 @@ class AdminRepositories {
           description = "",
           image = "",
           isLeafNode = false,
-          a_day_in_life = "",
-          core_skills_technical = "",
-          core_skills_soft = "",
-          educational_path_ug = "",
-          educational_path_pg = "",
           salary_range = "",
-          future_outlook_demand = "",
-          future_outlook_reason = "",
-          // New fields
-          soft_skills = "",
-          checklist = "",
-          education_10_2 = "",
-          education_diploma = "",
-          education_graduation = "",
-          education_post_graduation = "",
-          myth = "",
-          reality = "",
+          qualifying_exams = "",
           pros = "",
           cons = "",
+          myth = "",
+          reality = "",
           superstar1 = "",
           superstar2 = "",
           superstar3 = "",
           related_careers = "",
+          checklist = "",
+          technical_skills = "",
+          soft_skills = "",
+          potential_earnings = "",
+          future_growth = "",
+          a_day_in_life = "",
           growth_path = "",
-          qualifying_exams = "",
         } = record;
 
         // Skip records with missing required fields
@@ -719,86 +804,41 @@ class AdminRepositories {
           continue;
         }
 
-        // Parse core skills
-        const core_skills = {
-          technical: core_skills_technical
-            ? core_skills_technical.split(",").map((s: string) => s.trim())
-            : [],
-          soft: core_skills_soft
-            ? core_skills_soft.split(",").map((s: string) => s.trim())
-            : [],
+        // Parse array fields from CSV (comma-separated)
+        const parseArray = (value: string): string[] => {
+          if (!value || !value.trim()) return [];
+          return value.split(",").map((s: string) => s.trim()).filter(Boolean);
         };
 
-        const normalizeArray = (
-          value: string | string[] | undefined
-        ): string[] => {
-          if (Array.isArray(value)) return value.map((s) => s.trim());
-          return value?.trim() ? [value.trim()] : [];
-        };
-
-        // Parse educational path
-        const educational_path = {
-          ug_courses: normalizeArray(educational_path_ug),
-          pg_courses: educational_path_pg
-            ? educational_path_pg.split(",").map((s: string) => s.trim())
-            : [],
-        };
-
-        // Parse future outlook
-        const future_outlook = {
-          demand: future_outlook_demand || "",
-          reason: future_outlook_reason || "",
-        };
-
-        // Parse new fields
-        const parsedSoftSkills = soft_skills
-          ? soft_skills.split(",").map((s: string) => s.trim())
-          : [];
-        const parsedChecklist = checklist
-          ? checklist.split(",").map((s: string) => s.trim())
-          : [];
-        const parsedPros = pros
-          ? pros.split(",").map((s: string) => s.trim())
-          : [];
-        const parsedCons = cons
-          ? cons.split(",").map((s: string) => s.trim())
-          : [];
-        const parsedRelatedCareers = related_careers
-          ? related_careers.split(",").map((s: string) => s.trim())
-          : [];
-        const parsedQualifyingExams = qualifying_exams
-          ? qualifying_exams.split(",").map((s: string) => s.trim())
-          : [];
+        // Parse related_careers (category IDs) and convert to ObjectIds, filter invalid ones
+        const relatedCareersIds = parseArray(related_careers)
+          .filter((id: string) => mongoose.Types.ObjectId.isValid(id))
+          .map((id: string) => new mongoose.Types.ObjectId(id));
 
         const newCategory = new CategoryModel({
           name,
           parentId: new mongoose.Types.ObjectId(parentId),
-          description,
-          image,
+          description: description || "",
+          image: image || "",
           order,
           isLeafNode: isLeafNode === "true" || isLeafNode === "1",
-          a_day_in_life,
-          core_skills,
-          educational_path,
-          salary_range,
-          future_outlook,
-          // New fields
-          soft_skills: parsedSoftSkills,
-          checklist: parsedChecklist,
-          education_10_2,
-          education_diploma,
-          education_graduation,
-          education_post_graduation,
-          myth,
-          reality,
-          pros: parsedPros,
-          cons: parsedCons,
-          superstar1,
-          superstar2,
-          superstar3,
-          related_careers: parsedRelatedCareers,
-          growth_path,
-          qualifying_exams: parsedQualifyingExams,
+          salary_range: salary_range || "",
+          qualifying_exams: parseArray(qualifying_exams),
+          pros: parseArray(pros),
+          cons: parseArray(cons),
+          myth: myth || "",
+          reality: reality || "",
+          superstar1: superstar1 || "",
+          superstar2: superstar2 || "",
+          superstar3: superstar3 || "",
+          related_careers: relatedCareersIds,
+          checklist: parseArray(checklist),
+          technical_skills: parseArray(technical_skills),
+          soft_skills: parseArray(soft_skills),
+          potential_earnings: parseArray(potential_earnings),
+          future_growth: future_growth || "",
+          a_day_in_life: a_day_in_life || "",
+          growth_path: growth_path || "",
         });
 
         const savedCategory = await newCategory.save();

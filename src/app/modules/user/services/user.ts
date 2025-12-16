@@ -3,10 +3,13 @@ import User from "../../auth/models/User.js";
 import mongoose from "mongoose";
 import { UserToken } from "../../auth/models/usertoken.js";
 import UserRepository from "../repositories/user.js";
+import InAppBannerRepository from "../../in-app-banner/repositories/inAppBanner.repository.js";
 class UserService {
   private userRepository: UserRepository;
+  private inAppBannerRepository: InAppBannerRepository;
   constructor() {
     this.userRepository = new UserRepository();
+    this.inAppBannerRepository = new InAppBannerRepository();
   }
 
   async updateUser(userId: string, userData: any): Promise<any> {
@@ -83,7 +86,6 @@ class UserService {
 
   async getLikedCourse(userId: string, filter: any): Promise<any> {
     try {
-      console.log("Getting liked courses for user:", userId);
       if (!mongoose.Types.ObjectId.isValid(userId)) {
         throw new Error("Invalid user ID format");
       }
@@ -91,17 +93,22 @@ class UserService {
       const user = await this.userRepository.getLikedCourse(
         userObjectId.toString()
       );
-      console.log("Found liked courses:", user);
       return user || [];
     } catch (error) {
-      console.error("Error in getLikedCourse:", error);
       throw error;
     }
   }
 
   async getBookmarkedCourses(userId: string): Promise<any> {
     const user = await User.findById(userId)
-      .populate("bookmarkedCourses")
+      .populate({
+        path: "bookmarkedCourses",
+        populate: {
+          path: "UniversityId",
+          select:
+            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
+        },
+      })
       .lean();
     if (!user) {
       throw new Error("User not found");
@@ -124,6 +131,59 @@ class UserService {
     await userToken.save();
     await user.save();
     return userToken;
+  }
+
+  async getHomeData(userId: string): Promise<any> {
+    // Get user by ID first (required for categoryIds)
+    const user = await this.userRepository.getUserById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Fetch all independent data in parallel for better performance
+    const [
+      userCategories,
+      popularUniversities,
+      popularCourses,
+      upcomingWebinars,
+      bannerSection,
+    ] = await Promise.all([
+      // Get user's selected categories (max 3 for home page)
+      this.userRepository.getCategoriesByIds(user.categoryIds || [], 3),
+      // Get popular universities (only 3)
+      this.userRepository.getPopularUniversities(3),
+      // Get popular courses (only 3)
+      this.userRepository.getPopularCourses(3),
+      // Get top upcoming webinars (max 10)
+      this.userRepository.getUpcomingWebinars(10),
+      // Get top published banners (max 10)
+      this.inAppBannerRepository.getTopPublishedBanners(10),
+    ]);
+
+    return {
+      userCategories,
+      popularUniversities,
+      popularCourses,
+      upcomingWebinars,
+      bannerSection,
+    };
+  }
+
+  async getUserCategories(userId: string): Promise<any> {
+    // Get user by ID
+    const user = await this.userRepository.getUserById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Get all user's selected categories without limit
+    const userCategories = await this.userRepository.getCategoriesByIds(
+      user.categoryIds || []
+    );
+
+    return userCategories;
   }
 }
 
