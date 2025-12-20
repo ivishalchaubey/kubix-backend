@@ -18,18 +18,23 @@ class AdminController {
   ): Promise<any> {
     try {
       // Handle both array and single object requests
-      const categoryData = Array.isArray(req.body) ? req.body[0] : req.body;
-      
-      if (!categoryData) {
+      const categoryDataArray = Array.isArray(req.body) ? req.body : [req.body];
+
+      if (!categoryDataArray || categoryDataArray.length === 0) {
         return ResponseUtil.badRequest(res, "Category data is required");
       }
 
-      const result = await this.adminRepositories.createSingleCategory(
-        categoryData
-      );
+      const results = [];
+      for (const categoryData of categoryDataArray) {
+        const result = await this.adminRepositories.createSingleCategory(
+          categoryData
+        );
+        results.push(result);
+      }
+
       ResponseUtil.created(
         res,
-        result,
+        results,
         API_MESSAGES.ADMIN_SUCCESS.CATEGORY_CREATED
       );
     } catch (error) {

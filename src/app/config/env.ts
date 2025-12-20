@@ -3,14 +3,18 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Validate required environment variables
-const requiredEnvVars = ["MONGO_URI", "JWT_SECRET", "JWT_REFRESH_SECRET"];
+const requiredEnvVars = ["MONGODB_URI", "JWT_SECRET", "JWT_REFRESH_SECRET"];
 
 // Validate email configuration (optional but recommended)
 const emailEnvVars = ["EMAIL_HOST", "EMAIL_USER", "EMAIL_PASS"];
-const missingEmailVars = emailEnvVars.filter(envVar => !process.env[envVar]);
+const missingEmailVars = emailEnvVars.filter((envVar) => !process.env[envVar]);
 
 if (missingEmailVars.length > 0) {
-  console.warn(`Warning: Missing email configuration variables: ${missingEmailVars.join(', ')}. Email service will not be available.`);
+  console.warn(
+    `Warning: Missing email configuration variables: ${missingEmailVars.join(
+      ", "
+    )}. Email service will not be available.`
+  );
 }
 
 for (const envVar of requiredEnvVars) {
@@ -23,12 +27,15 @@ export const config = {
   env: process.env.NODE_ENV || "development",
   port: parseInt(process.env.PORT || "5000"),
   mongoose: {
-    url: process.env.MONGODB_URI || "mongodb+srv://vishalchaubey0011:tyVQdc92r1i1uzZi@cluster0.zajfs.mongodb.net/",
+    url:
+      process.env.MONGODB_URI ||
+      "mongodb+srv://vishalchaubey0011:tyVQdc92r1i1uzZi@cluster0.zajfs.mongodb.net/",
   },
   jwt: {
     secret: process.env.JWT_SECRET || "jwt_kubix_backend",
     accessExpirationMinutes: process.env.JWT_EXPIRE || "7d",
-    refreshSecret: process.env.JWT_REFRESH_SECRET || "jwt_kubix_backend_refresh",
+    refreshSecret:
+      process.env.JWT_REFRESH_SECRET || "jwt_kubix_backend_refresh",
     refreshExpirationDays: process.env.JWT_REFRESH_EXPIRE || "30d",
   },
   bcrypt: {
