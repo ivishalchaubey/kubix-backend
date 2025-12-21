@@ -4,6 +4,9 @@ import { UserRole, API_MESSAGES } from "../constants/enums.js";
 import ResponseUtil from "../utils/response.js";
 import jwt from "jsonwebtoken";
 import config from "../config/env.js";
+import AuthRepository from "../modules/auth/repositories/AuthRepository.js";
+
+const authRepository = new AuthRepository();
 class AuthMiddleware {
   /**
    * Authenticate user using JWT token
@@ -17,38 +20,94 @@ class AuthMiddleware {
     try {
       // Get token from header
       const authHeader = req.headers.authorization;
-      
+
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
-      return;
-        }
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
 
-      let token = authHeader.substring(7); // Remove "Bearer " prefix if present
-      // decode token
-          const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      if (!token || token === "undefined") {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+      // Decode token and ensure user exists
+      const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const user = await authRepository.findUserById(
+        decoded.userId,
+        false,
+        true
+      );
 
-        req.user = {
-          _id: decoded.userId,
-          firstName: decoded.firstName,
-          lastName: decoded.lastName,
-          dob: decoded.dob,
-          otp: decoded.otp,
-          otpExpires: decoded.otpExpires,
-          countryCode: decoded.countryCode,
-          phoneNumber: decoded.phoneNumber,
-          board: decoded.board,
-          stream: decoded.stream,
-          email: decoded.email,
-          password: "", // Password should not be included in the request
-          isEmailVerified: true, // Assuming email is verified for authenticated users
-          role: decoded.role,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-        next();
-      
+      if (!user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      req.user = {
+        _id: user._id?.toString(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+        stream: user.stream,
+        board: user.board,
+      };
+      next();
     } catch (error) {
-      next(error);
+      ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
+    }
+  };
+
+  static universityauthenticate = async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      // Get token from header
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      const token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      if (!token || token === "undefined") {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+      // Decode token and ensure user exists
+      const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const user = await authRepository.findUserById(
+        decoded.userId,
+        false,
+        true
+      );
+
+      if (!user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      if (user.role !== UserRole.UNIVERSITY) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.ACCESSDENIED);
+        return;
+      }
+
+      req.user = {
+        _id: user._id?.toString(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+      };
+      next();
+    } catch (error) {
+      ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
     }
   };
 
@@ -69,27 +128,25 @@ class AuthMiddleware {
 
       const token = authHeader.substring(7);
       const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const user = await authRepository.findUserById(
+        decoded.userId,
+        false,
+        true
+      );
+
+      if (!user) {
+        return next();
+      }
 
       // TODO: Implement JWT verification
-        req.user = {
-          _id:decoded.userId,
-          otpExpires: decoded.otpExpires,
-          firstName: decoded.firstName,
-          lastName: decoded.lastName,
-          dob: decoded.dob,
-          otp: decoded.otp,
-          countryCode: decoded.countryCode,
-          phoneNumber: decoded.phoneNumber,
-          board: decoded.board,
-          stream: decoded.stream,
-          email: decoded.email,
-          password: "", // Password should not be included in the request
-          isEmailVerified: true, // Assuming email is verified for optional auth
-          role: decoded.role,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-     
+      req.user = {
+        _id: user._id?.toString(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+      };
       next();
     } catch (error) {
       // In optional auth, we ignore token errors and continue
@@ -107,7 +164,7 @@ class AuthMiddleware {
         return;
       }
 
-      if (!roles.includes(req.user.role)) {
+      if (!roles.includes(req.user.role as UserRole)) {
         ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
         return;
       }
@@ -156,7 +213,7 @@ class AuthMiddleware {
   ): void => {
     if (
       !req.user ||
-      ![UserRole.User, UserRole.ADMIN].includes(req.user.role)
+      ![UserRole.USER, UserRole.ADMIN].includes(req.user.role as UserRole)
     ) {
       ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
       return;

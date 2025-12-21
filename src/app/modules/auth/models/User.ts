@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUser, IUserMethods, IUserModel } from "../../../types/global.js";
 import { UserRole } from "../../../constants/enums.js";
-import jwt from "jsonwebtoken";
 import config from "../../../config/env.js";
 import bcrypt from "bcryptjs";
 
@@ -19,21 +18,25 @@ const comparePassword = async (
 };
 
 // User schema
-const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
+// Removing generic type parameters to avoid TypeScript complexity issues
+const userSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: [true, "Name is required"],
       trim: true,
       minlength: [2, "Name must be at least 2 characters long"],
       maxlength: [50, "Name cannot exceed 50 characters"],
     },
     lastName: {
       type: String,
-      required: [true, "Last name is required"],
       trim: true,
       minlength: [2, "Last name must be at least 2 characters long"],
       maxlength: [50, "Last name cannot exceed 50 characters"],
+    },
+    categoryIds: {
+      type: [Schema.Types.ObjectId],
+      ref: "Category",
+      default: [],
     },
     email: {
       type: String,
@@ -49,11 +52,20 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     dob: {
       type: String,
-      required: [true, "Date of birth is required"],
       match: [
         /^\d{4}-\d{2}-\d{2}$/,
         "Date of birth must be in YYYY-MM-DD format",
       ],
+    },
+    likedCourses: {
+      type: [Schema.Types.ObjectId],
+      ref: "Course",
+      default: [],
+    },
+    bookmarkedCourses: {
+      type: [Schema.Types.ObjectId],
+      ref: "Course",
+      default: [],
     },
     countryCode: {
       type: String,
@@ -72,42 +84,32 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     board: {
       type: String,
-      required: [true, "Board is required"],
       trim: true,
-      enum: ["CBSE", "ICSE", "STATE", "IB", "OTHER"], // Example boards
+      enum: ["CBSE", "ICSE", "State", "IB", "Other"], // Example boards
+    },
+    otherBoardName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Other board name cannot exceed 100 characters"],
     },
     stream: {
       type: String,
-      required: [true, "Stream is required"],
       trim: true,
-      enum: [
-        "science",
-        "commerce",
-        "arts",
-        "engineering_technology",
-        "medical_health_sciences",
-        "law",
-        "management",
-        "computer_it",
-        "design_fine_arts",
-        "education_teaching",
-        "hotel_hospitality",
-        "mass_comm_journalism",
-        "architecture",
-        "agriculture_forestry",
-        "pharmacy",
-        "paramedical",
-        "performing_arts",
-        "social_work",
-        "aviation",
-        "marine_shipping",
-        "environmental_sciences",
-        "defense_military",
-        "fashion_technology",
-        "food_technology",
-        "veterinary_sciences",
-        "languages_literature",
-      ],
+      enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
+    },
+    otherStreamName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Other stream name cannot exceed 100 characters"],
+    },
+    grade: {
+      type: String,
+      trim: true,
+    },
+    yearOfPassing: {
+      type: String,
+      trim: true,
+      match: [/^\d{4}$/, "Year of passing must be a 4-digit year"],
     },
     password: {
       type: String,
@@ -123,7 +125,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     role: {
       type: String,
       enum: Object.values(UserRole),
-      default: UserRole.User,
+      default: UserRole.USER,
     },
     isEmailVerified: {
       type: Boolean,
@@ -143,7 +145,115 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
     },
     refreshToken: {
       type: String,
-      select: false,
+    },
+    accessToken: {
+      type: String,
+    },
+    profileImage: {
+      type: String,
+      trim: true,
+    },
+    collegeName: {
+      type: String,
+      trim: true,
+      minlength: 2,
+      maxlength: 100,
+    },
+    collegeCode: {
+      type: String,
+      trim: true,
+      maxlength: 50,
+    },
+    location: {
+      type: String,
+      trim: true,
+      maxlength: 255,
+    },
+    address: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
+    specialization: {
+      type: String,
+      trim: true,
+      maxlength: 100,
+    },
+    description: {
+      type: String,
+      trim: true,
+      maxlength: 2000,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+    },
+    bannerYoutubeVideoLink: {
+      type: String,
+      trim: true,
+      match: [
+        /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+        "Invalid YouTube URL",
+      ],
+    },
+    website: {
+      type: String,
+      trim: true,
+      maxlength: [500, "Website URL cannot exceed 500 characters"],
+    },
+    bannerImage: {
+      type: String,
+      trim: true,
+    },
+    state: {
+      type: String,
+      trim: true,
+      maxlength: [100, "State cannot exceed 100 characters"],
+    },
+    city: {
+      type: String,
+      trim: true,
+      maxlength: [100, "City cannot exceed 100 characters"],
+    },
+    pincode: {
+      type: String,
+      trim: true,
+      maxlength: [10, "Pincode cannot exceed 10 characters"],
+    },
+    parentGuardianName: {
+      type: String,
+      trim: true,
+      maxlength: [100, "Parent/Guardian name cannot exceed 100 characters"],
+    },
+    schoolName: {
+      type: String,
+      trim: true,
+      maxlength: [200, "School name cannot exceed 200 characters"],
+    },
+    foundedYear: {
+      type: String,
+      trim: true,
+      match: [/^\d{4}$/, "Founded year must be a 4-digit year"],
+    },
+    courses: {
+      type: [
+        {
+          courseName: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [200, "Course name cannot exceed 200 characters"],
+          },
+          courseDuration: {
+            type: String,
+            required: true,
+            trim: true,
+            maxlength: [50, "Course duration cannot exceed 50 characters"],
+          },
+        },
+      ],
+      default: [],
     },
   },
   {
@@ -152,6 +262,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       transform: function (doc, ret: any) {
         delete ret.password;
         delete ret.refreshToken;
+        delete ret.accessToken;
         delete ret.emailVerificationToken;
         delete ret.passwordResetToken;
         delete ret.passwordResetExpires;
@@ -163,6 +274,7 @@ const userSchema = new Schema<IUser, IUserModel, IUserMethods>(
       transform: function (doc, ret: any) {
         delete ret.password;
         delete ret.refreshToken;
+        delete ret.accessToken;
         delete ret.emailVerificationToken;
         delete ret.passwordResetToken;
         delete ret.passwordResetExpires;
@@ -210,30 +322,6 @@ userSchema.methods.isPasswordMatch = async function (
   password: string
 ): Promise<boolean> {
   return comparePassword(password, this.password);
-};
-
-userSchema.methods.generateAuthTokens = async function () {
-  const user = this as IUser & IUserMethods;
-  const accessToken = jwt.sign(
-    { sub: user._id, role: user.role },
-    config.jwt.secret as string,
-    { expiresIn: "7d" }
-  );
-  const refreshToken = jwt.sign(
-    { sub: user._id, role: user.role },
-    config.jwt.refreshSecret as string,
-    { expiresIn: "30d" }
-  );
-  return {
-    access: {
-      token: accessToken,
-      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-    },
-    refresh: {
-      token: refreshToken,
-      expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-    },
-  };
 };
 
 // Static methods

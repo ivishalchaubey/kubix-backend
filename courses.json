@@ -1,0 +1,102 @@
+[
+  {
+    "name": "Advanced Web Development",
+    "categoryName": "Computer Science",
+    "description": "Comprehensive course covering modern web development technologies including React, Node.js, and MongoDB. Learn to build full-stack applications from scratch.",
+    "duration": "6 months",
+    "universityName": "Indian Institute of Technology Delhi",
+    "amount": 25000,
+    "currency": "INR",
+    "chapters": 24
+  },
+  {
+    "name": "Data Science and Machine Learning",
+    "categoryName": "Data Science",
+    "description": "Master data science fundamentals, statistical analysis, and machine learning algorithms using Python and R. Includes hands-on projects and real-world case studies.",
+    "duration": "8 months",
+    "universityName": "Indian Institute of Science Bangalore",
+    "amount": 35000,
+    "currency": "INR",
+    "chapters": 32
+  },
+  {
+    "name": "Digital Marketing Strategy",
+    "categoryName": "Marketing",
+    "description": "Learn comprehensive digital marketing strategies including SEO, SEM, social media marketing, content marketing, and analytics. Perfect for marketing professionals.",
+    "duration": "4 months",
+    "universityName": "Xavier Institute of Management",
+    "amount": 18000,
+    "currency": "INR",
+    "chapters": 16
+  },
+  {
+    "name": "Financial Analysis and Investment",
+    "categoryName": "Finance",
+    "description": "Advanced course in financial modeling, investment analysis, portfolio management, and risk assessment. Includes practical exercises with real market data.",
+    "duration": "5 months",
+    "universityName": "Indian Institute of Management Ahmedabad",
+    "amount": 30000,
+    "currency": "INR",
+    "chapters": 20
+  },
+  {
+    "name": "Cybersecurity Fundamentals",
+    "categoryName": "Information Technology",
+    "description": "Comprehensive cybersecurity course covering network security, ethical hacking, vulnerability assessment, and incident response. Includes hands-on labs.",
+    "duration": "6 months",
+    "universityName": "National Institute of Technology Trichy",
+    "amount": 28000,
+    "currency": "INR",
+    "chapters": 28
+  },
+  {
+    "name": "Mobile App Development",
+    "categoryName": "Mobile Development",
+    "description": "Learn to develop mobile applications for both iOS and Android platforms using React Native and Flutter. Includes app store deployment strategies.",
+    "duration": "5 months",
+    "universityName": "Birla Institute of Technology and Science",
+    "amount": 22000,
+    "currency": "INR",
+    "chapters": 22
+  },
+  {
+    "name": "Cloud Computing and DevOps",
+    "categoryName": "Cloud Computing",
+    "description": "Master cloud platforms (AWS, Azure, GCP), containerization with Docker, orchestration with Kubernetes, and CI/CD pipelines. Industry-relevant skills.",
+    "duration": "7 months",
+    "universityName": "Indian Institute of Technology Bombay",
+    "amount": 32000,
+    "currency": "INR",
+    "chapters": 30
+  },
+  {
+    "name": "Artificial Intelligence and Deep Learning",
+    "categoryName": "Artificial Intelligence",
+    "description": "Advanced AI course covering neural networks, deep learning frameworks, computer vision, and natural language processing. Includes capstone projects.",
+    "duration": "9 months",
+    "universityName": "Indian Institute of Technology Madras",
+    "amount": 40000,
+    "currency": "INR",
+    "chapters": 36
+  },
+  {
+    "name": "Business Analytics and Intelligence",
+    "categoryName": "Business Intelligence",
+    "description": "Learn to analyze business data, create dashboards, and make data-driven decisions using tools like Tableau, Power BI, and SQL.",
+    "duration": "4 months",
+    "universityName": "Indian School of Business",
+    "amount": 26000,
+    "currency": "INR",
+    "chapters": 18
+  },
+  {
+    "name": "Blockchain and Cryptocurrency",
+    "categoryName": "Blockchain",
+    "description": "Comprehensive blockchain course covering smart contracts, DeFi, NFTs, and cryptocurrency trading strategies. Includes practical blockchain development.",
+    "duration": "6 months",
+    "universityName": "Indian Institute of Technology Kanpur",
+    "amount": 29000,
+    "currency": "INR",
+    "chapters": 26
+  }
+]
