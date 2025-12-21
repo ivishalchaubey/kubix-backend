@@ -1,26 +1,20 @@
-export interface ICategory {
-    description: string;
-    degree: string;
-    branch: string;
-    course: string;
-    courseStream: string;
-    subject: string;
-}
+import mongoose from "mongoose";
 declare class AdminService {
-    getCategories(): Promise<(import("mongoose").Document<unknown, {}, import("../models/category.js").ICategory, {}> & import("../models/category.js").ICategory & Required<{
-        _id: unknown;
-    }> & {
-        __v: number;
-    })[]>;
-    createCategory(categoryData: any): Promise<import("mongoose").Document<unknown, {}, import("../models/category.js").ICategory, {}> & import("../models/category.js").ICategory & Required<{
-        _id: unknown;
+    private adminRepositories;
+    constructor();
+    getCategories(): Promise<any>;
+    getUserCategories(stream: string, board: string): Promise<any>;
+    createCategory(categoryData: any[]): Promise<{
+        message: string;
+    }>;
+    updateCategory(categoryId: string, categoryData: any): Promise<mongoose.FlattenMaps<import("../models/category.js").ICategory> & Required<{
+        _id: mongoose.Types.ObjectId;
     }> & {
         __v: number;
     }>;
-    updateCategory(categoryId: string, categoryData: any): Promise<void>;
     deleteCategory(categoryId: string): Promise<void>;
-    getCategoryById(categoryId: string): Promise<import("mongoose").Document<unknown, {}, import("../models/category.js").ICategory, {}> & import("../models/category.js").ICategory & Required<{
-        _id: unknown;
+    getCategoryById(categoryId: string): Promise<mongoose.FlattenMaps<import("../models/category.js").ICategory> & Required<{
+        _id: mongoose.Types.ObjectId;
     }> & {
         __v: number;
     }>;

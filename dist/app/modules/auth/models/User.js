@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import { UserRole } from "../../../constants/enums.js";
-import jwt from "jsonwebtoken";
 import config from "../../../config/env.js";
 import bcrypt from "bcryptjs";
 const hashPassword = async (password) => {
@@ -11,12 +10,22 @@ const comparePassword = async (password, hashedPassword) => {
     return await bcrypt.compare(password, hashedPassword);
 };
 const userSchema = new Schema({
-    name: {
+    firstName: {
         type: String,
-        required: [true, "Name is required"],
         trim: true,
         minlength: [2, "Name must be at least 2 characters long"],
         maxlength: [50, "Name cannot exceed 50 characters"],
+    },
+    lastName: {
+        type: String,
+        trim: true,
+        minlength: [2, "Last name must be at least 2 characters long"],
+        maxlength: [50, "Last name cannot exceed 50 characters"],
+    },
+    categoryIds: {
+        type: [Schema.Types.ObjectId],
+        ref: "Category",
+        default: [],
     },
     email: {
         type: String,
@@ -26,16 +35,86 @@ const userSchema = new Schema({
         trim: true,
         match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please provide a valid email"],
     },
+    otp: {
+        type: String,
+        select: false,
+    },
+    dob: {
+        type: String,
+        match: [
+            /^\d{4}-\d{2}-\d{2}$/,
+            "Date of birth must be in YYYY-MM-DD format",
+        ],
+    },
+    likedCourses: {
+        type: [Schema.Types.ObjectId],
+        ref: "Course",
+        default: [],
+    },
+    bookmarkedCourses: {
+        type: [Schema.Types.ObjectId],
+        ref: "Course",
+        default: [],
+    },
+    countryCode: {
+        type: String,
+        required: [true, "Country code is required"],
+        trim: true,
+        match: [
+            /^\+\d{1,3}$/,
+            "Country code must start with '+' followed by digits",
+        ],
+    },
+    phoneNumber: {
+        type: String,
+        required: [true, "Phone number is required"],
+        trim: true,
+        match: [/^\d{10}$/, "Phone number must be 10 digits long"],
+    },
+    board: {
+        type: String,
+        trim: true,
+        enum: ["CBSE", "ICSE", "State", "IB", "Other"],
+    },
+    otherBoardName: {
+        type: String,
+        trim: true,
+        maxlength: [100, "Other board name cannot exceed 100 characters"],
+    },
+    stream: {
+        type: String,
+        trim: true,
+        enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"],
+    },
+    otherStreamName: {
+        type: String,
+        trim: true,
+        maxlength: [100, "Other stream name cannot exceed 100 characters"],
+    },
+    grade: {
+        type: String,
+        trim: true,
+    },
+    yearOfPassing: {
+        type: String,
+        trim: true,
+        match: [/^\d{4}$/, "Year of passing must be a 4-digit year"],
+    },
     password: {
         type: String,
         required: [true, "Password is required"],
         minlength: [8, "Password must be at least 8 characters long"],
         select: false,
     },
+    otpExpires: {
+        type: Date,
+        select: false,
+        default: Date.now,
+    },
     role: {
         type: String,
         enum: Object.values(UserRole),
-        default: UserRole.User,
+        default: UserRole.USER,
     },
     isEmailVerified: {
         type: Boolean,
@@ -55,7 +134,115 @@ const userSchema = new Schema({
     },
     refreshToken: {
         type: String,
-        select: false,
+    },
+    accessToken: {
+        type: String,
+    },
+    profileImage: {
+        type: String,
+        trim: true,
+    },
+    collegeName: {
+        type: String,
+        trim: true,
+        minlength: 2,
+        maxlength: 100,
+    },
+    collegeCode: {
+        type: String,
+        trim: true,
+        maxlength: 50,
+    },
+    location: {
+        type: String,
+        trim: true,
+        maxlength: 255,
+    },
+    address: {
+        type: String,
+        trim: true,
+        maxlength: 500,
+    },
+    specialization: {
+        type: String,
+        trim: true,
+        maxlength: 100,
+    },
+    description: {
+        type: String,
+        trim: true,
+        maxlength: 2000,
+    },
+    status: {
+        type: String,
+        enum: ["active", "inactive"],
+        default: "active",
+    },
+    bannerYoutubeVideoLink: {
+        type: String,
+        trim: true,
+        match: [
+            /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+$/,
+            "Invalid YouTube URL",
+        ],
+    },
+    website: {
+        type: String,
+        trim: true,
+        maxlength: [500, "Website URL cannot exceed 500 characters"],
+    },
+    bannerImage: {
+        type: String,
+        trim: true,
+    },
+    state: {
+        type: String,
+        trim: true,
+        maxlength: [100, "State cannot exceed 100 characters"],
+    },
+    city: {
+        type: String,
+        trim: true,
+        maxlength: [100, "City cannot exceed 100 characters"],
+    },
+    pincode: {
+        type: String,
+        trim: true,
+        maxlength: [10, "Pincode cannot exceed 10 characters"],
+    },
+    parentGuardianName: {
+        type: String,
+        trim: true,
+        maxlength: [100, "Parent/Guardian name cannot exceed 100 characters"],
+    },
+    schoolName: {
+        type: String,
+        trim: true,
+        maxlength: [200, "School name cannot exceed 200 characters"],
+    },
+    foundedYear: {
+        type: String,
+        trim: true,
+        match: [/^\d{4}$/, "Founded year must be a 4-digit year"],
+    },
+    courses: {
+        type: [
+            {
+                courseName: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                    maxlength: [200, "Course name cannot exceed 200 characters"],
+                },
+                courseDuration: {
+                    type: String,
+                    required: true,
+                    trim: true,
+                    maxlength: [50, "Course duration cannot exceed 50 characters"],
+                },
+            },
+        ],
+        default: [],
     },
 }, {
     timestamps: true,
@@ -63,6 +250,7 @@ const userSchema = new Schema({
         transform: function (doc, ret) {
             delete ret.password;
             delete ret.refreshToken;
+            delete ret.accessToken;
             delete ret.emailVerificationToken;
             delete ret.passwordResetToken;
             delete ret.passwordResetExpires;
@@ -74,6 +262,7 @@ const userSchema = new Schema({
         transform: function (doc, ret) {
             delete ret.password;
             delete ret.refreshToken;
+            delete ret.accessToken;
             delete ret.emailVerificationToken;
             delete ret.passwordResetToken;
             delete ret.passwordResetExpires;
@@ -107,15 +296,6 @@ userSchema.pre(["updateOne", "findOneAndUpdate"], async function (next) {
 });
 userSchema.methods.isPasswordMatch = async function (password) {
     return comparePassword(password, this.password);
-};
-userSchema.methods.generateAuthTokens = async function () {
-    const user = this;
-    const accessToken = jwt.sign({ sub: user._id, role: user.role }, config.jwt.secret, { expiresIn: '7d' });
-    const refreshToken = jwt.sign({ sub: user._id, role: user.role }, config.jwt.refreshSecret, { expiresIn: '30d' });
-    return {
-        access: { token: accessToken, expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
-        refresh: { token: refreshToken, expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) },
-    };
 };
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
     const user = await this.findOne({

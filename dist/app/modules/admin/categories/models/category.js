@@ -1,34 +1,36 @@
 import mongoose, { Schema } from "mongoose";
 const categorySchema = new Schema({
-    degree: {
-        type: String,
-        required: [true, "Degree is required"],
-        trim: true,
+    name: { type: String, required: true },
+    parentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        default: null,
+        ref: "Category",
     },
-    branch: {
-        type: String,
-        trim: true,
+    description: { type: String, default: "" },
+    image: { type: String, default: "" },
+    order: { type: Number },
+    isLeafNode: { type: Boolean, default: false },
+    salary_range: { type: String, default: "" },
+    qualifying_exams: { type: [String], default: [] },
+    pros: { type: [String], default: [] },
+    cons: { type: [String], default: [] },
+    myth: { type: String, default: "" },
+    superstar1: { type: String, default: "" },
+    superstar2: { type: String, default: "" },
+    superstar3: { type: String, default: "" },
+    reality: { type: String, default: "" },
+    related_careers: {
+        type: [mongoose.Schema.Types.ObjectId],
+        default: [],
+        ref: "Category",
     },
-    course: {
-        type: String,
-        unique: true,
-        lowercase: true,
-        trim: true,
-    },
-    courseStream: {
-        type: String,
-        trim: true,
-    },
-    subject: {
-        type: String,
-        required: [true, "Subject is required"],
-        minlength: [3, "Subject must be at least 3 characters long"],
-        trim: true,
-    },
-    description: {
-        type: String,
-        trim: true,
-    },
+    checklist: { type: [String], default: [] },
+    technical_skills: { type: [String], default: [] },
+    soft_skills: { type: [String], default: [] },
+    potential_earnings: { type: [String], default: [] },
+    future_growth: { type: String, default: "" },
+    a_day_in_life: { type: String, default: "" },
+    growth_path: { type: String, default: "" },
 }, {
     timestamps: true,
 });

@@ -28,9 +28,6 @@ class Logger {
         console.info(this.formatMessage(LOG_LEVELS.INFO, message, ...args));
     }
     debug(message, ...args) {
-        if (!this.isProduction) {
-            console.log(this.formatMessage(LOG_LEVELS.DEBUG, message, ...args));
-        }
     }
 }
 const logger = new Logger();

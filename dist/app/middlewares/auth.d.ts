@@ -3,6 +3,7 @@ import { AuthRequest } from "../types/global.js";
 import { UserRole } from "../constants/enums.js";
 declare class AuthMiddleware {
     static authenticate: (req: AuthRequest, res: Response, next: NextFunction) => Promise<void>;
+    static universityauthenticate: (req: AuthRequest, res: Response, next: NextFunction) => Promise<void>;
     static optionalAuth: (req: AuthRequest, res: Response, next: NextFunction) => Promise<void>;
     static authorize: (...roles: UserRole[]) => (req: AuthRequest, res: Response, next: NextFunction) => void;
     static isAuthenticated: (req: AuthRequest, res: Response, next: NextFunction) => void;

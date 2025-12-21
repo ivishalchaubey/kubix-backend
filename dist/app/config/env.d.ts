@@ -28,6 +28,14 @@ export declare const config: {
             };
         };
     };
+    stripe: {
+        secretKey: string;
+        publishableKey: string;
+        webhookSecret: string;
+    };
+    payment: {
+        tokenRate: number;
+    };
     frontendUrl: string;
 };
 export default config;

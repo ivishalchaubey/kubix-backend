@@ -19,6 +19,23 @@ export declare const authValidation: {
     login: (req: Request, res: Response, next: NextFunction) => void;
     forgotPassword: (req: Request, res: Response, next: NextFunction) => void;
     resetPassword: (req: Request, res: Response, next: NextFunction) => void;
+    updateUserCoursePaymentStatus: (req: Request, res: Response, next: NextFunction) => void;
+};
+export declare const notificationValidation: {
+    create: (req: Request, res: Response, next: NextFunction) => void;
+    update: (req: Request, res: Response, next: NextFunction) => void;
+};
+export declare const inAppBannerValidation: {
+    create: (req: Request, res: Response, next: NextFunction) => void;
+    update: (req: Request, res: Response, next: NextFunction) => void;
+};
+export declare const webinarValidation: {
+    create: (req: Request, res: Response, next: NextFunction) => void;
+    update: (req: Request, res: Response, next: NextFunction) => void;
+};
+export declare const applicationSalesValidation: {
+    create: (req: Request, res: Response, next: NextFunction) => void;
+    update: (req: Request, res: Response, next: NextFunction) => void;
 };
 export default Validator;
 //# sourceMappingURL=validationMiddleware.d.ts.map

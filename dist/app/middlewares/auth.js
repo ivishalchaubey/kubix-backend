@@ -2,32 +2,77 @@ import { UserRole, API_MESSAGES } from "../constants/enums.js";
 import ResponseUtil from "../utils/response.js";
 import jwt from "jsonwebtoken";
 import config from "../config/env.js";
+import AuthRepository from "../modules/auth/repositories/AuthRepository.js";
+const authRepository = new AuthRepository();
 class AuthMiddleware {
     static authenticate = async (req, res, next) => {
         try {
             const authHeader = req.headers.authorization;
-            console.log("authHeader<><><><><><><><> checking for authenticate", authHeader);
             if (!authHeader || !authHeader.startsWith("Bearer ")) {
                 ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
                 return;
             }
-            let token = authHeader.substring(7);
+            const token = authHeader.substring(7);
+            if (!token || token === "undefined") {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+                return;
+            }
             const decoded = jwt.verify(token, config.jwt.secret);
-            console.log("decoded<><><><><><><><> checking for authenticate", decoded);
+            const user = await authRepository.findUserById(decoded.userId, false, true);
+            if (!user) {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+                return;
+            }
             req.user = {
-                _id: decoded.userId,
-                name: decoded.name,
-                email: decoded.email,
-                password: "",
-                isEmailVerified: true,
-                role: decoded.role,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                _id: user._id?.toString(),
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+                phoneNumber: user.phoneNumber,
+                stream: user.stream,
+                board: user.board,
             };
             next();
         }
         catch (error) {
-            next(error);
+            ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
+        }
+    };
+    static universityauthenticate = async (req, res, next) => {
+        try {
+            const authHeader = req.headers.authorization;
+            if (!authHeader || !authHeader.startsWith("Bearer ")) {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+                return;
+            }
+            const token = authHeader.substring(7);
+            if (!token || token === "undefined") {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+                return;
+            }
+            const decoded = jwt.verify(token, config.jwt.secret);
+            const user = await authRepository.findUserById(decoded.userId, false, true);
+            if (!user) {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+                return;
+            }
+            if (user.role !== UserRole.UNIVERSITY) {
+                ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.ACCESSDENIED);
+                return;
+            }
+            req.user = {
+                _id: user._id?.toString(),
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+                phoneNumber: user.phoneNumber,
+            };
+            next();
+        }
+        catch (error) {
+            ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
         }
     };
     static optionalAuth = async (req, res, next) => {
@@ -37,17 +82,18 @@ class AuthMiddleware {
                 return next();
             }
             const token = authHeader.substring(7);
-            console.log("authHeader<><><><><><><><> checking for optionalAuth", authHeader);
             const decoded = jwt.verify(token, config.jwt.secret);
+            const user = await authRepository.findUserById(decoded.userId, false, true);
+            if (!user) {
+                return next();
+            }
             req.user = {
-                _id: decoded.userId,
-                name: decoded.name,
-                email: decoded.email,
-                password: "",
-                isEmailVerified: true,
-                role: decoded.role,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+                _id: user._id?.toString(),
+                firstName: user.firstName,
+                lastName: user.lastName,
+                email: user.email,
+                role: user.role,
+                phoneNumber: user.phoneNumber,
             };
             next();
         }
@@ -58,7 +104,6 @@ class AuthMiddleware {
     static authorize = (...roles) => {
         return (req, res, next) => {
             if (!req.user) {
-                console.log("req.user<><><><><><><><> checking for authorize");
                 ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
                 return;
             }
@@ -71,7 +116,6 @@ class AuthMiddleware {
     };
     static isAuthenticated = (req, res, next) => {
         if (!req.user) {
-            console.log("req.user<><><><><><><><> checking for isAuthenticated");
             ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
             return;
         }
@@ -86,7 +130,7 @@ class AuthMiddleware {
     };
     static isCounselorOrAdmin = (req, res, next) => {
         if (!req.user ||
-            ![UserRole.User, UserRole.ADMIN].includes(req.user.role)) {
+            ![UserRole.USER, UserRole.ADMIN].includes(req.user.role)) {
             ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
             return;
         }
@@ -95,7 +139,6 @@ class AuthMiddleware {
     static isOwnerOrAdmin = (userIdParam = "userId") => {
         return (req, res, next) => {
             if (!req.user) {
-                console.log("req.user<><><><><><><><> checking for isOwnerOrAdmin");
                 ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
                 return;
             }
