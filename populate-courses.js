@@ -1,27 +1,29 @@
-import mongoose from 'mongoose';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import mongoose from "mongoose";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Import models (using compiled JS versions from dist folder)
-import { Course } from './dist/app/modules/courses/models/Course.js';
-import User from './dist/app/modules/auth/models/User.js';
-import Category from './dist/app/modules/admin/categories/models/Category.js';
+import { Course } from "./dist/app/modules/courses/models/Course.js";
+import User from "./dist/app/modules/auth/models/User.js";
+import Category from "./dist/app/modules/admin/categories/models/Category.js";
 
 // Database configuration
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://vishalchaubey0011:tyVQdc92r1i1uzZi@cluster0.zajfs.mongodb.net/";
+const MONGODB_URI =
+  process.env.MONGODB_URI ||
+  "mongodb+srv://vishalchaubey0011:tyVQdc92r1i1uzZi@cluster0.zajfs.mongodb.net/kubix?retryWrites=true&w=majority";
 
 // Connect to MongoDB
 async function connectDB() {
   try {
     await mongoose.connect(MONGODB_URI);
-    console.log('✅ Connected to MongoDB');
+    console.log("✅ Connected to MongoDB");
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    console.error("❌ MongoDB connection error:", error);
     process.exit(1);
   }
 }
@@ -29,16 +31,16 @@ async function connectDB() {
 // Function to find university by name (searching in collegeName field)
 async function findUniversityByName(universityName) {
   try {
-    const university = await User.findOne({ 
-      collegeName: { $regex: new RegExp(universityName, 'i') },
-      role: 'university' // Assuming universities have role 'university'
+    const university = await User.findOne({
+      collegeName: { $regex: new RegExp(universityName, "i") },
+      role: "university", // Assuming universities have role 'university'
     });
-    
+
     if (!university) {
       console.log(`⚠️  University not found: ${universityName}`);
       return null;
     }
-    
+
     return university._id;
   } catch (error) {
     console.error(`❌ Error finding university ${universityName}:`, error);
@@ -49,15 +51,15 @@ async function findUniversityByName(universityName) {
 // Function to find category by name
 async function findCategoryByName(categoryName) {
   try {
-    const category = await Category.findOne({ 
-      name: { $regex: new RegExp(categoryName, 'i') }
+    const category = await Category.findOne({
+      name: { $regex: new RegExp(categoryName, "i") },
     });
-    
+
     if (!category) {
       console.log(`⚠️  Category not found: ${categoryName}`);
       return null;
     }
-    
+
     return category._id;
   } catch (error) {
     console.error(`❌ Error finding category ${categoryName}:`, error);
@@ -83,44 +85,50 @@ async function findParentCategory(categoryId) {
 async function populateCourses() {
   try {
     // Read courses data from JSON file
-    const coursesDataPath = path.join(__dirname, 'courses.json');
-    const coursesData = JSON.parse(fs.readFileSync(coursesDataPath, 'utf8'));
-    
+    const coursesDataPath = path.join(__dirname, "courses.json");
+    const coursesData = JSON.parse(fs.readFileSync(coursesDataPath, "utf8"));
+
     console.log(`📚 Found ${coursesData.length} courses to process`);
-    
+
     let successCount = 0;
     let errorCount = 0;
-    
+
     for (const courseData of coursesData) {
       try {
         console.log(`\n🔄 Processing: ${courseData.name}`);
-        
+
         // Find university ID
-        const universityId = await findUniversityByName(courseData.universityName);
+        const universityId = await findUniversityByName(
+          courseData.universityName
+        );
         if (!universityId) {
-          console.log(`❌ Skipping course - University not found: ${courseData.universityName}`);
+          console.log(
+            `❌ Skipping course - University not found: ${courseData.universityName}`
+          );
           errorCount++;
           continue;
         }
-        
+
         // Find category ID
         const categoryId = await findCategoryByName(courseData.categoryName);
         if (!categoryId) {
-          console.log(`❌ Skipping course - Category not found: ${courseData.categoryName}`);
+          console.log(
+            `❌ Skipping course - Category not found: ${courseData.categoryName}`
+          );
           errorCount++;
           continue;
         }
-        
+
         // Find parent category ID
         const parentCategoryId = await findParentCategory(categoryId);
-        
+
         // Check if course already exists
         const existingCourse = await Course.findOne({ name: courseData.name });
         if (existingCourse) {
           console.log(`⚠️  Course already exists: ${courseData.name}`);
           continue;
         }
-        
+
         // Create course object
         const courseObject = {
           name: courseData.name,
@@ -132,29 +140,30 @@ async function populateCourses() {
           UniversityId: universityId,
           amount: courseData.amount,
           currency: courseData.currency,
-          chapters: courseData.chapters
+          chapters: courseData.chapters,
         };
-        
+
         // Save course to database
         const course = new Course(courseObject);
         await course.save();
-        
+
         console.log(`✅ Successfully created course: ${courseData.name}`);
         successCount++;
-        
       } catch (error) {
-        console.error(`❌ Error processing course ${courseData.name}:`, error.message);
+        console.error(
+          `❌ Error processing course ${courseData.name}:`,
+          error.message
+        );
         errorCount++;
       }
     }
-    
+
     console.log(`\n📊 Summary:`);
     console.log(`✅ Successfully created: ${successCount} courses`);
     console.log(`❌ Errors: ${errorCount} courses`);
     console.log(`📚 Total processed: ${coursesData.length} courses`);
-    
   } catch (error) {
-    console.error('❌ Error in populateCourses:', error);
+    console.error("❌ Error in populateCourses:", error);
   }
 }
 
@@ -170,7 +179,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543210",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "IISc",
@@ -181,7 +190,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543211",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "XIM",
@@ -192,7 +201,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543212",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "IIM",
@@ -203,7 +212,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543213",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "NIT",
@@ -214,7 +223,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543214",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "BITS",
@@ -225,7 +234,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543215",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "IIT",
@@ -236,7 +245,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543216",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "IIT",
@@ -247,7 +256,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543217",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "ISB",
@@ -258,7 +267,7 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543218",
-      isEmailVerified: true
+      isEmailVerified: true,
     },
     {
       firstName: "IIT",
@@ -269,15 +278,17 @@ async function createSampleUniversities() {
       role: "university",
       countryCode: "+91",
       phoneNumber: "9876543219",
-      isEmailVerified: true
-    }
+      isEmailVerified: true,
+    },
   ];
 
-  console.log('🏫 Creating sample universities...');
-  
+  console.log("🏫 Creating sample universities...");
+
   for (const university of universities) {
     try {
-      const existingUniversity = await User.findOne({ email: university.email });
+      const existingUniversity = await User.findOne({
+        email: university.email,
+      });
       if (!existingUniversity) {
         const newUniversity = new User(university);
         await newUniversity.save();
@@ -286,7 +297,10 @@ async function createSampleUniversities() {
         console.log(`⚠️  University already exists: ${university.collegeName}`);
       }
     } catch (error) {
-      console.error(`❌ Error creating university ${university.collegeName}:`, error.message);
+      console.error(
+        `❌ Error creating university ${university.collegeName}:`,
+        error.message
+      );
     }
   }
 }
@@ -298,66 +312,66 @@ async function createSampleCategories() {
       name: "Computer Science",
       description: "Computer Science and Programming",
       order: 1,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Data Science",
       description: "Data Science and Analytics",
       order: 2,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Marketing",
       description: "Digital Marketing and Advertising",
       order: 3,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Finance",
       description: "Finance and Investment",
       order: 4,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Information Technology",
       description: "IT and Cybersecurity",
       order: 5,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Mobile Development",
       description: "Mobile App Development",
       order: 6,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Cloud Computing",
       description: "Cloud and DevOps",
       order: 7,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Artificial Intelligence",
       description: "AI and Machine Learning",
       order: 8,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Business Intelligence",
       description: "Business Analytics and Intelligence",
       order: 9,
-      isLeafNode: false
+      isLeafNode: false,
     },
     {
       name: "Blockchain",
       description: "Blockchain and Cryptocurrency",
       order: 10,
-      isLeafNode: false
-    }
+      isLeafNode: false,
+    },
   ];
 
-  console.log('📂 Creating sample categories...');
-  
+  console.log("📂 Creating sample categories...");
+
   for (const category of categories) {
     try {
       const existingCategory = await Category.findOne({ name: category.name });
@@ -369,7 +383,10 @@ async function createSampleCategories() {
         console.log(`⚠️  Category already exists: ${category.name}`);
       }
     } catch (error) {
-      console.error(`❌ Error creating category ${category.name}:`, error.message);
+      console.error(
+        `❌ Error creating category ${category.name}:`,
+        error.message
+      );
     }
   }
 }
@@ -378,25 +395,24 @@ async function createSampleCategories() {
 async function main() {
   try {
     await connectDB();
-    
-    console.log('🚀 Starting course population process...\n');
-    
+
+    console.log("🚀 Starting course population process...\n");
+
     // Create sample universities and categories first
     await createSampleUniversities();
-    console.log('');
+    console.log("");
     await createSampleCategories();
-    console.log('');
-    
+    console.log("");
+
     // Populate courses
     await populateCourses();
-    
-    console.log('\n🎉 Course population process completed!');
-    
+
+    console.log("\n🎉 Course population process completed!");
   } catch (error) {
-    console.error('❌ Fatal error:', error);
+    console.error("❌ Fatal error:", error);
   } finally {
     await mongoose.disconnect();
-    console.log('📴 Disconnected from MongoDB');
+    console.log("📴 Disconnected from MongoDB");
     process.exit(0);
   }
 }

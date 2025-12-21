@@ -71,7 +71,7 @@ backend/
    ```env
    NODE_ENV=development
    PORT=5000
-   MONGO_URI=mongodb://localhost:27017/counselling_launchpad
+   MONGODB_URI=mongodb://localhost:27017/counselling_launchpad
    JWT_SECRET=your-super-secret-jwt-key-here
    JWT_REFRESH_SECRET=your-super-secret-refresh-jwt-key-here
    JWT_EXPIRE=7d

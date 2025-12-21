@@ -4,6 +4,9 @@ import { UserRole, API_MESSAGES } from "../constants/enums.js";
 import ResponseUtil from "../utils/response.js";
 import jwt from "jsonwebtoken";
 import config from "../config/env.js";
+import AuthRepository from "../modules/auth/repositories/AuthRepository.js";
+
+const authRepository = new AuthRepository();
 class AuthMiddleware {
   /**
    * Authenticate user using JWT token
@@ -17,33 +20,41 @@ class AuthMiddleware {
     try {
       // Get token from header
       const authHeader = req.headers.authorization;
-      
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
-      return;
-        }
 
-      let token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      const token = authHeader.substring(7); // Remove "Bearer " prefix if present
       if (!token || token === "undefined") {
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
-      // decode token
-          const decoded = jwt.verify(token, config.jwt.secret) as any;
+      // Decode token and ensure user exists
+      const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const user = await authRepository.findUserById(
+        decoded.userId,
+        false,
+        true
+      );
 
-        req.user = {
-          _id: decoded.userId,
-          firstName: decoded.firstName ,
-          lastName: decoded.lastName,
-          email: decoded.email,
-          role: decoded.role,
-          phoneNumber: decoded.phoneNumber,
-          stream: decoded.stream,
-          board: decoded.board,
-          
-        };
-        next();
-      
+      if (!user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      req.user = {
+        _id: user._id?.toString(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+        stream: user.stream,
+        board: user.board,
+      };
+      next();
     } catch (error) {
       ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
     }
@@ -57,36 +68,44 @@ class AuthMiddleware {
     try {
       // Get token from header
       const authHeader = req.headers.authorization;
-      
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
-      return;
-        }
 
-      let token = authHeader.substring(7); // Remove "Bearer " prefix if present
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
+
+      const token = authHeader.substring(7); // Remove "Bearer " prefix if present
       if (!token || token === "undefined") {
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
       }
-      // decode token
-          const decoded = jwt.verify(token, config.jwt.secret) as any;
+      // Decode token and ensure user exists
+      const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const user = await authRepository.findUserById(
+        decoded.userId,
+        false,
+        true
+      );
 
-          if(decoded.role != "university"){
-            ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.ACCESSDENIED);
-            return ;
-          }
+      if (!user) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
+        return;
+      }
 
-        req.user = {
-          _id: decoded.userId,
-          firstName: decoded.firstName ,
-          lastName: decoded.lastName,
-          email: decoded.email,
-          role: decoded.role,
-          phoneNumber: decoded.phoneNumber,
-          
-        };
-        next();
-      
+      if (user.role !== UserRole.UNIVERSITY) {
+        ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.ACCESSDENIED);
+        return;
+      }
+
+      req.user = {
+        _id: user._id?.toString(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+      };
+      next();
     } catch (error) {
       ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.INVALID_TOKEN);
     }
@@ -109,17 +128,25 @@ class AuthMiddleware {
 
       const token = authHeader.substring(7);
       const decoded = jwt.verify(token, config.jwt.secret) as any;
+      const user = await authRepository.findUserById(
+        decoded.userId,
+        false,
+        true
+      );
+
+      if (!user) {
+        return next();
+      }
 
       // TODO: Implement JWT verification
-        req.user = {
-           _id: decoded.userId,
-          firstName: decoded.firstName,
-          lastName: decoded.lastName,
-          email: decoded.email,
-          role: decoded.role,
-          phoneNumber: decoded.phoneNumber,
-        };
-     
+      req.user = {
+        _id: user._id?.toString(),
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+      };
       next();
     } catch (error) {
       // In optional auth, we ignore token errors and continue

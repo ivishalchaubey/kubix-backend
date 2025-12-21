@@ -95,7 +95,7 @@ class AuthService {
       if (existingUser) {
         throw new AppError(
           API_MESSAGES.ERROR.EMAIL_ALREADY_EXISTS,
-          HttpStatus.CONFLICT
+          HttpStatus.NOT_FOUND
         );
       }
       //  check if role is admin
@@ -253,7 +253,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.NOT_FOUND
         );
       }
       const userToken = await this.authRepository.findUserToken(user._id);
@@ -264,7 +264,7 @@ class AuthService {
       if (!isPasswordMatch) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.NOT_FOUND
         );
       }
 
