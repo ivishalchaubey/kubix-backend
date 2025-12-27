@@ -31,6 +31,15 @@ applicationFormRouter.get(
   )
 );
 
+// Check if user has an application form
+applicationFormRouter.get(
+  "/check",
+  AuthMiddleware.authenticate,
+  asyncHandler((req: Request, res: Response, next: NextFunction) =>
+    applicationFormController.checkUserApplication(req, res, next)
+  )
+);
+
 applicationFormRouter.get(
   "/college/:collegeId",
   AuthMiddleware.authenticate,
@@ -52,6 +61,15 @@ applicationFormRouter.delete(
   AuthMiddleware.authenticate,
   asyncHandler((req: Request, res: Response, next: NextFunction) =>
     applicationFormController.deleteApplication(req, res, next)
+  )
+);
+
+// Apply to colleges directly (add colleges to existing application without form fields)
+applicationFormRouter.post(
+  "/apply",
+  AuthMiddleware.authenticate,
+  asyncHandler((req: Request, res: Response, next: NextFunction) =>
+    applicationFormController.addCollegesToApplication(req, res, next)
   )
 );
 

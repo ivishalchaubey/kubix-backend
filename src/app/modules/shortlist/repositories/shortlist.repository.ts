@@ -5,6 +5,7 @@ import { AppError } from "../../../middlewares/errorHandler.js";
 import CategoryModel from "../../admin/categories/models/category.js";
 import { Course } from "../../courses/models/course.js";
 import User from "../../auth/models/User.js";
+import { ApplicationForm } from "../../application-form/models/applicationForm.model.js";
 
 class ShortlistRepository {
   // Create or toggle shortlist item
@@ -119,10 +120,22 @@ class ShortlistRepository {
       Shortlist.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
     ]);
 
+    // Get user's application form to check applied colleges (only if itemType is colleges or not specified)
+    let userApplicationForm: any = null;
+    if (!itemType || itemType === "colleges") {
+      userApplicationForm = await ApplicationForm.findOne({
+        userId: new Types.ObjectId(userId),
+      })
+        .select("collegeIds")
+        .lean();
+    }
+
     // Populate items based on type
     const populatedShortlists = await Promise.all(
       shortlists.map(async (shortlist) => {
         let item: any = null;
+        let isApplied = false;
+
         switch (shortlist.itemType) {
           case "career":
             item = await CategoryModel.findById(shortlist.itemId).lean();
@@ -133,6 +146,14 @@ class ShortlistRepository {
                 "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
               )
               .lean();
+
+            // Check if user has applied to this college
+            if (userApplicationForm && userApplicationForm.collegeIds) {
+              const collegeIdString = shortlist.itemId.toString();
+              isApplied = userApplicationForm.collegeIds.some(
+                (id: any) => id.toString() === collegeIdString
+              );
+            }
             break;
           case "course":
             item = await Course.findById(shortlist.itemId)
@@ -147,13 +168,20 @@ class ShortlistRepository {
             break;
         }
 
-        return {
+        const result: any = {
           _id: shortlist._id,
           itemType: shortlist.itemType,
           item: item,
           createdAt: shortlist.createdAt,
           updatedAt: shortlist.updatedAt,
         };
+
+        // Add isApplied only for colleges
+        if (shortlist.itemType === "colleges") {
+          result.isApplied = isApplied;
+        }
+
+        return result;
       })
     );
 
@@ -199,6 +227,25 @@ class ShortlistRepository {
       );
     }
 
+    // Get user's application form to check applied colleges (only for colleges type)
+    let userApplicationForm: any = null;
+    let isApplied = false;
+    if (shortlist.itemType === "colleges") {
+      userApplicationForm = await ApplicationForm.findOne({
+        userId: new Types.ObjectId(userId),
+      })
+        .select("collegeIds")
+        .lean();
+
+      // Check if user has applied to this college
+      if (userApplicationForm && userApplicationForm.collegeIds) {
+        const collegeIdString = shortlist.itemId.toString();
+        isApplied = userApplicationForm.collegeIds.some(
+          (id: any) => id.toString() === collegeIdString
+        );
+      }
+    }
+
     // Populate item based on type
     let item: any = null;
     switch (shortlist.itemType) {
@@ -225,13 +272,20 @@ class ShortlistRepository {
         break;
     }
 
-    return {
+    const result: any = {
       _id: shortlist._id,
       itemType: shortlist.itemType,
       item: item,
       createdAt: shortlist.createdAt,
       updatedAt: shortlist.updatedAt,
     };
+
+    // Add isApplied only for colleges
+    if (shortlist.itemType === "colleges") {
+      result.isApplied = isApplied;
+    }
+
+    return result;
   };
 
   // Check if item is shortlisted

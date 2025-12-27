@@ -8,41 +8,59 @@ class ApplicationFormRepository {
   // Create or update application form using single upsert
   createOrUpdateApplication = async (
     userId: string,
-    collegeId: string,
+    collegeIds: string[],
     applicationData: any
   ): Promise<any> => {
-    if (
-      !Types.ObjectId.isValid(userId) ||
-      !Types.ObjectId.isValid(collegeId)
-    ) {
+    if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.INVALID_INPUT,
         HttpStatus.BAD_REQUEST
       );
     }
 
-    // Validate college exists and is a university
-    const collegeExists = await User.exists({
-      _id: new Types.ObjectId(collegeId),
-      role: "university",
-    });
-
-    if (!collegeExists) {
+    // Validate all collegeIds are valid ObjectIds
+    const invalidCollegeIds = collegeIds.filter(
+      (id) => !Types.ObjectId.isValid(id)
+    );
+    if (invalidCollegeIds.length > 0) {
       throw new AppError(
-        API_MESSAGES.APPLICATION_FORM.COLLEGE_NOT_FOUND,
+        `Invalid college IDs: ${invalidCollegeIds.join(", ")}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    // Convert to ObjectIds
+    const collegeIdObjs = collegeIds.map((id) => new Types.ObjectId(id));
+
+    // Validate all colleges exist and are universities
+    const colleges = await User.find({
+      _id: { $in: collegeIdObjs },
+      role: "university",
+    }).select("_id");
+
+    const foundCollegeIds = colleges.map((c) => c._id.toString());
+    const missingCollegeIds = collegeIds.filter(
+      (id) => !foundCollegeIds.includes(id)
+    );
+
+    if (missingCollegeIds.length > 0) {
+      throw new AppError(
+        `Colleges not found: ${missingCollegeIds.join(", ")}`,
         HttpStatus.NOT_FOUND
       );
     }
 
-    const filter = {
-      userId: new Types.ObjectId(userId),
-      collegeId: new Types.ObjectId(collegeId),
-    };
+    const userIdObj = new Types.ObjectId(userId);
 
+    // Find existing application for this user
+    const existingApplication = await ApplicationForm.findOne({
+      userId: userIdObj,
+    }).lean();
+
+    // Prepare update document
     const updateDocument: any = {
       ...applicationData,
-      userId: filter.userId,
-      collegeId: filter.collegeId,
+      userId: userIdObj,
       status: applicationData.status || "draft",
     };
 
@@ -50,21 +68,51 @@ class ApplicationFormRepository {
       updateDocument.submittedAt = new Date();
     }
 
-    const upserted = await ApplicationForm.findOneAndUpdate(
-      filter,
-      { $set: updateDocument },
-      {
-        new: true,
-        upsert: true,
-        runValidators: true,
-        setDefaultsOnInsert: true,
-      }
-    )
-      .populate("collegeId", "-password -otp -refreshToken -accessToken")
-      .populate("userId", "-password -otp -refreshToken -accessToken")
-      .lean();
+    let result;
+    if (existingApplication) {
+      // Get existing collegeIds as strings for comparison
+      const existingCollegeIds = (existingApplication.collegeIds || []).map(
+        (id: any) => id.toString()
+      );
 
-    return upserted;
+      // Find new collegeIds that don't exist in the array
+      const newCollegeIds = collegeIdObjs.filter(
+        (id) => !existingCollegeIds.includes(id.toString())
+      );
+
+      // Prepare update object
+      const updateObj: any = {
+        $set: updateDocument,
+      };
+
+      // If there are new colleges, add them (duplicates will be skipped by $addToSet)
+      if (newCollegeIds.length > 0) {
+        updateObj.$addToSet = { collegeIds: { $each: newCollegeIds } };
+      }
+
+      // Update the application
+      result = await ApplicationForm.findOneAndUpdate(
+        { userId: userIdObj },
+        updateObj,
+        {
+          new: true,
+          runValidators: true,
+        }
+      )
+        .populate("collegeIds", "-password -otp -refreshToken -accessToken")
+        .populate("userId", "-password -otp -refreshToken -accessToken")
+        .lean();
+    } else {
+      // Create new application with collegeIds in array
+      updateDocument.collegeIds = collegeIdObjs;
+      result = await ApplicationForm.create(updateDocument);
+      result = await ApplicationForm.findById(result._id)
+        .populate("collegeIds", "-password -otp -refreshToken -accessToken")
+        .populate("userId", "-password -otp -refreshToken -accessToken")
+        .lean();
+    }
+
+    return result;
   };
 
   // Get application by college ID and user ID
@@ -82,11 +130,14 @@ class ApplicationFormRepository {
       );
     }
 
+    const userIdObj = new Types.ObjectId(userId);
+    const collegeIdObj = new Types.ObjectId(collegeId);
+
     const application = await ApplicationForm.findOne({
-      userId: new Types.ObjectId(userId),
-      collegeId: new Types.ObjectId(collegeId),
+      userId: userIdObj,
+      collegeIds: collegeIdObj,
     })
-      .populate("collegeId", "-password -otp -refreshToken -accessToken")
+      .populate("collegeIds", "-password -otp -refreshToken -accessToken")
       .populate("userId", "-password -otp -refreshToken -accessToken")
       .lean();
 
@@ -100,7 +151,7 @@ class ApplicationFormRepository {
     return application;
   };
 
-  // Get all applications for a user
+  // Get all applications for a user (returns single application with all colleges)
   getUserApplications = async (userId: string): Promise<any[]> => {
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
@@ -109,15 +160,15 @@ class ApplicationFormRepository {
       );
     }
 
-    const applications = await ApplicationForm.find({
+    const application = await ApplicationForm.findOne({
       userId: new Types.ObjectId(userId),
     })
-      .populate("collegeId", "-password -otp -refreshToken -accessToken")
+      .populate("collegeIds", "-password -otp -refreshToken -accessToken")
       .populate("userId", "-password -otp -refreshToken -accessToken")
-      .sort({ createdAt: -1 })
       .lean();
 
-    return applications;
+    // Return as array for consistency with existing API
+    return application ? [application] : [];
   };
 
   // Get all applications for a college (for university view)
@@ -130,17 +181,130 @@ class ApplicationFormRepository {
     }
 
     const applications = await ApplicationForm.find({
-      collegeId: new Types.ObjectId(collegeId),
+      collegeIds: new Types.ObjectId(collegeId),
     })
       .populate("userId", "-password -otp -refreshToken -accessToken")
-      .populate("collegeId", "-password -otp -refreshToken -accessToken")
+      .populate("collegeIds", "-password -otp -refreshToken -accessToken")
       .sort({ createdAt: -1 })
       .lean();
 
     return applications;
   };
 
-  // Delete application
+  // Check if user has an application form (returns the form or null)
+  checkUserApplication = async (userId: string): Promise<any | null> => {
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new AppError(
+        API_MESSAGES.ERROR.INVALID_INPUT,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    const application = await ApplicationForm.findOne({
+      userId: new Types.ObjectId(userId),
+    })
+      .populate("collegeIds", "-password -otp -refreshToken -accessToken")
+      .populate("userId", "-password -otp -refreshToken -accessToken")
+      .lean();
+
+    return application;
+  };
+
+  // Add colleges to existing application without requiring form fields
+  addCollegesToApplication = async (
+    userId: string,
+    collegeIds: string[]
+  ): Promise<any> => {
+    if (!Types.ObjectId.isValid(userId)) {
+      throw new AppError(
+        API_MESSAGES.ERROR.INVALID_INPUT,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    // Validate all collegeIds are valid ObjectIds
+    const invalidCollegeIds = collegeIds.filter(
+      (id) => !Types.ObjectId.isValid(id)
+    );
+    if (invalidCollegeIds.length > 0) {
+      throw new AppError(
+        `Invalid college IDs: ${invalidCollegeIds.join(", ")}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    // Convert to ObjectIds
+    const collegeIdObjs = collegeIds.map((id) => new Types.ObjectId(id));
+
+    // Validate all colleges exist and are universities
+    const colleges = await User.find({
+      _id: { $in: collegeIdObjs },
+      role: "university",
+    }).select("_id");
+
+    const foundCollegeIds = colleges.map((c) => c._id.toString());
+    const missingCollegeIds = collegeIds.filter(
+      (id) => !foundCollegeIds.includes(id)
+    );
+
+    if (missingCollegeIds.length > 0) {
+      throw new AppError(
+        `Colleges not found: ${missingCollegeIds.join(", ")}`,
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    const userIdObj = new Types.ObjectId(userId);
+
+    // Check if user has an existing application
+    const existingApplication = await ApplicationForm.findOne({
+      userId: userIdObj,
+    });
+
+    if (!existingApplication) {
+      throw new AppError(
+        "Application form not found. Please fill the application form first.",
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    // Get existing collegeIds as strings for comparison
+    const existingCollegeIds = (existingApplication.collegeIds || []).map(
+      (id: any) => id.toString()
+    );
+
+    // Find new collegeIds that don't exist in the array
+    const newCollegeIds = collegeIdObjs.filter(
+      (id) => !existingCollegeIds.includes(id.toString())
+    );
+
+    if (newCollegeIds.length === 0) {
+      // All colleges already exist, return existing application
+      return await ApplicationForm.findById(existingApplication._id)
+        .populate("collegeIds", "-password -otp -refreshToken -accessToken")
+        .populate("userId", "-password -otp -refreshToken -accessToken")
+        .lean();
+    }
+
+    // Add new colleges to the array
+    const result = await ApplicationForm.findByIdAndUpdate(
+      existingApplication._id,
+      {
+        $addToSet: { collegeIds: { $each: newCollegeIds } },
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
+      .populate("collegeIds", "-password -otp -refreshToken -accessToken")
+      .populate("userId", "-password -otp -refreshToken -accessToken")
+      .lean();
+
+    return result;
+  };
+
+  // Delete application (remove college from array, or delete if last college)
   deleteApplication = async (
     userId: string,
     collegeId: string
@@ -155,16 +319,29 @@ class ApplicationFormRepository {
       );
     }
 
-    const deleted = await ApplicationForm.findOneAndDelete({
-      userId: new Types.ObjectId(userId),
-      collegeId: new Types.ObjectId(collegeId),
+    const userIdObj = new Types.ObjectId(userId);
+    const collegeIdObj = new Types.ObjectId(collegeId);
+
+    const application = await ApplicationForm.findOne({
+      userId: userIdObj,
+      collegeIds: collegeIdObj,
     });
 
-    if (!deleted) {
+    if (!application) {
       throw new AppError(
         API_MESSAGES.APPLICATION_FORM.APPLICATION_NOT_FOUND,
         HttpStatus.NOT_FOUND
       );
+    }
+
+    // If only one college in array, delete the entire document
+    if (application.collegeIds.length === 1) {
+      await ApplicationForm.findByIdAndDelete(application._id);
+    } else {
+      // Remove the collegeId from the array
+      await ApplicationForm.findByIdAndUpdate(application._id, {
+        $pull: { collegeIds: collegeIdObj },
+      });
     }
   };
 }

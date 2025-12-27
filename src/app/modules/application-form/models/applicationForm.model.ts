@@ -3,7 +3,7 @@ import mongoose, { Schema, model, Document, ObjectId } from "mongoose";
 // Application Form interface
 export interface IApplicationForm extends Document {
   userId: ObjectId;
-  collegeId: ObjectId;
+  collegeIds: ObjectId[];
   // Personal Information
   firstName: string;
   middleName?: string;
@@ -41,13 +41,14 @@ const ApplicationFormSchema = new Schema<IApplicationForm>(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
+      unique: true,
       index: true,
     },
-    collegeId: {
-      type: mongoose.Schema.Types.ObjectId,
+    collegeIds: {
+      type: [mongoose.Schema.Types.ObjectId],
       required: true,
       ref: "User",
-      index: true,
+      default: [],
     },
     // Personal Information
     firstName: {
@@ -70,7 +71,10 @@ const ApplicationFormSchema = new Schema<IApplicationForm>(
     dateOfBirth: {
       type: String,
       required: true,
-      match: [/^\d{4}-\d{2}-\d{2}$/, "Date of birth must be in YYYY-MM-DD format"],
+      match: [
+        /^\d{4}-\d{2}-\d{2}$/,
+        "Date of birth must be in YYYY-MM-DD format",
+      ],
     },
     email: {
       type: String,
@@ -164,12 +168,11 @@ const ApplicationFormSchema = new Schema<IApplicationForm>(
   { timestamps: true }
 );
 
-// Compound index to ensure one application per user per college
-ApplicationFormSchema.index({ userId: 1, collegeId: 1 }, { unique: true });
+// Index to ensure one application per user
+ApplicationFormSchema.index({ userId: 1 }, { unique: true });
 
 // Create & Export Model
 export const ApplicationForm = model<IApplicationForm>(
   "ApplicationForm",
   ApplicationFormSchema
 );
-

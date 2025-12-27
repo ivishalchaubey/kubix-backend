@@ -46,7 +46,7 @@ class ExploreController {
           break;
 
         case 'colleges':
-          const collegesResult = await this.exploreService.getColleges(page, limit, search);
+          const collegesResult = await this.exploreService.getColleges(userId, page, limit, search);
           result = { data: collegesResult.colleges, total: collegesResult.total };
           message = "Colleges retrieved successfully";
           break;
@@ -58,7 +58,7 @@ class ExploreController {
           break;
 
         case 'webinars':
-          const webinarsResult = await this.exploreService.getWebinars(page, limit, search);
+          const webinarsResult = await this.exploreService.getWebinars(userId, page, limit, search);
           result = { data: webinarsResult.webinars, total: webinarsResult.total };
           message = "Webinars retrieved successfully";
           break;

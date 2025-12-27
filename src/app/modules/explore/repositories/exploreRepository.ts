@@ -6,8 +6,30 @@ import { Webinar } from "../../webinar/models/webinar.model.js";
 import { HttpStatus, API_MESSAGES } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
 import { UserRole } from "../../../constants/enums.js";
+import { Shortlist } from "../../shortlist/models/shortlist.model.js";
 
 class ExploreRepository {
+  /**
+   * Get user's shortlisted item IDs for a specific type
+   */
+  private async getUserShortlistedIds(
+    userId: string,
+    itemType: "career" | "colleges" | "course"
+  ): Promise<string[]> {
+    if (!Types.ObjectId.isValid(userId)) {
+      return [];
+    }
+
+    const shortlists = await Shortlist.find({
+      userId: new Types.ObjectId(userId),
+      itemType: itemType,
+    })
+      .select("itemId")
+      .lean();
+
+    return shortlists.map((s) => s.itemId.toString());
+  }
+
   /**
    * Get careers - siblings of ONLY user's selected categories
    * Only returns siblings of the specific categories user selected
@@ -87,13 +109,23 @@ class ExploreRepository {
     const total = uniqueSiblings.length;
     const careers = uniqueSiblings.slice(skip, skip + limit);
 
-    return { careers, total };
+    // Get user's shortlisted career IDs
+    const shortlistedCareerIds = await this.getUserShortlistedIds(userId, "career");
+
+    // Add isShortlisted field to each career
+    const careersWithShortlist = careers.map((career) => ({
+      ...career,
+      isShortlisted: shortlistedCareerIds.includes(career._id.toString()),
+    }));
+
+    return { careers: careersWithShortlist, total };
   }
 
   /**
    * Get all colleges (university users)
    */
   async getColleges(
+    userId: string,
     page: number = 1,
     limit: number = 10,
     search?: string
@@ -122,7 +154,16 @@ class ExploreRepository {
 
     const total = await User.countDocuments(searchQuery);
 
-    return { colleges, total };
+    // Get user's shortlisted college IDs
+    const shortlistedCollegeIds = await this.getUserShortlistedIds(userId, "colleges");
+
+    // Add isShortlisted field to each college
+    const collegesWithShortlist = colleges.map((college) => ({
+      ...college,
+      isShortlisted: shortlistedCollegeIds.includes(college._id.toString()),
+    }));
+
+    return { colleges: collegesWithShortlist, total };
   }
 
   /**
@@ -196,13 +237,23 @@ class ExploreRepository {
     const total = uniqueCourses.length;
     const courses = uniqueCourses.slice(skip, skip + limit);
 
-    return { courses, total };
+    // Get user's shortlisted course IDs
+    const shortlistedCourseIds = await this.getUserShortlistedIds(userId, "course");
+
+    // Add isShortlisted field to each course
+    const coursesWithShortlist = courses.map((course) => ({
+      ...course,
+      isShortlisted: shortlistedCourseIds.includes(course._id.toString()),
+    }));
+
+    return { courses: coursesWithShortlist, total };
   }
 
   /**
    * Get webinars (published/live) with pagination and search
    */
   async getWebinars(
+    userId: string,
     page: number = 1,
     limit: number = 10,
     search?: string
@@ -240,7 +291,14 @@ class ExploreRepository {
 
     const total = await Webinar.countDocuments(query);
 
-    return { webinars, total };
+    // Note: Webinars don't have shortlist functionality in the current system
+    // But we add isShortlisted: false for consistency
+    const webinarsWithShortlist = webinars.map((webinar) => ({
+      ...webinar,
+      isShortlisted: false,
+    }));
+
+    return { webinars: webinarsWithShortlist, total };
   }
 
   /**

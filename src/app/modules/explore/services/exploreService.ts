@@ -31,13 +31,14 @@ class ExploreService {
    * Get all colleges (universities)
    */
   async getColleges(
+    userId: string,
     page: number = 1,
     limit: number = 10,
     search?: string
   ): Promise<{ colleges: any[]; total: number }> {
     try {
-      const result = await this.exploreRepository.getColleges(page, limit, search);
-      logger.info(`Colleges retrieved, page: ${page}, limit: ${limit}, search: ${search || 'none'}`);
+      const result = await this.exploreRepository.getColleges(userId, page, limit, search);
+      logger.info(`Colleges retrieved for user: ${userId}, page: ${page}, limit: ${limit}, search: ${search || 'none'}`);
       return result;
     } catch (error) {
       logger.error("Get colleges failed:", error);
@@ -68,13 +69,14 @@ class ExploreService {
    * Get webinars (published/live)
    */
   async getWebinars(
+    userId: string,
     page: number = 1,
     limit: number = 10,
     search?: string
   ): Promise<{ webinars: any[]; total: number }> {
     try {
-      const result = await this.exploreRepository.getWebinars(page, limit, search);
-      logger.info(`Webinars retrieved, page: ${page}, limit: ${limit}, search: ${search || 'none'}`);
+      const result = await this.exploreRepository.getWebinars(userId, page, limit, search);
+      logger.info(`Webinars retrieved for user: ${userId}, page: ${page}, limit: ${limit}, search: ${search || 'none'}`);
       return result;
     } catch (error) {
       logger.error("Get webinars failed:", error);

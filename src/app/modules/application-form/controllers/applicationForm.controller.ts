@@ -31,9 +31,12 @@ class ApplicationFormController {
         return;
       }
 
+      // Normalize collegeId to array (support both string and array)
+      const collegeIds = Array.isArray(collegeId) ? collegeId : [collegeId];
+
       const result = await this.applicationFormService.createOrUpdateApplication(
         userId,
-        collegeId,
+        collegeIds,
         applicationData
       );
 
@@ -136,6 +139,77 @@ class ApplicationFormController {
         res,
         result,
         API_MESSAGES.APPLICATION_FORM.APPLICATIONS_FETCHED
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Check if user has an application form
+  async checkUserApplication(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.user || !req.user._id) {
+        ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
+        return;
+      }
+
+      const userId = req.user._id;
+      const result = await this.applicationFormService.checkUserApplication(userId);
+
+      if (result) {
+        ResponseUtil.success(
+          res,
+          result,
+          "Application form found"
+        );
+      } else {
+        ResponseUtil.success(
+          res,
+          null,
+          "No application form found"
+        );
+      }
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  // Add colleges to existing application (without form fields)
+  async addCollegesToApplication(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.user || !req.user._id) {
+        ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
+        return;
+      }
+
+      const userId = req.user._id;
+      const { collegeId } = req.body || {};
+
+      if (!collegeId) {
+        ResponseUtil.badRequest(res, "collegeId is required");
+        return;
+      }
+
+      // Normalize collegeId to array (support both string and array)
+      const collegeIds = Array.isArray(collegeId) ? collegeId : [collegeId];
+
+      const result = await this.applicationFormService.addCollegesToApplication(
+        userId,
+        collegeIds
+      );
+
+      ResponseUtil.success(
+        res,
+        result,
+        "Colleges added to application successfully"
       );
     } catch (error) {
       next(error);

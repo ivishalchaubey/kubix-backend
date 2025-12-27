@@ -13,7 +13,7 @@ class ApplicationFormService {
   // Create or update application form
   async createOrUpdateApplication(
     userId: string,
-    collegeId: string,
+    collegeIds: string[],
     applicationData: any
   ): Promise<any> {
     try {
@@ -23,11 +23,11 @@ class ApplicationFormService {
 
       const result = await this.applicationFormRepository.createOrUpdateApplication(
         userId,
-        collegeId,
+        collegeIds,
         sanitizedData
       );
 
-      logger.info(`Application form saved for user ${userId} and college ${collegeId}`);
+      logger.info(`Application form saved for user ${userId} with colleges: ${collegeIds.join(", ")}`);
 
       return result;
     } catch (error) {
@@ -156,6 +156,40 @@ class ApplicationFormService {
       return result;
     } catch (error) {
       logger.error("Get college applications failed:", error);
+      throw error;
+    }
+  }
+
+  // Check if user has an application form
+  async checkUserApplication(userId: string): Promise<any | null> {
+    try {
+      const result = await this.applicationFormRepository.checkUserApplication(
+        userId
+      );
+      return result;
+    } catch (error) {
+      logger.error("Check user application failed:", error);
+      throw error;
+    }
+  }
+
+  // Add colleges to existing application without form fields
+  async addCollegesToApplication(
+    userId: string,
+    collegeIds: string[]
+  ): Promise<any> {
+    try {
+      const result =
+        await this.applicationFormRepository.addCollegesToApplication(
+          userId,
+          collegeIds
+        );
+      logger.info(
+        `Colleges added to application for user ${userId}: ${collegeIds.join(", ")}`
+      );
+      return result;
+    } catch (error) {
+      logger.error("Add colleges to application failed:", error);
       throw error;
     }
   }
