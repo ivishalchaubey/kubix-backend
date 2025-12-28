@@ -21,13 +21,18 @@ class ApplicationFormService {
       this.validateRequiredFields(sanitizedData);
       this.validateTwelfthSection(sanitizedData);
 
-      const result = await this.applicationFormRepository.createOrUpdateApplication(
-        userId,
-        collegeIds,
-        sanitizedData
-      );
+      const result =
+        await this.applicationFormRepository.createOrUpdateApplication(
+          userId,
+          collegeIds,
+          sanitizedData
+        );
 
-      logger.info(`Application form saved for user ${userId} with colleges: ${collegeIds.join(", ")}`);
+      logger.info(
+        `Application form saved for user ${userId} with colleges: ${collegeIds.join(
+          ", "
+        )}`
+      );
 
       return result;
     } catch (error) {
@@ -100,20 +105,36 @@ class ApplicationFormService {
       return;
     }
 
-    const twelfthFields = [
-      "twelfthPercentage",
-      "twelfthSchoolName",
-      "passingYear",
-      "twelfthMarksheet",
-    ];
+    // Always required fields for twelfth section
+    const alwaysRequiredFields = ["twelfthSchoolName", "passingYear"];
 
-    const missingTwelfthFields = twelfthFields.filter((field) => !data[field]);
+    // Fields that are only required if status is not "pending"
+    const conditionalRequiredFields = ["twelfthPercentage", "twelfthMarksheet"];
 
-    if (missingTwelfthFields.length > 0) {
+    // Check always required fields
+    const missingAlwaysRequired = alwaysRequiredFields.filter(
+      (field) => !data[field] || data[field].trim() === ""
+    );
+
+    if (missingAlwaysRequired.length > 0) {
       throw new AppError(
-        API_MESSAGES.APPLICATION_FORM.TWELFTH_FIELDS_REQUIRED,
+        `Missing required fields: ${missingAlwaysRequired.join(", ")}`,
         HttpStatus.BAD_REQUEST
       );
+    }
+
+    // If status is not "pending", check conditional fields
+    if (data.twelfthStatus !== "pending") {
+      const missingConditionalFields = conditionalRequiredFields.filter(
+        (field) => !data[field] || data[field].trim() === ""
+      );
+
+      if (missingConditionalFields.length > 0) {
+        throw new AppError(
+          `Missing required fields: ${missingConditionalFields.join(", ")}`,
+          HttpStatus.BAD_REQUEST
+        );
+      }
     }
   }
 
@@ -123,10 +144,11 @@ class ApplicationFormService {
     collegeId: string
   ): Promise<any> {
     try {
-      const result = await this.applicationFormRepository.getApplicationByCollegeId(
-        userId,
-        collegeId
-      );
+      const result =
+        await this.applicationFormRepository.getApplicationByCollegeId(
+          userId,
+          collegeId
+        );
       return result;
     } catch (error) {
       logger.error("Get application form failed:", error);
@@ -150,9 +172,8 @@ class ApplicationFormService {
   // Get all applications for college (university view)
   async getCollegeApplications(collegeId: string): Promise<any[]> {
     try {
-      const result = await this.applicationFormRepository.getCollegeApplications(
-        collegeId
-      );
+      const result =
+        await this.applicationFormRepository.getCollegeApplications(collegeId);
       return result;
     } catch (error) {
       logger.error("Get college applications failed:", error);
@@ -185,7 +206,9 @@ class ApplicationFormService {
           collegeIds
         );
       logger.info(
-        `Colleges added to application for user ${userId}: ${collegeIds.join(", ")}`
+        `Colleges added to application for user ${userId}: ${collegeIds.join(
+          ", "
+        )}`
       );
       return result;
     } catch (error) {
@@ -198,7 +221,9 @@ class ApplicationFormService {
   async deleteApplication(userId: string, collegeId: string): Promise<void> {
     try {
       await this.applicationFormRepository.deleteApplication(userId, collegeId);
-      logger.info(`Application deleted for user ${userId} and college ${collegeId}`);
+      logger.info(
+        `Application deleted for user ${userId} and college ${collegeId}`
+      );
     } catch (error) {
       logger.error("Delete application failed:", error);
       throw error;
@@ -207,4 +232,3 @@ class ApplicationFormService {
 }
 
 export default ApplicationFormService;
-
