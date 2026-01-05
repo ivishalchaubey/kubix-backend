@@ -73,6 +73,8 @@ class UserService {
     if (!deletedUser) {
       throw new Error("User not found");
     }
+    // Delete associated tokens
+    await UserToken.deleteMany({ userId: UserId });
   }
 
   async getUsers(): Promise<any[]> {

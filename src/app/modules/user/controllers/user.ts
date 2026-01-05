@@ -159,6 +159,24 @@ class UserController {
       next(error);
     }
   }
+
+  async deleteUser(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      if (!req.user || !req.user._id) {
+        ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
+        return;
+      }
+      const UserId = req.user._id;
+      await this.userService.deleteUser(UserId);
+      ResponseUtil.success(res, null, API_MESSAGES.USER.User_DELETED);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default UserController;

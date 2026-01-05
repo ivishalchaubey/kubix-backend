@@ -58,4 +58,12 @@ userRouter.get(
   )
 );
 
+userRouter.delete(
+  "/",
+  AuthMiddleware.authenticate,
+  asyncHandler((req: Request, res: Response, next: NextFunction) =>
+    userController.deleteUser(req, res, next)
+  )
+);
+
 export default userRouter;
