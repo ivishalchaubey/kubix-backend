@@ -11,8 +11,8 @@ declare class AuthService {
         firstName: string;
         lastName: string;
         dob?: string;
-        countryCode: string;
-        phoneNumber: string;
+        countryCode?: string;
+        phoneNumber?: string;
         board?: string;
         otherBoardName?: string;
         stream?: string;

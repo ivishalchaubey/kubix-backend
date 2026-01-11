@@ -69,7 +69,6 @@ const userSchema = new Schema(
     },
     countryCode: {
       type: String,
-      required: [true, "Country code is required"],
       trim: true,
       match: [
         /^\+\d{1,3}$/,
@@ -78,7 +77,6 @@ const userSchema = new Schema(
     },
     phoneNumber: {
       type: String,
-      required: [true, "Phone number is required"],
       trim: true,
       match: [/^\d{10}$/, "Phone number must be 10 digits long"],
     },

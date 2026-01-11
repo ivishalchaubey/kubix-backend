@@ -23,8 +23,8 @@ class AuthRepository {
     lastName: string;
     email: string;
     dob?: string;
-    countryCode: string;
-    phoneNumber: string;
+    countryCode?: string;
+    phoneNumber?: string;
     board?: string;
     otherBoardName?: string;
     stream?: string;

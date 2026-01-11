@@ -1,1 +1,1 @@
-{"version":3,"file":"User.d.ts","sourceRoot":"","sources":["../../../../../src/app/modules/auth/models/User.ts"],"names":[],"mappings":"AACA,OAAO,EAAuB,UAAU,EAAE,MAAM,0BAA0B,CAAC;AAkV3E,QAAA,MAAM,IAAI,YAAwD,CAAC;AAEnE,eAAe,IAAI,CAAC"}
+{"version":3,"file":"User.d.ts","sourceRoot":"","sources":["../../../../../src/app/modules/auth/models/User.ts"],"names":[],"mappings":"AACA,OAAO,EAAuB,UAAU,EAAE,MAAM,0BAA0B,CAAC;AAgV3E,QAAA,MAAM,IAAI,YAAwD,CAAC;AAEnE,eAAe,IAAI,CAAC"}

@@ -192,10 +192,11 @@ export const authValidation = {
       // { pattern: VALIDATION_RULES.PASSWORD.PATTERN },
     ],
     dob: [{ required: false, type: "string" }], // Assuming dob is a string in ISO format
-    countryCode: [{ required: true, type: "string" }],
+    countryCode: [{ required: false, type: "string" }],
     role: [{ required: true, type: "string" }], // Assuming role is a string
-    phoneNumber: [{ required: true, type: "string" }],
+    phoneNumber: [{ required: false, type: "string" }],
     board: [{ required: false, type: "string" }],
+
     otherBoardName: [{ required: false, type: "string" }, { maxLength: 100 }],
     stream: [{ required: false, type: "string" }],
     otherStreamName: [{ required: false, type: "string" }, { maxLength: 100 }],

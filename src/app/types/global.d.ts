@@ -8,11 +8,11 @@ export interface IUser {
   email: string;
   firstName: string;
   lastName: string;
-  dob: string; // Assuming ISO date string
-  countryCode: string;
+  dob?: string; // Assuming ISO date string
+  countryCode?: string;
   otp: string;
   otpExpires: Date; // Optional, used for OTP expiration
-  phoneNumber: string;
+  phoneNumber?: string;
   categoryIds: ObjectId[];
   likedCourses: ObjectId[];
   bookmarkedCourses: ObjectId[];
@@ -34,9 +34,6 @@ export interface IUser {
   collegeName?: string;
   collegeCode?: string;
   location?: string;
-  email?: string;
-  countryCode?: string;
-  phoneNumber?: string;
   address?: string;
   specialization?: string;
   description?: string;
@@ -71,8 +68,7 @@ export interface IUserReq {
   email: string;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
-  role: string;
+  phoneNumber?: string;
   role: UserRole;
   stream?: string;
   board?: string;
