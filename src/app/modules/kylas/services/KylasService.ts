@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosError } from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  InternalAxiosRequestConfig,
+  AxiosResponse,
+} from "axios";
 import KylasConfig from "../config/KylasConfig.js";
 import {
   CreateLeadPayload,
@@ -37,13 +42,13 @@ class KylasService {
 
     // Request interceptor for logging
     this.client.interceptors.request.use(
-      (config) => {
+      (config: InternalAxiosRequestConfig) => {
         logger.info(
           `Kylas API Request: ${config.method?.toUpperCase()} ${config.url}`
         );
         return config;
       },
-      (error) => {
+      (error: AxiosError) => {
         logger.error("Kylas API Request Error:", error);
         return Promise.reject(error);
       }
@@ -51,7 +56,7 @@ class KylasService {
 
     // Response interceptor for logging and error handling
     this.client.interceptors.response.use(
-      (response) => {
+      (response: AxiosResponse) => {
         logger.info(
           `Kylas API Response: ${response.status} ${response.config.url}`
         );
