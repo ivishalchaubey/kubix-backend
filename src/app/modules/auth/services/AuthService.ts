@@ -19,14 +19,18 @@ import logger from "../../../utils/logger.js";
 import { UserCourseLiked } from "../models/usercourseliked.js";
 import { Types } from "mongoose";
 import emailService, { EmailService } from "../../../utils/emailService.js";
+import KylasService from "../../kylas/services/KylasService.js";
+import { ActivityType } from "../../kylas/types/KylasTypes.js";
 
 class AuthService {
   private authRepository: AuthRepository;
   private emailService: EmailService;
+  private kylasService: KylasService;
 
   constructor() {
     this.authRepository = new AuthRepository();
     this.emailService = new EmailService();
+    this.kylasService = new KylasService();
   }
 
   /**
@@ -143,6 +147,26 @@ class AuthService {
       await this.authRepository.updateAccessToken(user._id, accessToken);
 
       logger.info(`User registered: ${user.email}`);
+
+      // Create lead in Kylas CRM (non-blocking)
+      if (userData.role === UserRole.USER) {
+        this.kylasService
+          .createLead({
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            phoneNumber: userData.phoneNumber,
+            countryCode: userData.countryCode,
+            city: userData.city,
+            state: userData.state,
+            board: userData.board,
+            stream: userData.stream,
+            grade: userData.grade,
+          })
+          .catch((error) => {
+            logger.error("Failed to create Kylas lead (non-blocking):", error);
+          });
+      }
 
       return {
         user,
@@ -807,6 +831,27 @@ class AuthService {
       }
 
       logger.info(`User profile updated: ${userId}`);
+
+      // Track career field selection in Kylas CRM (non-blocking)
+      if (
+        updateData.categoryIds &&
+        Array.isArray(updateData.categoryIds) &&
+        updatedUser.email
+      ) {
+        this.kylasService
+          .trackActivity(
+            updatedUser.email,
+            ActivityType.CAREER_FIELD_SELECTED,
+            updateData.categoryIds.map((id) => id.toString())
+          )
+          .catch((error: any) => {
+            logger.error(
+              "Failed to track career field selection in Kylas (non-blocking):",
+              error
+            );
+          });
+      }
+
       return updatedUser;
     } catch (error) {
       logger.error("Update user profile failed:", error);

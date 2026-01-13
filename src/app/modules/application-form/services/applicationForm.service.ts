@@ -2,12 +2,19 @@ import ApplicationFormRepository from "../repositories/applicationForm.repositor
 import logger from "../../../utils/logger.js";
 import { HttpStatus, API_MESSAGES } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
+import KylasService from "../../kylas/services/KylasService.js";
+import { ActivityType } from "../../kylas/types/KylasTypes.js";
+import AuthRepository from "../../auth/repositories/AuthRepository.js";
 
 class ApplicationFormService {
   private applicationFormRepository: ApplicationFormRepository;
+  private kylasService: KylasService;
+  private authRepository: AuthRepository;
 
   constructor() {
     this.applicationFormRepository = new ApplicationFormRepository();
+    this.kylasService = new KylasService();
+    this.authRepository = new AuthRepository();
   }
 
   // Create or update application form
@@ -33,6 +40,14 @@ class ApplicationFormService {
           ", "
         )}`
       );
+
+      // Track course application in Kylas CRM (non-blocking)
+      this.trackApplicationInKylas(userId, collegeIds).catch((error: any) => {
+        logger.error(
+          "Failed to track application in Kylas (non-blocking):",
+          error
+        );
+      });
 
       return result;
     } catch (error) {
@@ -227,6 +242,39 @@ class ApplicationFormService {
     } catch (error) {
       logger.error("Delete application failed:", error);
       throw error;
+    }
+  }
+
+  // Helper method to track application in Kylas
+  private async trackApplicationInKylas(
+    userId: string,
+    collegeIds: string[]
+  ): Promise<void> {
+    try {
+      // Get user email
+      const user = await this.authRepository.findUserById(userId);
+      if (!user || !user.email) {
+        logger.warn(
+          `Cannot track Kylas activity - user ${userId} not found or has no email`
+        );
+        return;
+      }
+
+      // Get all applications for the user
+      const allApplications =
+        await this.applicationFormRepository.getUserApplications(userId);
+      const allCollegeIds = allApplications.map((app: any) =>
+        app.collegeId.toString()
+      );
+
+      await this.kylasService.trackActivity(
+        user.email,
+        ActivityType.COURSE_APPLIED,
+        allCollegeIds
+      );
+    } catch (error) {
+      logger.error("Error tracking application in Kylas:", error);
+      // Don't throw - this is non-blocking
     }
   }
 }
