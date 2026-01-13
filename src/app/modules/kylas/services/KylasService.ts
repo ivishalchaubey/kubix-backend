@@ -303,8 +303,13 @@ class KylasService {
 
   /**
    * Update an existing lead in Kylas CRM (Partial Update using JSON Patch)
+   * Includes retry logic for rate limiting (429 errors)
    */
-  async patchLead(leadId: number, patchOperations: any[]): Promise<void> {
+  async patchLead(
+    leadId: number,
+    patchOperations: any[],
+    retryCount = 0
+  ): Promise<void> {
     if (!this.enabled) return;
 
     try {
@@ -313,8 +318,13 @@ class KylasService {
           "Content-Type": "application/json-patch+json",
         },
       });
-      logger.info(`Patched Kylas lead ID: ${leadId}`);
     } catch (error: any) {
+      // Retry on rate limit (429) with exponential backoff
+      if (error.response?.status === 429 && retryCount < 3) {
+        const delay = (retryCount + 1) * 1000; // 1s, 2s, 3s
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        return this.patchLead(leadId, patchOperations, retryCount + 1);
+      }
       // Re-throw error so caller can handle (e.g., fallback to notes)
       throw error;
     }
@@ -466,8 +476,13 @@ class KylasService {
 
   /**
    * Add note to lead
+   * Includes retry logic for rate limiting (429 errors)
    */
-  async addNoteToLead(leadId: number, note: string): Promise<void> {
+  async addNoteToLead(
+    leadId: number,
+    note: string,
+    retryCount = 0
+  ): Promise<void> {
     if (!this.enabled) return;
 
     try {
@@ -479,7 +494,13 @@ class KylasService {
           description: note,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
+      // Retry on rate limit (429) with exponential backoff
+      if (error.response?.status === 429 && retryCount < 3) {
+        const delay = (retryCount + 1) * 1000; // 1s, 2s, 3s
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        return this.addNoteToLead(leadId, note, retryCount + 1);
+      }
       logger.error(`Error adding note to Kylas lead ${leadId}:`, error);
     }
   }
