@@ -165,8 +165,11 @@ class ApplicationFormService {
           collegeId
         );
       return result;
-    } catch (error) {
-      logger.error("Get application form failed:", error);
+    } catch (error: any) {
+      // 404 is expected when checking if application exists - don't log as error
+      if (error.statusCode !== 404) {
+        logger.error("Get application form failed:", error);
+      }
       throw error;
     }
   }
@@ -225,6 +228,15 @@ class ApplicationFormService {
           ", "
         )}`
       );
+
+      // Track application in Kylas CRM (non-blocking)
+      this.trackApplicationInKylas(userId, collegeIds).catch((error: any) => {
+        logger.error(
+          "Failed to track application in Kylas (non-blocking):",
+          error
+        );
+      });
+
       return result;
     } catch (error) {
       logger.error("Add colleges to application failed:", error);
@@ -254,26 +266,70 @@ class ApplicationFormService {
       // Get user email
       const user = await this.authRepository.findUserById(userId);
       if (!user || !user.email) {
-        logger.warn(
-          `Cannot track Kylas activity - user ${userId} not found or has no email`
-        );
         return;
       }
 
-      // Get all applications for the user
-      const allApplications =
-        await this.applicationFormRepository.getUserApplications(userId);
-      const allCollegeIds = allApplications.map((app: any) =>
-        app.collegeId.toString()
-      );
+      // Import User model dynamically to get college names
+      const { default: User } = await import("../../auth/models/User.js");
 
-      await this.kylasService.trackActivity(
-        user.email,
-        ActivityType.COURSE_APPLIED,
-        allCollegeIds
-      );
-    } catch (error) {
-      logger.error("Error tracking application in Kylas:", error);
+      // Get the names of the colleges that were just applied to
+      const collegeNames: string[] = [];
+
+      for (const collegeId of collegeIds) {
+        // First try with role filter, then without as fallback
+        let college = await User.findOne({
+          _id: collegeId,
+          role: "university",
+        });
+
+        // Fallback: try without role filter
+        if (!college) {
+          college = await User.findById(collegeId);
+        }
+
+        if (college) {
+          const collegeName =
+            (college as any).collegeName || (college as any).firstName || "";
+          if (collegeName) {
+            collegeNames.push(collegeName);
+          } else {
+            // Use ID as fallback
+            collegeNames.push(`College ID: ${collegeId}`);
+          }
+        } else {
+          // College not found - skip silently
+        }
+      }
+
+      if (collegeNames.length > 0) {
+        // Format as a single string with proper formatting
+        const formattedData =
+          collegeNames.length === 1 ? collegeNames[0] : collegeNames;
+
+        await this.kylasService.trackActivity(
+          user.email,
+          ActivityType.COURSE_APPLIED,
+          formattedData,
+          {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            countryCode: user.countryCode,
+            city: user.city,
+            state: user.state,
+            board: user.board,
+            stream: user.stream,
+            grade: user.grade,
+          }
+        );
+      }
+    } catch (error: any) {
+      logger.error("Error tracking application in Kylas:", {
+        message: error.message,
+        stack: error.stack,
+        details: error.response?.data,
+      });
       // Don't throw - this is non-blocking
     }
   }

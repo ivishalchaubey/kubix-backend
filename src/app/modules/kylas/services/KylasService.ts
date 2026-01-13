@@ -40,12 +40,9 @@ class KylasService {
       },
     });
 
-    // Request interceptor for logging
+    // Request interceptor - silent
     this.client.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
-        logger.info(
-          `Kylas API Request: ${config.method?.toUpperCase()} ${config.url}`
-        );
         return config;
       },
       (error: AxiosError) => {
@@ -54,12 +51,9 @@ class KylasService {
       }
     );
 
-    // Response interceptor for logging and error handling
+    // Response interceptor for error handling
     this.client.interceptors.response.use(
       (response: AxiosResponse) => {
-        logger.info(
-          `Kylas API Response: ${response.status} ${response.config.url}`
-        );
         return response;
       },
       (error: AxiosError) => {
@@ -74,6 +68,19 @@ class KylasService {
    */
   private handleApiError(error: AxiosError): void {
     if (error.response) {
+      const data = error.response.data as any;
+      const errorString = JSON.stringify(data || {});
+
+      // Suppress expected errors as warnings (these are handled gracefully)
+      const isExpectedError =
+        errorString.includes("Field is not defined") ||
+        errorString.includes("Invalid Mobile Number");
+
+      if (isExpectedError) {
+        // Don't log - these are handled by the calling code
+        return;
+      }
+
       logger.error("Kylas API Error Response:", {
         status: error.response.status,
         data: error.response.data,
@@ -154,7 +161,6 @@ class KylasService {
       );
 
       if (response.data.totalCount > 0 && response.data.records.length > 0) {
-        logger.info(`Found existing Kylas lead for email: ${email}`);
         return response.data.records[0];
       }
 
@@ -189,7 +195,6 @@ class KylasService {
       // Check if lead already exists
       const existingLead = await this.searchLead(data.email);
       if (existingLead) {
-        logger.info(`Lead already exists for ${data.email}, skipping creation`);
         return existingLead;
       }
 
@@ -225,13 +230,72 @@ class KylasService {
       };
 
       const response = await this.client.post<KylasLead>("/leads/", payload);
-      logger.info(
-        `Created Kylas lead for ${data.email} with ID: ${response.data.id}`
-      );
 
       return response.data;
-    } catch (error) {
-      logger.error("Error creating Kylas lead:", error);
+    } catch (error: any) {
+      // If validation error (400), try creating with minimal fields
+      if (
+        error.response?.status === 400 &&
+        (data.board || data.stream || data.grade)
+      ) {
+        try {
+          // Retry with minimal payload
+          const minimalPayload: CreateLeadPayload = {
+            firstName: data.firstName,
+            lastName: data.lastName,
+            emails: this.formatEmail(data.email),
+            phoneNumbers: this.formatPhoneNumber(
+              data.phoneNumber,
+              data.countryCode
+            ),
+            city: data.city,
+            state: data.state,
+            country: KylasConfig.DEFAULT_COUNTRY_CODE,
+            requirementName: "Student Counselling",
+          };
+
+          const retryResponse = await this.client.post<KylasLead>(
+            "/leads/",
+            minimalPayload
+          );
+          return retryResponse.data;
+        } catch (retryError: any) {
+          // If minimal failed (likely phone number issue), try absolute minimal (Name + Email only)
+          if (retryError.response?.status === 400) {
+            try {
+              const absoluteMinimalPayload: CreateLeadPayload = {
+                firstName: data.firstName,
+                lastName: data.lastName,
+                emails: this.formatEmail(data.email),
+                requirementName: "Student Counselling",
+              };
+              const lastResortResponse = await this.client.post<KylasLead>(
+                "/leads/",
+                absoluteMinimalPayload
+              );
+              return lastResortResponse.data;
+            } catch (lastResortError: any) {
+              logger.error(
+                "Absolute minimal creation failed:",
+                lastResortError.response?.data
+              );
+            }
+          }
+
+          logger.error("Error creating minimal Kylas lead:", {
+            message: retryError.message,
+            stack: retryError.stack,
+            details: retryError.response?.data,
+          });
+          return null;
+        }
+      }
+
+      logger.error("Error creating Kylas lead:", {
+        message: error.message,
+        stack: error.stack,
+        details: error.response?.data,
+      });
       // Don't throw error - we don't want to fail user registration if Kylas is down
       return null;
     }
@@ -251,10 +315,8 @@ class KylasService {
       });
       logger.info(`Patched Kylas lead ID: ${leadId}`);
     } catch (error: any) {
-      logger.error(
-        `Error patching Kylas lead ${leadId}:`,
-        error.response?.data || error.message
-      );
+      // Re-throw error so caller can handle (e.g., fallback to notes)
+      throw error;
     }
   }
 
@@ -286,19 +348,39 @@ class KylasService {
   async trackActivity(
     email: string,
     activityType: ActivityType,
-    activityData: string | string[]
+    activityData: string | string[],
+    userDetails?: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      phoneNumber?: string | undefined;
+      countryCode?: string | undefined;
+      city?: string | undefined;
+      state?: string | undefined;
+      board?: string | undefined;
+      stream?: string | undefined;
+      grade?: string | undefined;
+    }
   ): Promise<void> {
     if (!this.enabled) return;
 
     try {
       // Find lead by email
-      const lead = await this.searchLead(email);
+      let lead = await this.searchLead(email);
+
+      // If lead not found and we have details, create it
+      if (!lead && userDetails) {
+        lead = await this.createLead(userDetails);
+      }
+
       if (!lead) {
-        logger.warn(`No Kylas lead found for ${email}, cannot track activity`);
+        logger.warn(
+          `No Kylas lead found (and creation failed/skipped) for ${email}, cannot track activity`
+        );
         return;
       }
 
-      // Build JSON Patch operations for custom fields
+      // Build data string
       const dataString = Array.isArray(activityData)
         ? activityData.join(", ")
         : activityData;
@@ -323,20 +405,62 @@ class KylasService {
       }
 
       if (fieldName) {
-        await this.patchLead(lead.id, [
-          {
-            op: "replace",
-            path: `/customFieldValues/${fieldName}`,
-            value: dataString,
-          },
-        ]);
-        logger.info(`Tracked ${activityType} for ${email}`);
+        try {
+          await this.patchLead(lead.id, [
+            {
+              op: "add",
+              path: `/customFieldValues/${fieldName}`,
+              value: dataString,
+            },
+          ]);
+        } catch (patchError: any) {
+          // If patching fails (likely missing field), fallback to adding a note
+          if (
+            patchError.response?.status === 400 &&
+            JSON.stringify(patchError.response?.data || {}).includes(
+              "Field is not defined"
+            )
+          ) {
+            // Format note content with proper labels
+            let noteTitle = "";
+            switch (activityType) {
+              case ActivityType.CAREER_SHORTLISTED:
+                noteTitle = "📌 Shortlisted Careers";
+                break;
+              case ActivityType.COURSE_SHORTLISTED:
+                noteTitle = "📌 Shortlisted Courses";
+                break;
+              case ActivityType.COLLEGE_SHORTLISTED:
+                noteTitle = "📌 Shortlisted Colleges";
+                break;
+              case ActivityType.COURSE_APPLIED:
+                noteTitle = "✅ Applied to Colleges";
+                break;
+              case ActivityType.CAREER_FIELD_SELECTED:
+                noteTitle = "🎯 Selected Career Field";
+                break;
+              default:
+                noteTitle = "📋 Activity";
+            }
+
+            // Format items as bullet list for readability
+            const itemsList = Array.isArray(activityData)
+              ? activityData.map((item) => `• ${item}`).join("\n")
+              : `• ${activityData}`;
+
+            const noteContent = `${noteTitle}\n\n${itemsList}`;
+            await this.addNoteToLead(lead.id, noteContent);
+          } else {
+            throw patchError;
+          }
+        }
       }
-    } catch (error) {
-      logger.error(
-        `Error tracking activity ${activityType} for ${email}:`,
-        error
-      );
+    } catch (error: any) {
+      logger.error(`Error tracking activity ${activityType} for ${email}:`, {
+        message: error.message,
+        stack: error.stack,
+        details: error.response?.data,
+      });
     }
   }
 
@@ -355,7 +479,6 @@ class KylasService {
           description: note,
         },
       });
-      logger.info(`Added note to Kylas lead ${leadId}`);
     } catch (error) {
       logger.error(`Error adding note to Kylas lead ${leadId}:`, error);
     }

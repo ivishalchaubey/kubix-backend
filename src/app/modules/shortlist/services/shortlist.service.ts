@@ -159,37 +159,104 @@ class ShortlistService {
         return;
       }
 
-      // Get all shortlists of this type for the user
-      const shortlists = await this.shortlistRepository.getShortlists(
-        userId,
-        itemType,
-        1,
-        100
-      );
-      const itemIds = shortlists.items.map((item: any) =>
-        item.itemId.toString()
-      );
+      // Get the specific item that was just shortlisted (with parent info for careers)
+      let itemName = "";
+      let parentName = "";
 
-      // Determine activity type and track
+      // Import the models dynamically to avoid circular dependencies
+      const CategoryModel = (
+        await import("../../admin/categories/models/category.js")
+      ).default;
+      const { Course } = await import("../../courses/models/course.js");
+      const { default: User } = await import("../../auth/models/User.js");
+
+      switch (itemType) {
+        case "career":
+          // Fetch the career with its parent populated
+          const career = await CategoryModel.findById(itemId).populate(
+            "parentId"
+          );
+          if (career) {
+            itemName = career.name;
+            // parentId is populated, so it's an object with name
+            if (career.parentId && typeof career.parentId === "object") {
+              parentName = (career.parentId as any).name || "";
+            }
+          }
+          break;
+        case "course":
+          const course = await Course.findById(itemId);
+          if (course) {
+            itemName = (course as any).name || "";
+          }
+          break;
+        case "colleges":
+          // Colleges are stored as Users with role="university"
+          const college = await User.findOne({
+            _id: itemId,
+            role: "university",
+          });
+          if (college) {
+            // Access name field - collegeName is the actual field in User model
+            itemName =
+              (college as any).collegeName || (college as any).firstName || "";
+          }
+          break;
+      }
+
+      if (!itemName) {
+        logger.warn(`Could not find item ${itemId} of type ${itemType}`);
+        return;
+      }
+
+      // Determine activity type
       let activityType: ActivityType;
+      let formattedData: string;
+
       switch (itemType) {
         case "career":
           activityType = ActivityType.CAREER_SHORTLISTED;
+          // Format: "Career Name (under Parent Category)"
+          formattedData = parentName
+            ? `${itemName} (under ${parentName})`
+            : itemName;
           break;
         case "course":
           activityType = ActivityType.COURSE_SHORTLISTED;
+          formattedData = itemName;
           break;
         case "colleges":
           activityType = ActivityType.COLLEGE_SHORTLISTED;
+          formattedData = itemName;
           break;
         default:
           logger.warn(`Unknown shortlist type: ${itemType}`);
           return;
       }
 
-      await this.kylasService.trackActivity(user.email, activityType, itemIds);
-    } catch (error) {
-      logger.error("Error tracking shortlist in Kylas:", error);
+      await this.kylasService.trackActivity(
+        user.email,
+        activityType,
+        formattedData, // Single string, not array
+        {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          countryCode: user.countryCode,
+          city: user.city,
+          state: user.state,
+          board: user.board,
+          stream: user.stream,
+          grade: user.grade,
+        }
+      );
+    } catch (error: any) {
+      logger.error("Error tracking shortlist in Kylas:", {
+        message: error.message,
+        stack: error.stack,
+        details: error.response?.data,
+      });
       // Don't throw - this is non-blocking
     }
   }

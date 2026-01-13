@@ -163,6 +163,24 @@ class AuthService {
             stream: userData.stream,
             grade: userData.grade,
           })
+          .then(async (lead) => {
+            if (lead) {
+              // Add welcome note
+              const registrationDate = new Date().toLocaleDateString("en-IN", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              });
+              const noteContent = `🎉 New User Registered\n\n• Date: ${registrationDate}\n• Email: ${
+                userData.email
+              }\n• Board: ${userData.board || "Not specified"}\n• Stream: ${
+                userData.stream || "Not specified"
+              }`;
+              await this.kylasService.addNoteToLead(lead.id, noteContent);
+            }
+          })
           .catch((error) => {
             logger.error("Failed to create Kylas lead (non-blocking):", error);
           });

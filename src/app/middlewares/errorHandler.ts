@@ -45,11 +45,14 @@ const handleJWTExpiredError = (): AppError =>
   );
 
 const sendErrorDev = (err: CustomError, res: Response): void => {
-  logger.error("Error details:", {
-    message: err.message,
-    stack: err.stack,
-    statusCode: err.statusCode,
-  });
+  // Don't log 404 errors verbosely - they're expected for "check if exists" calls
+  if (err.statusCode !== 404) {
+    logger.error("Error details:", {
+      message: err.message,
+      stack: err.stack,
+      statusCode: err.statusCode,
+    });
+  }
 
   ResponseUtil.error(
     res,
