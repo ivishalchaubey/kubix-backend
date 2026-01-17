@@ -69,11 +69,34 @@ class UserService {
   }
 
   async deleteUser(UserId: string): Promise<void> {
-    const deletedUser = await User.findByIdAndDelete(UserId);
-    if (!deletedUser) {
+    // Get user details before deletion for Kylas tracking
+    const user = await User.findById(UserId);
+    if (!user) {
       throw new Error("User not found");
     }
-    // Delete associated tokens
+
+    // Track account deletion in Kylas (non-blocking)
+    if (user.email) {
+      const { kylasCRM } = await import("../../kylas/index.js");
+      const deletionDate = new Date().toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      kylasCRM
+        .addNote(
+          user.email,
+          `❌ Account Deleted\n\n• Date: ${deletionDate}\n• User: ${user.firstName} ${user.lastName}\n• Email: ${user.email}`
+        )
+        .catch(() => {
+          // Silently ignore - don't block deletion
+        });
+    }
+
+    // Delete user and associated tokens
+    await User.findByIdAndDelete(UserId);
     await UserToken.deleteMany({ userId: UserId });
   }
 

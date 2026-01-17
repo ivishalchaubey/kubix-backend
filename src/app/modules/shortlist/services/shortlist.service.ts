@@ -3,18 +3,17 @@ import logger from "../../../utils/logger.js";
 import { HttpStatus, API_MESSAGES } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
 import { ShortlistType } from "../models/shortlist.model.js";
-import KylasService from "../../kylas/services/KylasService.js";
-import { ActivityType } from "../../kylas/types/KylasTypes.js";
+import { kylasCRM, ActivityType } from "../../kylas/index.js";
 import AuthRepository from "../../auth/repositories/AuthRepository.js";
 
 class ShortlistService {
   private shortlistRepository: ShortlistRepository;
-  private kylasService: KylasService;
+
   private authRepository: AuthRepository;
 
   constructor() {
     this.shortlistRepository = new ShortlistRepository();
-    this.kylasService = new KylasService();
+
     this.authRepository = new AuthRepository();
   }
 
@@ -234,23 +233,7 @@ class ShortlistService {
           return;
       }
 
-      await this.kylasService.trackActivity(
-        user.email,
-        activityType,
-        formattedData, // Single string, not array
-        {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-          countryCode: user.countryCode,
-          city: user.city,
-          state: user.state,
-          board: user.board,
-          stream: user.stream,
-          grade: user.grade,
-        }
-      );
+      await kylasCRM.trackActivity(user.email, activityType, formattedData);
     } catch (error: any) {
       logger.error("Error tracking shortlist in Kylas:", {
         message: error.message,

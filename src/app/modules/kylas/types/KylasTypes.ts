@@ -74,4 +74,5 @@ export enum ActivityType {
   COURSE_SHORTLISTED = "course_shortlisted",
   COURSE_APPLIED = "course_applied",
   COLLEGE_SHORTLISTED = "college_shortlisted",
+  ACCOUNT_DELETED = "account_deleted",
 }

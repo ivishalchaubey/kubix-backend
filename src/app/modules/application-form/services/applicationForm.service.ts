@@ -2,18 +2,17 @@ import ApplicationFormRepository from "../repositories/applicationForm.repositor
 import logger from "../../../utils/logger.js";
 import { HttpStatus, API_MESSAGES } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
-import KylasService from "../../kylas/services/KylasService.js";
-import { ActivityType } from "../../kylas/types/KylasTypes.js";
+import { kylasCRM, ActivityType } from "../../kylas/index.js";
 import AuthRepository from "../../auth/repositories/AuthRepository.js";
 
 class ApplicationFormService {
   private applicationFormRepository: ApplicationFormRepository;
-  private kylasService: KylasService;
+
   private authRepository: AuthRepository;
 
   constructor() {
     this.applicationFormRepository = new ApplicationFormRepository();
-    this.kylasService = new KylasService();
+
     this.authRepository = new AuthRepository();
   }
 
@@ -306,22 +305,10 @@ class ApplicationFormService {
         const formattedData =
           collegeNames.length === 1 ? collegeNames[0] : collegeNames;
 
-        await this.kylasService.trackActivity(
+        await kylasCRM.trackActivity(
           user.email,
           ActivityType.COURSE_APPLIED,
-          formattedData,
-          {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            countryCode: user.countryCode,
-            city: user.city,
-            state: user.state,
-            board: user.board,
-            stream: user.stream,
-            grade: user.grade,
-          }
+          formattedData
         );
       }
     } catch (error: any) {

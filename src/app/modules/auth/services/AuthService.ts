@@ -19,18 +19,15 @@ import logger from "../../../utils/logger.js";
 import { UserCourseLiked } from "../models/usercourseliked.js";
 import { Types } from "mongoose";
 import emailService, { EmailService } from "../../../utils/emailService.js";
-import KylasService from "../../kylas/services/KylasService.js";
-import { ActivityType } from "../../kylas/types/KylasTypes.js";
+import { kylasCRM, ActivityType } from "../../kylas/index.js";
 
 class AuthService {
   private authRepository: AuthRepository;
   private emailService: EmailService;
-  private kylasService: KylasService;
 
   constructor() {
     this.authRepository = new AuthRepository();
     this.emailService = new EmailService();
-    this.kylasService = new KylasService();
   }
 
   /**
@@ -148,10 +145,10 @@ class AuthService {
 
       logger.info(`User registered: ${user.email}`);
 
-      // Create lead in Kylas CRM (non-blocking)
+      // Register lead in Kylas CRM (non-blocking)
       if (userData.role === UserRole.USER) {
-        this.kylasService
-          .createLead({
+        kylasCRM
+          .registerLead({
             firstName: userData.firstName,
             lastName: userData.lastName,
             email: userData.email,
@@ -163,26 +160,11 @@ class AuthService {
             stream: userData.stream,
             grade: userData.grade,
           })
-          .then(async (lead) => {
-            if (lead) {
-              // Add welcome note
-              const registrationDate = new Date().toLocaleDateString("en-IN", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              });
-              const noteContent = `🎉 New User Registered\n\n• Date: ${registrationDate}\n• Email: ${
-                userData.email
-              }\n• Board: ${userData.board || "Not specified"}\n• Stream: ${
-                userData.stream || "Not specified"
-              }`;
-              await this.kylasService.addNoteToLead(lead.id, noteContent);
-            }
-          })
           .catch((error) => {
-            logger.error("Failed to create Kylas lead (non-blocking):", error);
+            logger.error(
+              "Failed to register Kylas lead (non-blocking):",
+              error
+            );
           });
       }
 
@@ -856,18 +838,15 @@ class AuthService {
         Array.isArray(updateData.categoryIds) &&
         updatedUser.email
       ) {
-        this.kylasService
-          .trackActivity(
-            updatedUser.email,
-            ActivityType.CAREER_FIELD_SELECTED,
-            updateData.categoryIds.map((id) => id.toString())
-          )
-          .catch((error: any) => {
-            logger.error(
-              "Failed to track career field selection in Kylas (non-blocking):",
-              error
-            );
-          });
+        this.trackCareerFieldsInKylas(
+          updatedUser.email,
+          updateData.categoryIds.map((id) => id.toString())
+        ).catch((error: any) => {
+          logger.error(
+            "Failed to track career field selection in Kylas (non-blocking):",
+            error
+          );
+        });
       }
 
       return updatedUser;
@@ -1071,6 +1050,74 @@ class AuthService {
     } catch (error) {
       logger.error("Update user course payment status failed:", error);
       throw error;
+    }
+  }
+
+  /**
+   * Helper method to track career field selection in Kylas with category names
+   * Also registers the lead if it doesn't exist (for users who registered before Kylas integration)
+   */
+  private async trackCareerFieldsInKylas(
+    email: string,
+    categoryIds: string[]
+  ): Promise<void> {
+    try {
+      // First, ensure lead exists - find or create if needed (without registration note)
+      const user = await this.authRepository.findUserByEmail(email);
+      if (user) {
+        // Ensure lead exists (handles pre-existing users) - uses ensureLeadExists to avoid adding "New User Registered" note
+        await kylasCRM.ensureLeadExists({
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          phoneNumber: user.phoneNumber,
+          countryCode: user.countryCode,
+          city: user.city,
+          state: user.state,
+          board: user.board,
+          stream: user.stream,
+          grade: user.grade,
+        });
+      }
+
+      // Import the Category model dynamically to avoid circular dependencies
+      const CategoryModel = (
+        await import("../../admin/categories/models/category.js")
+      ).default;
+
+      const categoryNames: string[] = [];
+
+      for (const categoryId of categoryIds) {
+        // Fetch the category with its parent populated
+        const category = await CategoryModel.findById(categoryId).populate(
+          "parentId"
+        );
+
+        if (category) {
+          let formattedName = category.name;
+          // If category has a parent, format as "Name (under Parent)"
+          if (category.parentId && typeof category.parentId === "object") {
+            const parentName = (category.parentId as any).name || "";
+            if (parentName) {
+              formattedName = `${category.name} (under ${parentName})`;
+            }
+          }
+          categoryNames.push(formattedName);
+        }
+      }
+
+      if (categoryNames.length > 0) {
+        await kylasCRM.trackActivity(
+          email,
+          ActivityType.CAREER_FIELD_SELECTED,
+          categoryNames
+        );
+      }
+    } catch (error: any) {
+      logger.error("Error tracking career fields in Kylas:", {
+        message: error.message,
+        details: error.response?.data,
+      });
     }
   }
 
