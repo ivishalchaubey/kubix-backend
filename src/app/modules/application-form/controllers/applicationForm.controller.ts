@@ -15,7 +15,7 @@ class ApplicationFormController {
   async createOrUpdateApplication(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -34,16 +34,19 @@ class ApplicationFormController {
       // Normalize collegeId to array (support both string and array)
       const collegeIds = Array.isArray(collegeId) ? collegeId : [collegeId];
 
-      const result = await this.applicationFormService.createOrUpdateApplication(
-        userId,
-        collegeIds,
-        applicationData
-      );
+      const platform = req.headers.platform as string | undefined;
+      const result =
+        await this.applicationFormService.createOrUpdateApplication(
+          userId,
+          collegeIds,
+          applicationData,
+          platform,
+        );
 
       ResponseUtil.success(
         res,
         result,
-        API_MESSAGES.APPLICATION_FORM.APPLICATION_CREATED_OR_UPDATED
+        API_MESSAGES.APPLICATION_FORM.APPLICATION_CREATED_OR_UPDATED,
       );
     } catch (error) {
       next(error);
@@ -54,7 +57,7 @@ class ApplicationFormController {
   async getApplicationByCollegeId(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -64,23 +67,23 @@ class ApplicationFormController {
 
       const userId = req.user._id;
       const collegeId =
-        (req.params?.collegeId as string) ||
-        (req.query?.collegeId as string);
+        (req.params?.collegeId as string) || (req.query?.collegeId as string);
 
       if (!collegeId) {
         ResponseUtil.badRequest(res, "collegeId is required");
         return;
       }
 
-      const result = await this.applicationFormService.getApplicationByCollegeId(
-        userId,
-        collegeId
-      );
+      const result =
+        await this.applicationFormService.getApplicationByCollegeId(
+          userId,
+          collegeId,
+        );
 
       ResponseUtil.success(
         res,
         result,
-        API_MESSAGES.APPLICATION_FORM.APPLICATION_FETCHED
+        API_MESSAGES.APPLICATION_FORM.APPLICATION_FETCHED,
       );
     } catch (error) {
       next(error);
@@ -91,7 +94,7 @@ class ApplicationFormController {
   async getUserApplications(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -100,12 +103,13 @@ class ApplicationFormController {
       }
 
       const userId = req.user._id;
-      const result = await this.applicationFormService.getUserApplications(userId);
+      const result =
+        await this.applicationFormService.getUserApplications(userId);
 
       ResponseUtil.success(
         res,
         result,
-        API_MESSAGES.APPLICATION_FORM.APPLICATIONS_FETCHED
+        API_MESSAGES.APPLICATION_FORM.APPLICATIONS_FETCHED,
       );
     } catch (error) {
       next(error);
@@ -116,7 +120,7 @@ class ApplicationFormController {
   async getCollegeApplications(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -132,13 +136,13 @@ class ApplicationFormController {
       }
 
       const result = await this.applicationFormService.getCollegeApplications(
-        collegeId as string
+        collegeId as string,
       );
 
       ResponseUtil.success(
         res,
         result,
-        API_MESSAGES.APPLICATION_FORM.APPLICATIONS_FETCHED
+        API_MESSAGES.APPLICATION_FORM.APPLICATIONS_FETCHED,
       );
     } catch (error) {
       next(error);
@@ -149,7 +153,7 @@ class ApplicationFormController {
   async checkUserApplication(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -158,20 +162,13 @@ class ApplicationFormController {
       }
 
       const userId = req.user._id;
-      const result = await this.applicationFormService.checkUserApplication(userId);
+      const result =
+        await this.applicationFormService.checkUserApplication(userId);
 
       if (result) {
-        ResponseUtil.success(
-          res,
-          result,
-          "Application form found"
-        );
+        ResponseUtil.success(res, result, "Application form found");
       } else {
-        ResponseUtil.success(
-          res,
-          null,
-          "No application form found"
-        );
+        ResponseUtil.success(res, null, "No application form found");
       }
     } catch (error) {
       next(error);
@@ -182,7 +179,7 @@ class ApplicationFormController {
   async addCollegesToApplication(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -201,15 +198,17 @@ class ApplicationFormController {
       // Normalize collegeId to array (support both string and array)
       const collegeIds = Array.isArray(collegeId) ? collegeId : [collegeId];
 
+      const platform = req.headers.platform as string | undefined;
       const result = await this.applicationFormService.addCollegesToApplication(
         userId,
-        collegeIds
+        collegeIds,
+        platform,
       );
 
       ResponseUtil.success(
         res,
         result,
-        "Colleges added to application successfully"
+        "Colleges added to application successfully",
       );
     } catch (error) {
       next(error);
@@ -220,7 +219,7 @@ class ApplicationFormController {
   async deleteApplication(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -236,12 +235,15 @@ class ApplicationFormController {
         return;
       }
 
-      await this.applicationFormService.deleteApplication(userId, collegeId as string);
+      await this.applicationFormService.deleteApplication(
+        userId,
+        collegeId as string,
+      );
 
       ResponseUtil.success(
         res,
         null,
-        API_MESSAGES.APPLICATION_FORM.APPLICATION_DELETED
+        API_MESSAGES.APPLICATION_FORM.APPLICATION_DELETED,
       );
     } catch (error) {
       next(error);
@@ -250,4 +252,3 @@ class ApplicationFormController {
 }
 
 export default ApplicationFormController;
-

@@ -21,6 +21,7 @@ export interface KylasCustomFields {
   cf_board?: string;
   cf_stream?: string;
   cf_grade?: string;
+  cf_platform?: string;
   [key: string]: any;
 }
 

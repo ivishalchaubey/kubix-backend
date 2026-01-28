@@ -12,6 +12,7 @@ export const KylasConfig = {
     BOARD: "cf_board",
     STREAM: "cf_stream",
     GRADE: "cf_grade",
+    PLATFORM: "cf_platform",
   },
 
   // API configuration

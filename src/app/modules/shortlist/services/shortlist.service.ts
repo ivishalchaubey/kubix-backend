@@ -21,34 +21,37 @@ class ShortlistService {
   async createShortlist(
     userId: string,
     itemId: string,
-    itemType: ShortlistType
+    itemType: ShortlistType,
+    platform?: string,
   ): Promise<any> {
     try {
       // Validate item type
       if (!["career", "colleges", "course"].includes(itemType)) {
         throw new AppError(
           API_MESSAGES.SHORTLIST.INVALID_ITEM_TYPE,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
       const result = await this.shortlistRepository.createShortlist(
         userId,
         itemId,
-        itemType
+        itemType,
       );
       logger.info(
-        `Shortlist ${result.action} for user ${userId}, item ${itemId}, type ${itemType}`
+        `Shortlist ${result.action} for user ${userId}, item ${itemId}, type ${itemType}`,
       );
 
       // Track activity in Kylas CRM (non-blocking)
       if (result.action === "added") {
-        this.trackShortlistInKylas(userId, itemId, itemType).catch((error) => {
-          logger.error(
-            "Failed to track shortlist in Kylas (non-blocking):",
-            error
-          );
-        });
+        this.trackShortlistInKylas(userId, itemId, itemType, platform).catch(
+          (error) => {
+            logger.error(
+              "Failed to track shortlist in Kylas (non-blocking):",
+              error,
+            );
+          },
+        );
       }
 
       return result;
@@ -63,20 +66,20 @@ class ShortlistService {
     userId: string,
     itemType?: ShortlistType,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<any> {
     try {
       if (page < 1 || limit < 1 || limit > 100) {
         throw new AppError(
           "Invalid pagination parameters",
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
       if (itemType && !["career", "colleges", "course"].includes(itemType)) {
         throw new AppError(
           API_MESSAGES.SHORTLIST.INVALID_ITEM_TYPE,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -84,7 +87,7 @@ class ShortlistService {
         userId,
         itemType,
         page,
-        limit
+        limit,
       );
     } catch (error) {
       logger.error("Get shortlists failed:", error);
@@ -97,7 +100,7 @@ class ShortlistService {
     try {
       const result = await this.shortlistRepository.getShortlistById(
         userId,
-        shortlistId
+        shortlistId,
       );
       return result;
     } catch (error) {
@@ -110,20 +113,20 @@ class ShortlistService {
   async isShortlisted(
     userId: string,
     itemId: string,
-    itemType: ShortlistType
+    itemType: ShortlistType,
   ): Promise<boolean> {
     try {
       if (!["career", "colleges", "course"].includes(itemType)) {
         throw new AppError(
           API_MESSAGES.SHORTLIST.INVALID_ITEM_TYPE,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
       return await this.shortlistRepository.isShortlisted(
         userId,
         itemId,
-        itemType
+        itemType,
       );
     } catch (error) {
       logger.error("Check shortlisted failed:", error);
@@ -146,14 +149,15 @@ class ShortlistService {
   private async trackShortlistInKylas(
     userId: string,
     itemId: string,
-    itemType: ShortlistType
+    itemType: ShortlistType,
+    platform?: string,
   ): Promise<void> {
     try {
       // Get user email
       const user = await this.authRepository.findUserById(userId);
       if (!user || !user.email) {
         logger.warn(
-          `Cannot track Kylas activity - user ${userId} not found or has no email`
+          `Cannot track Kylas activity - user ${userId} not found or has no email`,
         );
         return;
       }
@@ -172,9 +176,8 @@ class ShortlistService {
       switch (itemType) {
         case "career":
           // Fetch the career with its parent populated
-          const career = await CategoryModel.findById(itemId).populate(
-            "parentId"
-          );
+          const career =
+            await CategoryModel.findById(itemId).populate("parentId");
           if (career) {
             itemName = career.name;
             // parentId is populated, so it's an object with name
@@ -233,7 +236,12 @@ class ShortlistService {
           return;
       }
 
-      await kylasCRM.trackActivity(user.email, activityType, formattedData);
+      await kylasCRM.trackActivity(
+        user.email,
+        activityType,
+        formattedData,
+        platform,
+      );
     } catch (error: any) {
       logger.error("Error tracking shortlist in Kylas:", {
         message: error.message,

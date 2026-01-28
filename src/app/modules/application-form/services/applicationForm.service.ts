@@ -20,7 +20,8 @@ class ApplicationFormService {
   async createOrUpdateApplication(
     userId: string,
     collegeIds: string[],
-    applicationData: any
+    applicationData: any,
+    platform?: string,
   ): Promise<any> {
     try {
       const sanitizedData = this.sanitizeApplicationData(applicationData);
@@ -31,22 +32,24 @@ class ApplicationFormService {
         await this.applicationFormRepository.createOrUpdateApplication(
           userId,
           collegeIds,
-          sanitizedData
+          sanitizedData,
         );
 
       logger.info(
         `Application form saved for user ${userId} with colleges: ${collegeIds.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
 
       // Track course application in Kylas CRM (non-blocking)
-      this.trackApplicationInKylas(userId, collegeIds).catch((error: any) => {
-        logger.error(
-          "Failed to track application in Kylas (non-blocking):",
-          error
-        );
-      });
+      this.trackApplicationInKylas(userId, collegeIds, platform).catch(
+        (error: any) => {
+          logger.error(
+            "Failed to track application in Kylas (non-blocking):",
+            error,
+          );
+        },
+      );
 
       return result;
     } catch (error) {
@@ -91,7 +94,7 @@ class ApplicationFormService {
     if (missingFields.length > 0) {
       throw new AppError(
         `Missing required fields: ${missingFields.join(", ")}`,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -100,7 +103,7 @@ class ApplicationFormService {
     if (!emailRegex.test(data.email)) {
       throw new AppError(
         API_MESSAGES.APPLICATION_FORM.INVALID_EMAIL,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -109,7 +112,7 @@ class ApplicationFormService {
     if (!dateRegex.test(data.dateOfBirth)) {
       throw new AppError(
         API_MESSAGES.APPLICATION_FORM.INVALID_DATE_FORMAT,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -127,26 +130,26 @@ class ApplicationFormService {
 
     // Check always required fields
     const missingAlwaysRequired = alwaysRequiredFields.filter(
-      (field) => !data[field] || data[field].trim() === ""
+      (field) => !data[field] || data[field].trim() === "",
     );
 
     if (missingAlwaysRequired.length > 0) {
       throw new AppError(
         `Missing required fields: ${missingAlwaysRequired.join(", ")}`,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
     // If status is not "pending", check conditional fields
     if (data.twelfthStatus !== "pending") {
       const missingConditionalFields = conditionalRequiredFields.filter(
-        (field) => !data[field] || data[field].trim() === ""
+        (field) => !data[field] || data[field].trim() === "",
       );
 
       if (missingConditionalFields.length > 0) {
         throw new AppError(
           `Missing required fields: ${missingConditionalFields.join(", ")}`,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
     }
@@ -155,13 +158,13 @@ class ApplicationFormService {
   // Get application by college ID
   async getApplicationByCollegeId(
     userId: string,
-    collegeId: string
+    collegeId: string,
   ): Promise<any> {
     try {
       const result =
         await this.applicationFormRepository.getApplicationByCollegeId(
           userId,
-          collegeId
+          collegeId,
         );
       return result;
     } catch (error: any) {
@@ -176,9 +179,8 @@ class ApplicationFormService {
   // Get all applications for user
   async getUserApplications(userId: string): Promise<any[]> {
     try {
-      const result = await this.applicationFormRepository.getUserApplications(
-        userId
-      );
+      const result =
+        await this.applicationFormRepository.getUserApplications(userId);
       return result;
     } catch (error) {
       logger.error("Get user applications failed:", error);
@@ -201,9 +203,8 @@ class ApplicationFormService {
   // Check if user has an application form
   async checkUserApplication(userId: string): Promise<any | null> {
     try {
-      const result = await this.applicationFormRepository.checkUserApplication(
-        userId
-      );
+      const result =
+        await this.applicationFormRepository.checkUserApplication(userId);
       return result;
     } catch (error) {
       logger.error("Check user application failed:", error);
@@ -214,27 +215,30 @@ class ApplicationFormService {
   // Add colleges to existing application without form fields
   async addCollegesToApplication(
     userId: string,
-    collegeIds: string[]
+    collegeIds: string[],
+    platform?: string,
   ): Promise<any> {
     try {
       const result =
         await this.applicationFormRepository.addCollegesToApplication(
           userId,
-          collegeIds
+          collegeIds,
         );
       logger.info(
         `Colleges added to application for user ${userId}: ${collegeIds.join(
-          ", "
-        )}`
+          ", ",
+        )}`,
       );
 
       // Track application in Kylas CRM (non-blocking)
-      this.trackApplicationInKylas(userId, collegeIds).catch((error: any) => {
-        logger.error(
-          "Failed to track application in Kylas (non-blocking):",
-          error
-        );
-      });
+      this.trackApplicationInKylas(userId, collegeIds, platform).catch(
+        (error: any) => {
+          logger.error(
+            "Failed to track application in Kylas (non-blocking):",
+            error,
+          );
+        },
+      );
 
       return result;
     } catch (error) {
@@ -248,7 +252,7 @@ class ApplicationFormService {
     try {
       await this.applicationFormRepository.deleteApplication(userId, collegeId);
       logger.info(
-        `Application deleted for user ${userId} and college ${collegeId}`
+        `Application deleted for user ${userId} and college ${collegeId}`,
       );
     } catch (error) {
       logger.error("Delete application failed:", error);
@@ -259,7 +263,8 @@ class ApplicationFormService {
   // Helper method to track application in Kylas
   private async trackApplicationInKylas(
     userId: string,
-    collegeIds: string[]
+    collegeIds: string[],
+    platform?: string,
   ): Promise<void> {
     try {
       // Get user email
@@ -308,7 +313,8 @@ class ApplicationFormService {
         await kylasCRM.trackActivity(
           user.email,
           ActivityType.COURSE_APPLIED,
-          formattedData
+          formattedData,
+          platform,
         );
       }
     } catch (error: any) {

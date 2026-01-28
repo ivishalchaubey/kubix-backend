@@ -16,7 +16,7 @@ class ShortlistController {
   async createShortlist(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -29,16 +29,18 @@ class ShortlistController {
       if (!id || !type) {
         ResponseUtil.badRequest(
           res,
-          "Both 'id' and 'type' are required fields"
+          "Both 'id' and 'type' are required fields",
         );
         return;
       }
 
       const userId = req.user._id;
+      const platform = req.headers.platform as string | undefined;
       const result = await this.shortlistService.createShortlist(
         userId,
         id,
-        type as ShortlistType
+        type as ShortlistType,
+        platform,
       );
 
       const message = result.shortlisted
@@ -55,7 +57,7 @@ class ShortlistController {
   async getShortlists(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -79,21 +81,23 @@ class ShortlistController {
 
       const page = parseInt(pageStr, 10) || PAGINATION.DEFAULT_PAGE;
       const limit =
-        Math.min(parseInt(limitStr, 10) || PAGINATION.DEFAULT_LIMIT, PAGINATION.MAX_LIMIT) ||
-        PAGINATION.DEFAULT_LIMIT;
+        Math.min(
+          parseInt(limitStr, 10) || PAGINATION.DEFAULT_LIMIT,
+          PAGINATION.MAX_LIMIT,
+        ) || PAGINATION.DEFAULT_LIMIT;
 
       const result = await this.shortlistService.getShortlists(
         userId,
         itemType,
         page,
-        limit
+        limit,
       );
 
       ResponseUtil.paginated(
         res,
         result.data,
         result.pagination,
-        API_MESSAGES.SHORTLIST.SHORTLISTS_FETCHED
+        API_MESSAGES.SHORTLIST.SHORTLISTS_FETCHED,
       );
     } catch (error) {
       next(error);
@@ -104,7 +108,7 @@ class ShortlistController {
   async getShortlistById(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -117,13 +121,13 @@ class ShortlistController {
 
       const result = await this.shortlistService.getShortlistById(
         userId,
-        shortlistId
+        shortlistId,
       );
 
       ResponseUtil.success(
         res,
         result,
-        API_MESSAGES.SHORTLIST.SHORTLIST_FETCHED
+        API_MESSAGES.SHORTLIST.SHORTLIST_FETCHED,
       );
     } catch (error) {
       next(error);
@@ -134,7 +138,7 @@ class ShortlistController {
   async checkShortlisted(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -148,7 +152,7 @@ class ShortlistController {
       if (!id || !type) {
         ResponseUtil.badRequest(
           res,
-          "Both 'id' and 'type' query parameters are required"
+          "Both 'id' and 'type' query parameters are required",
         );
         return;
       }
@@ -156,10 +160,14 @@ class ShortlistController {
       const isShortlisted = await this.shortlistService.isShortlisted(
         userId,
         id as string,
-        type as ShortlistType
+        type as ShortlistType,
       );
 
-      ResponseUtil.success(res, { isShortlisted }, API_MESSAGES.SHORTLIST.CHECK_SUCCESS);
+      ResponseUtil.success(
+        res,
+        { isShortlisted },
+        API_MESSAGES.SHORTLIST.CHECK_SUCCESS,
+      );
     } catch (error) {
       next(error);
     }
@@ -169,7 +177,7 @@ class ShortlistController {
   async deleteShortlist(
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> {
     try {
       if (!req.user || !req.user._id) {
@@ -182,11 +190,7 @@ class ShortlistController {
 
       await this.shortlistService.deleteShortlist(userId, shortlistId);
 
-      ResponseUtil.success(
-        res,
-        null,
-        API_MESSAGES.SHORTLIST.SHORTLIST_DELETED
-      );
+      ResponseUtil.success(res, null, API_MESSAGES.SHORTLIST.SHORTLIST_DELETED);
     } catch (error) {
       next(error);
     }
@@ -194,4 +198,3 @@ class ShortlistController {
 }
 
 export default ShortlistController;
-

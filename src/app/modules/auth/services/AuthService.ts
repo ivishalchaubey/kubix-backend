@@ -45,9 +45,8 @@ class AuthService {
       throw new AppError("Invalid email format", HttpStatus.BAD_REQUEST);
     }
 
-    const isAvailable = await this.authRepository.checkEmailAvailability(
-      normalizedEmail
-    );
+    const isAvailable =
+      await this.authRepository.checkEmailAvailability(normalizedEmail);
     return { available: isAvailable };
   }
 
@@ -55,55 +54,58 @@ class AuthService {
    * Register a new user
    */
 
-  async register(userData: {
-    firstName: string;
-    lastName: string;
-    dob?: string;
-    countryCode?: string;
-    phoneNumber?: string;
-    board?: string;
-    otherBoardName?: string;
-    stream?: string;
-    otherStreamName?: string;
-    grade?: string;
-    yearOfPassing?: string;
-    email: string;
-    password: string;
-    role: UserRole;
-    profileImage?: string;
-    collegeName?: string;
-    collegeCode?: string;
-    location?: string;
-    address?: string;
-    specialization?: string;
-    description?: string;
-    bannerYoutubeVideoLink?: string;
-    website?: string;
-    bannerImage?: string;
-    state?: string;
-    city?: string;
-    foundedYear?: string;
-    courses?: Array<{
-      courseName: string;
-      courseDuration: string;
-    }>;
-  }): Promise<{ user: IUser; tokens: TokenResponse }> {
+  async register(
+    userData: {
+      firstName: string;
+      lastName: string;
+      dob?: string;
+      countryCode?: string;
+      phoneNumber?: string;
+      board?: string;
+      otherBoardName?: string;
+      stream?: string;
+      otherStreamName?: string;
+      grade?: string;
+      yearOfPassing?: string;
+      email: string;
+      password: string;
+      role: UserRole;
+      profileImage?: string;
+      collegeName?: string;
+      collegeCode?: string;
+      location?: string;
+      address?: string;
+      specialization?: string;
+      description?: string;
+      bannerYoutubeVideoLink?: string;
+      website?: string;
+      bannerImage?: string;
+      state?: string;
+      city?: string;
+      foundedYear?: string;
+      courses?: Array<{
+        courseName: string;
+        courseDuration: string;
+      }>;
+    },
+    platform?: string,
+  ): Promise<{ user: IUser; tokens: TokenResponse }> {
     try {
       // Check if user already exists and role is not admin
       const existingUser = await this.authRepository.findUserByEmail(
-        userData.email
+        userData.email,
       );
       if (existingUser) {
         throw new AppError(
           API_MESSAGES.ERROR.EMAIL_ALREADY_EXISTS,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
       //  check if role is admin
       if (userData.role && userData.role === UserRole.ADMIN) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_ROLE,
-          HttpStatus.FORBIDDEN
+          HttpStatus.FORBIDDEN,
         );
       }
       // Create user
@@ -113,7 +115,7 @@ class AuthService {
       const emailVerificationToken = this.generateRandomToken();
       await this.authRepository.setEmailVerificationToken(
         user._id,
-        emailVerificationToken
+        emailVerificationToken,
       );
 
       // Generate auth tokens
@@ -125,7 +127,7 @@ class AuthService {
           stream: user.stream,
           board: user.board,
         },
-        config.jwt.secret as string
+        config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
         {
@@ -135,7 +137,7 @@ class AuthService {
           stream: user.stream,
           board: user.board,
         },
-        config.jwt.refreshSecret as string
+        config.jwt.refreshSecret as string,
       );
 
       // Store refresh token
@@ -159,11 +161,12 @@ class AuthService {
             board: userData.board,
             stream: userData.stream,
             grade: userData.grade,
+            platform, // Pass platform here
           })
           .catch((error) => {
             logger.error(
               "Failed to register Kylas lead (non-blocking):",
-              error
+              error,
             );
           });
       }
@@ -198,7 +201,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -207,7 +210,7 @@ class AuthService {
         logger.error("Email service is not configured or unavailable");
         throw new AppError(
           "Email service is not configured. Please contact administrator.",
-          HttpStatus.SERVICE_UNAVAILABLE
+          HttpStatus.SERVICE_UNAVAILABLE,
         );
       }
 
@@ -226,7 +229,7 @@ class AuthService {
         logger.error(`Failed to send OTP email to ${email}`);
         throw new AppError(
           "Failed to send OTP email. Please try again later.",
-          HttpStatus.INTERNAL_SERVER_ERROR
+          HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
 
@@ -248,7 +251,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
       // Generate OTP
@@ -272,12 +275,12 @@ class AuthService {
       const user = await this.authRepository.findUserByEmailAndRole(
         email,
         role,
-        true
+        true,
       );
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
       const userToken = await this.authRepository.findUserToken(user._id);
@@ -288,7 +291,7 @@ class AuthService {
       if (!isPasswordMatch) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -304,7 +307,7 @@ class AuthService {
           stream: user.stream,
           board: user.board,
         },
-        config.jwt.secret as string
+        config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
         {
@@ -316,7 +319,7 @@ class AuthService {
           stream: user.stream,
           board: user.board,
         },
-        config.jwt.refreshSecret as string
+        config.jwt.refreshSecret as string,
       );
 
       // Store refresh token
@@ -326,7 +329,7 @@ class AuthService {
 
       // Remove password from user object
       const userWithoutPassword = await this.authRepository.findUserById(
-        user._id
+        user._id,
       );
 
       logger.info(`User logged in: ${user.email}`);
@@ -353,7 +356,7 @@ class AuthService {
 
   verifyOtp = async (
     email: string,
-    otp: string
+    otp: string,
   ): Promise<{ user: IUser; tokens: TokenResponse }> => {
     try {
       // Check if user exists
@@ -361,7 +364,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -369,7 +372,7 @@ class AuthService {
       if (user.otp != otp && user.otpExpires && user.otpExpires < new Date()) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_OTP,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -387,7 +390,7 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
         },
-        config.jwt.secret as string
+        config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
         {
@@ -397,7 +400,7 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
         },
-        config.jwt.refreshSecret as string
+        config.jwt.refreshSecret as string,
       );
       // Store refresh token
       await this.authRepository.updateRefreshToken(user._id, refreshToken);
@@ -406,7 +409,7 @@ class AuthService {
       // sent token and user data in response
 
       const userWithoutPassword = await this.authRepository.findUserById(
-        user._id
+        user._id,
       );
 
       logger.info(`User logged in: ${user.email}`);
@@ -432,7 +435,7 @@ class AuthService {
 
   verifyPhoneOtp = async (
     phone: string,
-    otp: string
+    otp: string,
   ): Promise<{ user: IUser; tokens: TokenResponse }> => {
     try {
       // Check if user exists
@@ -440,7 +443,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -452,7 +455,7 @@ class AuthService {
       ) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_OTP,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -470,7 +473,7 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
         },
-        config.jwt.secret as string
+        config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
         {
@@ -480,7 +483,7 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
         },
-        config.jwt.refreshSecret as string
+        config.jwt.refreshSecret as string,
       );
       // Store refresh token
       await this.authRepository.updateRefreshToken(user._id, refreshToken);
@@ -489,7 +492,7 @@ class AuthService {
       // sent token and user data in response
 
       const userWithoutPassword = await this.authRepository.findUserById(
-        user._id
+        user._id,
       );
 
       logger.info(`User logged in: ${user.email}`);
@@ -534,23 +537,22 @@ class AuthService {
       if (!refreshToken) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_TOKEN,
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
       const decoded = jwt.verify(
         refreshToken,
-        config.jwt.refreshSecret as string
+        config.jwt.refreshSecret as string,
       ) as any;
 
-      const user = await this.authRepository.findUserByRefreshToken(
-        refreshToken
-      );
+      const user =
+        await this.authRepository.findUserByRefreshToken(refreshToken);
 
       if (!user || !decoded?.userId || user._id.toString() !== decoded.userId) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_REFRESH_TOKEN,
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
@@ -574,21 +576,21 @@ class AuthService {
       const newRefreshToken = jwt.sign(
         payload,
         config.jwt.refreshSecret as string,
-        refreshTokenOptions
+        refreshTokenOptions,
       );
 
       const refreshExpiryDays = parseInt(
         config.jwt.refreshExpirationDays?.toString() || "7",
-        10
+        10,
       );
 
       await this.authRepository.updateRefreshToken(
         user._id.toString(),
-        newRefreshToken
+        newRefreshToken,
       );
       await this.authRepository.updateAccessToken(
         user._id.toString(),
-        accessToken
+        accessToken,
       );
 
       const tokens: TokenResponse = {
@@ -599,7 +601,7 @@ class AuthService {
         refresh: {
           token: newRefreshToken,
           expires: new Date(
-            Date.now() + refreshExpiryDays * 24 * 60 * 60 * 1000
+            Date.now() + refreshExpiryDays * 24 * 60 * 60 * 1000,
           ),
         },
       };
@@ -613,7 +615,7 @@ class AuthService {
       }
       throw new AppError(
         API_MESSAGES.ERROR.INVALID_REFRESH_TOKEN,
-        HttpStatus.UNAUTHORIZED
+        HttpStatus.UNAUTHORIZED,
       );
     }
   }
@@ -628,7 +630,7 @@ class AuthService {
         // Don't reveal if email exists
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -639,7 +641,7 @@ class AuthService {
       await this.authRepository.setPasswordResetToken(
         user._id,
         resetToken,
-        resetExpires
+        resetExpires,
       );
 
       const hashPassword = async (password: string): Promise<string> => {
@@ -660,7 +662,7 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
         },
-        config.jwt.secret as string
+        config.jwt.secret as string,
       );
       const refreshToken = jwt.sign(
         {
@@ -670,7 +672,7 @@ class AuthService {
           firstName: user.firstName,
           lastName: user.lastName,
         },
-        config.jwt.refreshSecret as string
+        config.jwt.refreshSecret as string,
       );
       // Store refresh token
       await this.authRepository.updateRefreshToken(user._id, refreshToken);
@@ -679,7 +681,7 @@ class AuthService {
       // sent token and user data in response
 
       const userWithoutPassword = await this.authRepository.findUserById(
-        user._id
+        user._id,
       );
 
       logger.info(`User logged in: ${user.email}`);
@@ -710,14 +712,14 @@ class AuthService {
   async resetPassword(
     userId: string,
     oldPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<void> {
     try {
       const user = await this.authRepository.findUserByIdWithPassword(userId);
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -727,7 +729,7 @@ class AuthService {
         if (!isMatch) {
           throw new AppError(
             API_MESSAGES.ERROR.INCORRECT_CURRENT_PASSWORD,
-            HttpStatus.BAD_REQUEST
+            HttpStatus.BAD_REQUEST,
           );
         }
       }
@@ -750,7 +752,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_TOKEN,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -772,12 +774,12 @@ class AuthService {
       const basicUser = await this.authRepository.findUserById(
         userId,
         false,
-        false
+        false,
       );
       if (!basicUser) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -786,7 +788,7 @@ class AuthService {
         const completeUser = await this.authRepository.findUserById(
           userId,
           false,
-          true
+          true,
         );
         return completeUser;
       }
@@ -803,30 +805,31 @@ class AuthService {
    */
   async updateUserProfile(
     userId: string,
-    updateData: Partial<IUser>
+    updateData: Partial<IUser>,
+    platform?: string,
   ): Promise<IUser> {
     try {
       // Check if new email is already taken
       if (updateData.email) {
         const isEmailTaken = await this.authRepository.findUserByEmail(
-          updateData.email
+          updateData.email,
         );
         if (isEmailTaken && isEmailTaken._id !== userId) {
           throw new AppError(
             API_MESSAGES.ERROR.EMAIL_ALREADY_EXISTS,
-            HttpStatus.CONFLICT
+            HttpStatus.CONFLICT,
           );
         }
       }
 
       const updatedUser = await this.authRepository.updateUserById(
         userId,
-        updateData
+        updateData,
       );
       if (!updatedUser) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -840,11 +843,12 @@ class AuthService {
       ) {
         this.trackCareerFieldsInKylas(
           updatedUser.email,
-          updateData.categoryIds.map((id) => id.toString())
+          updateData.categoryIds.map((id) => id.toString()),
+          platform, // Pass platform here
         ).catch((error: any) => {
           logger.error(
             "Failed to track career field selection in Kylas (non-blocking):",
-            error
+            error,
           );
         });
       }
@@ -862,14 +866,14 @@ class AuthService {
   async changePassword(
     userId: string,
     currentPassword: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<void> {
     try {
       const user = await this.authRepository.findUserById(userId, true);
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -880,7 +884,7 @@ class AuthService {
       if (!isCurrentPasswordValid) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_CREDENTIALS,
-          HttpStatus.UNAUTHORIZED
+          HttpStatus.UNAUTHORIZED,
         );
       }
 
@@ -900,7 +904,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -924,7 +928,7 @@ class AuthService {
       if (!user) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -935,7 +939,7 @@ class AuthService {
       if (!updatedUser) {
         throw new AppError(
           API_MESSAGES.ERROR.INTERNAL_SERVER_ERROR,
-          HttpStatus.INTERNAL_SERVER_ERROR
+          HttpStatus.INTERNAL_SERVER_ERROR,
         );
       }
 
@@ -952,9 +956,8 @@ class AuthService {
    */
   async getUniversities(): Promise<IUser[]> {
     try {
-      const universities = await this.authRepository.findUsersByRole(
-        "university"
-      );
+      const universities =
+        await this.authRepository.findUsersByRole("university");
 
       logger.info(`Retrieved ${universities.length} universities`);
       return universities;
@@ -970,7 +973,7 @@ class AuthService {
   async getUniversitiesWithPagination(
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
   ): Promise<{
     universities: IUser[];
     total: number;
@@ -983,11 +986,11 @@ class AuthService {
         "university",
         page,
         limit,
-        search
+        search,
       );
 
       logger.info(
-        `Retrieved ${result.users.length} universities (Page ${page}/${result.totalPages}, Total: ${result.total})`
+        `Retrieved ${result.users.length} universities (Page ${page}/${result.totalPages}, Total: ${result.total})`,
       );
 
       return {
@@ -1008,14 +1011,14 @@ class AuthService {
    */
   async updateUserCoursePaymentStatus(
     userId: string,
-    courseId: string
+    courseId: string,
   ): Promise<any> {
     try {
       // Validate ObjectIds
       if (!Types.ObjectId.isValid(userId)) {
         throw new AppError(
           API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
       }
 
@@ -1032,7 +1035,7 @@ class AuthService {
       if (!userCourseLiked) {
         throw new AppError(
           "User course liked record not found",
-          HttpStatus.NOT_FOUND
+          HttpStatus.NOT_FOUND,
         );
       }
 
@@ -1040,11 +1043,11 @@ class AuthService {
       const updatedRecord = await UserCourseLiked.findByIdAndUpdate(
         userCourseLiked._id,
         { isPaidByAdmin: true },
-        { new: true }
+        { new: true },
       );
 
       logger.info(
-        `User course payment status updated for user: ${userId}, course: ${courseId}`
+        `User course payment status updated for user: ${userId}, course: ${courseId}`,
       );
       return updatedRecord;
     } catch (error) {
@@ -1059,7 +1062,8 @@ class AuthService {
    */
   private async trackCareerFieldsInKylas(
     email: string,
-    categoryIds: string[]
+    categoryIds: string[],
+    platform?: string,
   ): Promise<void> {
     try {
       // First, ensure lead exists - find or create if needed (without registration note)
@@ -1077,6 +1081,7 @@ class AuthService {
           board: user.board,
           stream: user.stream,
           grade: user.grade,
+          platform, // Pass platform here
         });
       }
 
@@ -1089,9 +1094,8 @@ class AuthService {
 
       for (const categoryId of categoryIds) {
         // Fetch the category with its parent populated
-        const category = await CategoryModel.findById(categoryId).populate(
-          "parentId"
-        );
+        const category =
+          await CategoryModel.findById(categoryId).populate("parentId");
 
         if (category) {
           let formattedName = category.name;
@@ -1110,7 +1114,8 @@ class AuthService {
         await kylasCRM.trackActivity(
           email,
           ActivityType.CAREER_FIELD_SELECTED,
-          categoryNames
+          categoryNames,
+          platform,
         );
       }
     } catch (error: any) {

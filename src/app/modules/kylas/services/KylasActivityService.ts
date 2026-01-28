@@ -36,7 +36,8 @@ class KylasActivityService {
   public async trackActivity(
     email: string,
     activityType: ActivityType,
-    activityData: string | string[]
+    activityData: string | string[],
+    platform?: string,
   ): Promise<void> {
     try {
       // Find existing lead - DO NOT create
@@ -45,7 +46,7 @@ class KylasActivityService {
       if (!lead) {
         logger.warn(
           `No Kylas lead found for ${email}, cannot track activity. ` +
-            `Lead must be created during registration.`
+            `Lead must be created during registration.`,
         );
         return;
       }
@@ -73,10 +74,15 @@ class KylasActivityService {
           if (
             patchError.response?.status === 400 &&
             JSON.stringify(patchError.response?.data || {}).includes(
-              "Field is not defined"
+              "Field is not defined",
             )
           ) {
-            await this.addActivityAsNote(lead.id, activityType, activityData);
+            await this.addActivityAsNote(
+              lead.id,
+              activityType,
+              activityData,
+              platform,
+            );
           } else {
             throw patchError;
           }
@@ -116,7 +122,8 @@ class KylasActivityService {
   private async addActivityAsNote(
     leadId: number,
     activityType: ActivityType,
-    activityData: string | string[]
+    activityData: string | string[],
+    platform?: string,
   ): Promise<void> {
     // Get note title based on activity type
     const noteTitle = this.getNoteTitleForActivity(activityType);
@@ -126,7 +133,10 @@ class KylasActivityService {
       ? activityData.map((item) => `• ${item}`).join("\n")
       : `• ${activityData}`;
 
-    const noteContent = `${noteTitle}\n\n${itemsList}`;
+    let noteContent = `${noteTitle}\n\n${itemsList}`;
+    if (platform) {
+      noteContent += `\n\n• Platform: ${platform}`;
+    }
 
     await this.leadRepository.addNote(leadId, noteContent);
   }

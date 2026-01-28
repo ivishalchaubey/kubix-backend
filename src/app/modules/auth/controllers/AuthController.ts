@@ -29,7 +29,7 @@ class AuthController {
   register = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const {
@@ -82,7 +82,7 @@ class AuthController {
       this.includeIfExists(
         registrationData,
         "otherStreamName",
-        otherStreamName
+        otherStreamName,
       );
       this.includeIfExists(registrationData, "grade", grade);
       this.includeIfExists(registrationData, "yearOfPassing", yearOfPassing);
@@ -96,7 +96,7 @@ class AuthController {
       this.includeIfExists(
         registrationData,
         "bannerYoutubeVideoLink",
-        bannerYoutubeVideoLink
+        bannerYoutubeVideoLink,
       );
       this.includeIfExists(registrationData, "website", website);
       this.includeIfExists(registrationData, "bannerImage", bannerImage);
@@ -105,7 +105,11 @@ class AuthController {
       this.includeIfExists(registrationData, "foundedYear", foundedYear);
       this.includeIfExists(registrationData, "courses", courses);
 
-      const result = await this.authService.register(registrationData);
+      const platform = req.headers.platform as string | undefined;
+      const result = await this.authService.register(
+        registrationData,
+        platform,
+      );
 
       ResponseUtil.created(res, result, API_MESSAGES.SUCCESS.USER_CREATED);
     } catch (error) {
@@ -120,7 +124,7 @@ class AuthController {
   login = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { email, password, role } = req.body;
@@ -139,7 +143,7 @@ class AuthController {
   logout = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user) {
@@ -161,7 +165,7 @@ class AuthController {
   refreshTokens = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { refreshToken } = req.body;
@@ -180,7 +184,7 @@ class AuthController {
   forgotPassword = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { email, password } = req.body;
@@ -190,7 +194,7 @@ class AuthController {
       ResponseUtil.success(
         res,
         result,
-        API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS
+        API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS,
       );
     } catch (error) {
       next(error);
@@ -203,7 +207,7 @@ class AuthController {
   resetPassword = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user || !req.user._id) {
@@ -216,13 +220,13 @@ class AuthController {
       await this.authService.resetPassword(
         req.user._id,
         oldPassword,
-        newPassword
+        newPassword,
       );
 
       ResponseUtil.success(
         res,
         null,
-        API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS
+        API_MESSAGES.SUCCESS.PASSWORD_RESET_SUCCESS,
       );
     } catch (error) {
       next(error);
@@ -235,12 +239,12 @@ class AuthController {
   verifyEmail = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       console.log(
         "req.user<><><><><><><><> checking for verifyEmail",
-        req.user
+        req.user,
       );
       if (!req.user) {
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
@@ -258,7 +262,7 @@ class AuthController {
   sendOtp = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { email, phone, type } = req.body;
@@ -301,7 +305,7 @@ class AuthController {
   verifyOtp = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { email, otp, type, phone } = req.body;
@@ -336,7 +340,7 @@ class AuthController {
   getProfile = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user) {
@@ -358,7 +362,7 @@ class AuthController {
   updateProfile = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user) {
@@ -375,15 +379,17 @@ class AuthController {
         updateData.categoryIds = categoryIds; // overwrite existing
       }
 
+      const platform = req.headers.platform as string | undefined;
       const updatedUser = await this.authService.updateUserProfile(
         req.user._id,
-        updateData
+        updateData,
+        platform,
       );
 
       ResponseUtil.success(
         res,
         { user: updatedUser },
-        API_MESSAGES.SUCCESS.USER_UPDATED
+        API_MESSAGES.SUCCESS.USER_UPDATED,
       );
     } catch (error) {
       next(error);
@@ -396,7 +402,7 @@ class AuthController {
   changePassword = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user) {
@@ -408,7 +414,7 @@ class AuthController {
       await this.authService.changePassword(
         req.user._id,
         currentPassword,
-        newPassword
+        newPassword,
       );
 
       ResponseUtil.success(res, null, "Password changed successfully");
@@ -420,7 +426,7 @@ class AuthController {
   getUserCourses = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user) {
@@ -434,7 +440,7 @@ class AuthController {
       ResponseUtil.success(
         res,
         { courses },
-        "User courses retrieved successfully"
+        "User courses retrieved successfully",
       );
     } catch (error) {
       next(error);
@@ -447,7 +453,7 @@ class AuthController {
   updateUser = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user) {
@@ -491,7 +497,7 @@ class AuthController {
         if (!validStatuses.includes(status)) {
           ResponseUtil.badRequest(
             res,
-            `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+            `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
           );
           return;
         }
@@ -519,7 +525,7 @@ class AuthController {
       this.includeIfExists(
         updateData,
         "bannerYoutubeVideoLink",
-        bannerYoutubeVideoLink
+        bannerYoutubeVideoLink,
       );
       this.includeIfExists(updateData, "website", website);
       this.includeIfExists(updateData, "bannerImage", bannerImage);
@@ -536,7 +542,7 @@ class AuthController {
 
       const result = await this.authService.updateUserProfile(
         userId,
-        updateData
+        updateData,
       );
 
       ResponseUtil.success(res, { user: result }, "User updated successfully");
@@ -551,7 +557,7 @@ class AuthController {
   changeUserStatus = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       if (!req.user) {
@@ -573,7 +579,7 @@ class AuthController {
       if (!validStatuses.includes(status)) {
         ResponseUtil.badRequest(
           res,
-          `Invalid status. Must be one of: ${validStatuses.join(", ")}`
+          `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
         );
         return;
       }
@@ -583,7 +589,7 @@ class AuthController {
       ResponseUtil.success(
         res,
         { user: result },
-        `User status changed to ${status} successfully`
+        `User status changed to ${status} successfully`,
       );
     } catch (error) {
       next(error);
@@ -596,7 +602,7 @@ class AuthController {
   getUniversities = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const page = parseInt(req.query.page as string) || 1;
@@ -616,7 +622,7 @@ class AuthController {
       const result = await this.authService.getUniversitiesWithPagination(
         page,
         limit,
-        search
+        search,
       );
 
       ResponseUtil.success(res, result, "Universities retrieved successfully");
@@ -631,7 +637,7 @@ class AuthController {
   updateUserCoursePaymentStatus = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { userId, courseId } = req.body;
@@ -644,13 +650,13 @@ class AuthController {
 
       const result = await this.authService.updateUserCoursePaymentStatus(
         userId,
-        courseId
+        courseId,
       );
 
       ResponseUtil.success(
         res,
         { userCourseLiked: result },
-        "User course payment status updated successfully"
+        "User course payment status updated successfully",
       );
     } catch (error) {
       next(error);
@@ -663,7 +669,7 @@ class AuthController {
   checkEmailAvailability = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const { email } = req.body;
@@ -678,7 +684,7 @@ class AuthController {
       ResponseUtil.success(
         res,
         result,
-        result.available ? "Email is available" : "Email is already taken"
+        result.available ? "Email is available" : "Email is already taken",
       );
     } catch (error) {
       next(error);

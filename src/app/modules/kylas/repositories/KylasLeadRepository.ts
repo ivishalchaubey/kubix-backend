@@ -37,6 +37,7 @@ export interface LeadData {
   board?: string | undefined;
   stream?: string | undefined;
   grade?: string | undefined;
+  platform?: string | undefined;
 }
 
 class KylasLeadRepository {
@@ -108,8 +109,8 @@ class KylasLeadRepository {
         // Find exact email match from results
         const exactMatch = records.find((lead: any) =>
           lead.emails?.some(
-            (e: any) => e.value?.toLowerCase() === normalizedEmail
-          )
+            (e: any) => e.value?.toLowerCase() === normalizedEmail,
+          ),
         );
 
         if (exactMatch) {
@@ -159,7 +160,7 @@ class KylasLeadRepository {
    */
   private async performFindOrCreate(
     normalizedEmail: string,
-    data: LeadData
+    data: LeadData,
   ): Promise<KylasLead | null> {
     try {
       // Step 1: Check if lead already exists
@@ -173,7 +174,7 @@ class KylasLeadRepository {
     } catch (error) {
       // Search failed (timeout, network error, etc.) - do NOT create to avoid duplicates
       logger.warn(
-        `Search failed for ${normalizedEmail}, NOT creating lead to avoid potential duplicates`
+        `Search failed for ${normalizedEmail}, NOT creating lead to avoid potential duplicates`,
       );
       return null;
     }
@@ -197,6 +198,9 @@ class KylasLeadRepository {
       if (data.grade) {
         customFieldValues[KylasConfig.CUSTOM_FIELDS.GRADE] = data.grade;
       }
+      if (data.platform) {
+        customFieldValues[KylasConfig.CUSTOM_FIELDS.PLATFORM] = data.platform;
+      }
 
       // Build lead payload
       const payload: CreateLeadPayload = {
@@ -205,7 +209,7 @@ class KylasLeadRepository {
         emails: this.formatEmail(data.email),
         phoneNumbers: this.formatPhoneNumber(
           data.phoneNumber,
-          data.countryCode
+          data.countryCode,
         ),
         city: data.city,
         state: data.state,
@@ -250,7 +254,7 @@ class KylasLeadRepository {
         emails: this.formatEmail(data.email),
         phoneNumbers: this.formatPhoneNumber(
           data.phoneNumber,
-          data.countryCode
+          data.countryCode,
         ),
         city: data.city,
         state: data.state,
@@ -260,7 +264,7 @@ class KylasLeadRepository {
 
       const response = await this.client.post<KylasLead>(
         "/leads/",
-        minimalPayload
+        minimalPayload,
       );
       this.addToCache(data.email.toLowerCase().trim(), response.id);
       return response;
@@ -277,14 +281,14 @@ class KylasLeadRepository {
 
           const response = await this.client.post<KylasLead>(
             "/leads/",
-            absoluteMinimalPayload
+            absoluteMinimalPayload,
           );
           this.addToCache(data.email.toLowerCase().trim(), response.id);
           return response;
         } catch (lastError: any) {
           logger.error(
             "Absolute minimal creation failed:",
-            lastError.response?.data
+            lastError.response?.data,
           );
         }
       }
@@ -343,7 +347,7 @@ class KylasLeadRepository {
    */
   private formatPhoneNumber(
     phoneNumber?: string,
-    countryCode?: string
+    countryCode?: string,
   ): KylasPhoneNumber[] | undefined {
     if (!phoneNumber) return undefined;
 

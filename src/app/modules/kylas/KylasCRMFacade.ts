@@ -115,7 +115,8 @@ class KylasCRMFacade {
   public async trackActivity(
     email: string,
     activityType: ActivityType,
-    activityData: string | string[]
+    activityData: string | string[],
+    platform?: string,
   ): Promise<void> {
     if (!this.client.isEnabled()) return;
 
@@ -123,7 +124,8 @@ class KylasCRMFacade {
       await this.activityService.trackActivity(
         email,
         activityType,
-        activityData
+        activityData,
+        platform,
       );
     } catch (error) {
       logger.error("Error tracking activity:", error);
@@ -179,7 +181,7 @@ class KylasCRMFacade {
    */
   private async addRegistrationNote(
     leadId: number,
-    userData: LeadData
+    userData: LeadData,
   ): Promise<void> {
     const registrationDate = new Date().toLocaleDateString("en-IN", {
       day: "numeric",
@@ -193,7 +195,7 @@ class KylasCRMFacade {
       userData.email
     }\n• Board: ${userData.board || "Not specified"}\n• Stream: ${
       userData.stream || "Not specified"
-    }`;
+    }\n• Platform: ${userData.platform || "Not specified"}`;
 
     await this.leadRepository.addNote(leadId, noteContent);
   }
