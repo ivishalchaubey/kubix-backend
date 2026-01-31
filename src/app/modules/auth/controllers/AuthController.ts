@@ -3,9 +3,6 @@ import AuthService from "../services/AuthService.js";
 import { AuthRequest } from "../../../types/global.js";
 import { API_MESSAGES } from "../../../constants/enums.js";
 import ResponseUtil from "../../../utils/response.js";
-import logger from "../../../utils/logger.js";
-import bcrypt from "bcryptjs";
-import CategoryModel from "../../admin/categories/models/category.js";
 
 class AuthController {
   private authService: AuthService;
@@ -680,6 +677,7 @@ class AuthController {
       }
 
       const result = await this.authService.checkEmailAvailability(email);
+      console.log("check-email", result);
 
       ResponseUtil.success(
         res,
@@ -687,6 +685,7 @@ class AuthController {
         result.available ? "Email is available" : "Email is already taken",
       );
     } catch (error) {
+      console.log("check-email error", error);
       next(error);
     }
   };
