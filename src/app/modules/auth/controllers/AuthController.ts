@@ -262,38 +262,30 @@ class AuthController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const { email, phone, type } = req.body;
+      const { email, phone, type, checkUser } = req.body;
 
-      // Generate OTP
-      // Save OTP to user
-      // if (type == 'email') {
-      const user = await this.authService.sendOtp(email);
+      if (type === "phone") {
+        if (!phone) {
+          ResponseUtil.badRequest(res, "Phone number is required");
+          return;
+        }
 
-      if (!user) {
-        ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-        return;
+        await this.authService.sendPhoneOtp(phone, !!checkUser);
+        ResponseUtil.success(res, null, "Phone OTP sent successfully");
+      } else {
+        if (!email) {
+          ResponseUtil.badRequest(res, "Email is required");
+          return;
+        }
+
+        const user = await this.authService.sendOtp(email);
+        if (!user) {
+          ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+          return;
+        }
+
+        ResponseUtil.success(res, null, "OTP sent successfully");
       }
-
-      // ResponseUtil.success(res, null, "OTP sent successfully");
-      // }
-      // else if (type == 'phone') {
-      //   const user = await this.authService.sendPhoneOtp(phone);
-
-      //   if (!user) {
-      //     ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-      //     return;
-      //   }
-
-      //   ResponseUtil.success(res, null, "Phone OTP sent successfully");
-      // }
-      // const user = await this.authService.sendOtp(email);
-
-      // if (!user) {
-      //   ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-      //   return;
-      // }
-
-      ResponseUtil.success(res, null, "OTP sent successfully");
     } catch (error) {
       next(error);
     }
@@ -307,25 +299,23 @@ class AuthController {
     try {
       const { email, otp, type, phone } = req.body;
 
-      // Verify OTP
-      if (type == "email") {
-        const user = await this.authService.verifyOtp(email, otp);
+      if (type === "phone") {
+        if (!phone || !otp) {
+          ResponseUtil.badRequest(res, "Phone number and OTP are required");
+          return;
+        }
 
-        if (!user) {
+        const result = await this.authService.verifyPhoneOtp(phone, otp);
+        ResponseUtil.success(res, result, "Phone OTP verified successfully");
+      } else {
+        const result = await this.authService.verifyOtp(email, otp);
+
+        if (!result) {
           ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
           return;
         }
 
-        ResponseUtil.success(res, user, "OTP verified successfully");
-      } else if (type == "phone") {
-        const user = await this.authService.verifyPhoneOtp(phone, otp);
-
-        if (!user) {
-          ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-          return;
-        }
-
-        ResponseUtil.success(res, user, "Phone OTP verified successfully");
+        ResponseUtil.success(res, result, "OTP verified successfully");
       }
     } catch (error) {
       next(error);

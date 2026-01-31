@@ -65,6 +65,11 @@ export const config = {
     tokenRate: 10, // 1 USD = 10 tokens
   },
   frontendUrl: process.env.FRONTEND_URL || "http://localhost:3000",
+  fast2sms: {
+    apiKey: process.env.FAST2SMS_API_KEY || "",
+    senderId: process.env.FAST2SMS_SENDER_ID || "KUBIXA",
+    messageId: process.env.FAST2SMS_MESSAGE_ID || "208271",
+  },
 };
 
 export default config;

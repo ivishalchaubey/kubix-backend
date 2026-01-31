@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import User from "../models/User.js";
 import { UserToken } from "../models/usertoken.js";
+import PhoneOtp, { IPhoneOtp } from "../models/PhoneOtp.js";
 import { IUser, IUserToken } from "../../../types/global.js";
 import CourseService from "../../courses/services/course.js";
 import {
@@ -289,7 +290,7 @@ class AuthRepository {
 
     await User.findOneAndUpdate(
       { phoneNumber: phone },
-      { otp, otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
+      { otp, otpExpires: Date.now() + 3 * 60 * 60 * 1000 }, // OTP expires in 3 hours
       { new: true, runValidators: true }
     );
     return await User.findOne({ phoneNumber: phone });
@@ -528,6 +529,24 @@ class AuthRepository {
       page,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  // ── PhoneOtp collection methods ──
+
+  async savePhoneOtp(phone: string, otp: string): Promise<IPhoneOtp> {
+    return await PhoneOtp.findOneAndUpdate(
+      { phone },
+      { otp, otpExpires: new Date(Date.now() + 10 * 60 * 1000) }, // 10 minutes
+      { new: true, upsert: true, runValidators: true },
+    );
+  }
+
+  async findPhoneOtp(phone: string): Promise<IPhoneOtp | null> {
+    return await PhoneOtp.findOne({ phone });
+  }
+
+  async deletePhoneOtp(phone: string): Promise<void> {
+    await PhoneOtp.deleteMany({ phone });
   }
 }
 

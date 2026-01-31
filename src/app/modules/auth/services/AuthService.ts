@@ -19,6 +19,7 @@ import logger from "../../../utils/logger.js";
 import { UserCourseLiked } from "../models/usercourseliked.js";
 import { Types } from "mongoose";
 import emailService, { EmailService } from "../../../utils/emailService.js";
+import smsService from "../../../utils/smsService.js";
 import { kylasCRM, ActivityType } from "../../kylas/index.js";
 
 class AuthService {
@@ -244,19 +245,47 @@ class AuthService {
     }
   }
 
-  async sendPhoneOtp(phone: string): Promise<IUser> {
+  async sendPhoneOtp(
+    phone: string,
+    checkUser: boolean = false,
+  ): Promise<void> {
     try {
-      // Check if user exists
-      const user = await this.authRepository.findUserByPhone(phone);
-      if (!user) {
+      // Optionally check if user exists
+      if (checkUser) {
+        const user = await this.authRepository.findUserByPhone(phone);
+        if (!user) {
+          throw new AppError(
+            API_MESSAGES.ERROR.USER_NOT_FOUND,
+            HttpStatus.NOT_FOUND,
+          );
+        }
+      }
+
+      // Check if SMS service is available
+      if (!smsService.isAvailable()) {
+        logger.error("SMS service is not configured or unavailable");
         throw new AppError(
-          API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND,
+          "SMS service is not configured. Please contact administrator.",
+          HttpStatus.SERVICE_UNAVAILABLE,
         );
       }
+
       // Generate OTP
       const otp = crypto.randomInt(100000, 999999).toString();
-      return await this.authRepository.setPhoneOtp(phone, otp);
+
+      // Send OTP via Fast2SMS
+      const smsSent = await smsService.sendOtp(phone, otp);
+      if (!smsSent) {
+        logger.error(`Failed to send OTP SMS to ${phone}`);
+        throw new AppError(
+          "Failed to send OTP SMS. Please try again later.",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      // Save OTP to PhoneOtp collection (3-hour expiry, auto-cleanup via TTL)
+      await this.authRepository.savePhoneOtp(phone, otp);
+      logger.info(`Phone OTP sent successfully to ${phone}`);
     } catch (error) {
       logger.error("Send Phone OTP failed:", error);
       throw error;
@@ -436,82 +465,95 @@ class AuthService {
   verifyPhoneOtp = async (
     phone: string,
     otp: string,
-  ): Promise<{ user: IUser; tokens: TokenResponse }> => {
+  ): Promise<{
+    verified: boolean;
+    isAvailable: boolean;
+    user?: IUser;
+    tokens?: TokenResponse;
+  }> => {
     try {
-      // Check if user exists
-      const user = await this.authRepository.findUserByPhone(phone);
-      if (!user) {
+      // Look up OTP from PhoneOtp collection
+      const phoneOtpRecord = await this.authRepository.findPhoneOtp(phone);
+      if (!phoneOtpRecord) {
         throw new AppError(
-          API_MESSAGES.ERROR.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND,
+          "OTP has expired or was not requested. Please request a new OTP.",
+          HttpStatus.BAD_REQUEST,
         );
       }
 
-      // Verify OTP
-      if (
-        user.otp != "123456" &&
-        user.otpExpires &&
-        user.otpExpires < new Date()
-      ) {
+      // Check if OTP has expired (valid for 10 minutes)
+      if (phoneOtpRecord.otpExpires < new Date()) {
+        await this.authRepository.deletePhoneOtp(phone);
+        throw new AppError(
+          "OTP has expired. Please request a new OTP.",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      // Verify OTP matches
+      if (phoneOtpRecord.otp !== otp) {
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_OTP,
           HttpStatus.BAD_REQUEST,
         );
       }
 
-      // Clear OTP after verification
+      // OTP is valid — clean up
+      await this.authRepository.deletePhoneOtp(phone);
+      logger.info(`Phone OTP verified for: ${phone}`);
 
-      await this.authRepository.clearPhoneOtp(phone);
-
-      logger.info(`OTP verified for user: ${phone}`);
-      // add  jwt token generation here
-      const accessToken = jwt.sign(
-        {
-          userId: user._id,
-          role: "user",
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
-        config.jwt.secret as string,
-      );
-      const refreshToken = jwt.sign(
-        {
-          userId: user._id,
-          role: "user",
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        },
-        config.jwt.refreshSecret as string,
-      );
-      // Store refresh token
-      await this.authRepository.updateRefreshToken(user._id, refreshToken);
-      await this.authRepository.updateAccessToken(user._id, accessToken);
-
-      // sent token and user data in response
-
-      const userWithoutPassword = await this.authRepository.findUserById(
-        user._id,
-      );
-
-      logger.info(`User logged in: ${user.email}`);
-
-      return {
-        user: userWithoutPassword!,
-        tokens: {
-          access: {
-            token: accessToken,
-            expires: new Date(Date.now() + 15 * 60 * 1000),
+      // If a user exists with this phone, return user + tokens
+      const user = await this.authRepository.findUserByPhone(phone);
+      if (user) {
+        const accessToken = jwt.sign(
+          {
+            userId: user._id,
+            role: "user",
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
           },
-          refresh: {
-            token: refreshToken,
-            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          config.jwt.secret as string,
+        );
+        const refreshToken = jwt.sign(
+          {
+            userId: user._id,
+            role: "user",
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
           },
-        },
-      };
+          config.jwt.refreshSecret as string,
+        );
+
+        await this.authRepository.updateRefreshToken(user._id, refreshToken);
+        await this.authRepository.updateAccessToken(user._id, accessToken);
+
+        const userWithoutPassword = await this.authRepository.findUserById(
+          user._id,
+        );
+
+        return {
+          verified: true,
+          isAvailable: true,
+          user: userWithoutPassword!,
+          tokens: {
+            access: {
+              token: accessToken,
+              expires: new Date(Date.now() + 15 * 60 * 1000),
+            },
+            refresh: {
+              token: refreshToken,
+              expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            },
+          },
+        };
+      }
+
+      // No user with this phone
+      return { verified: true, isAvailable: false };
     } catch (error) {
-      logger.error("Verify OTP failed:", error);
+      logger.error("Verify Phone OTP failed:", error);
       throw error;
     }
   };
