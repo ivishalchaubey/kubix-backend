@@ -14,7 +14,7 @@ class ExploreRepository {
    */
   private async getUserShortlistedIds(
     userId: string,
-    itemType: "career" | "colleges" | "course"
+    itemType: "career" | "colleges" | "course",
   ): Promise<string[]> {
     if (!Types.ObjectId.isValid(userId)) {
       return [];
@@ -38,13 +38,13 @@ class ExploreRepository {
     userId: string,
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
   ): Promise<{ careers: any[]; total: number }> {
     // Validate user
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -52,7 +52,7 @@ class ExploreRepository {
     if (!user) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -91,7 +91,7 @@ class ExploreRepository {
 
     // Remove duplicates
     let uniqueSiblings: any[] = Array.from(
-      new Map(allSiblings.map((item) => [item._id.toString(), item])).values()
+      new Map(allSiblings.map((item) => [item._id.toString(), item])).values(),
     );
 
     // Apply search filter if provided
@@ -100,7 +100,7 @@ class ExploreRepository {
       uniqueSiblings = uniqueSiblings.filter(
         (item) =>
           item.name?.toLowerCase().includes(searchLower) ||
-          item.description?.toLowerCase().includes(searchLower)
+          item.description?.toLowerCase().includes(searchLower),
       );
     }
 
@@ -110,7 +110,10 @@ class ExploreRepository {
     const careers = uniqueSiblings.slice(skip, skip + limit);
 
     // Get user's shortlisted career IDs
-    const shortlistedCareerIds = await this.getUserShortlistedIds(userId, "career");
+    const shortlistedCareerIds = await this.getUserShortlistedIds(
+      userId,
+      "career",
+    );
 
     // Add isShortlisted field to each career
     const careersWithShortlist = careers.map((career) => ({
@@ -128,7 +131,7 @@ class ExploreRepository {
     userId: string,
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
   ): Promise<{ colleges: any[]; total: number }> {
     const skip = (page - 1) * limit;
 
@@ -155,7 +158,10 @@ class ExploreRepository {
     const total = await User.countDocuments(searchQuery);
 
     // Get user's shortlisted college IDs
-    const shortlistedCollegeIds = await this.getUserShortlistedIds(userId, "colleges");
+    const shortlistedCollegeIds = await this.getUserShortlistedIds(
+      userId,
+      "colleges",
+    );
 
     // Add isShortlisted field to each college
     const collegesWithShortlist = colleges.map((college) => ({
@@ -174,13 +180,13 @@ class ExploreRepository {
     userId: string,
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
   ): Promise<{ courses: any[]; total: number }> {
     // Validate user
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -188,7 +194,7 @@ class ExploreRepository {
     if (!user) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -196,11 +202,78 @@ class ExploreRepository {
       return { courses: [], total: 0 };
     }
 
-    // Find all courses that match user's categoryIds
-    const allCourses = [];
+    // Build aggregation pipeline
+    const pipeline: any[] = [];
 
-    for (const categoryId of user.categoryIds) {
-      const courses = await Course.find({ categoryId })
+    // 1. Match courses by user's categories
+    pipeline.push({
+      $match: {
+        categoryId: { $in: user.categoryIds },
+      },
+    });
+
+    // 2. Apply search filter if provided
+    if (search && search.trim()) {
+      const searchRegex = new RegExp(search.trim(), "i");
+      pipeline.push({
+        $match: {
+          $or: [{ name: searchRegex }, { description: searchRegex }],
+        },
+      });
+    }
+
+    // 3. Project only necessary fields for sorting/deduplication to save memory
+    pipeline.push({
+      $project: {
+        _id: 1,
+        name: 1,
+        createdAt: 1,
+      },
+    });
+
+    // 4. Deduplicate by Name (Case-insensitive)
+    pipeline.push(
+      { $sort: { createdAt: -1 } },
+      {
+        $group: {
+          _id: { $toLower: "$name" },
+          doc: { $first: "$$ROOT" },
+        },
+      },
+      {
+        $replaceRoot: { newRoot: "$doc" },
+      },
+    );
+
+    // 5. Sort (consistency)
+    pipeline.push({ $sort: { createdAt: -1 } });
+
+    // 6. Facet for Pagination and Counting
+    const skip = (page - 1) * limit;
+    pipeline.push({
+      $facet: {
+        metadata: [{ $count: "total" }],
+        data: [{ $skip: skip }, { $limit: limit }],
+      },
+    });
+
+    // Execute Initial Aggregation (Lightweight)
+    const result = await Course.aggregate(pipeline);
+    const aggregationResult = result[0];
+
+    const total =
+      aggregationResult.metadata && aggregationResult.metadata.length > 0
+        ? aggregationResult.metadata[0].total
+        : 0;
+
+    const pageData = aggregationResult.data || [];
+    const courseIds = pageData.map((c: any) => c._id);
+
+    // 7. Fetch full details for the paginated IDs
+    // We fetch details separately to avoid carrying heavy data through the pipeline
+    let courses: any[] = [];
+    if (courseIds.length > 0) {
+      const fullCourses = await Course.find({ _id: { $in: courseIds } })
         .populate({
           path: "UniversityId",
           select:
@@ -209,39 +282,23 @@ class ExploreRepository {
         .populate("categoryId")
         .populate("parentCategoryId")
         .lean();
-      allCourses.push(...courses);
+
+      // Sort fullCourses to match the order of courseIds (since $in doesn't preserve order)
+      courses = courseIds
+        .map((id: any) =>
+          fullCourses.find((fc) => fc._id.toString() === id.toString()),
+        )
+        .filter((fc: any) => !!fc);
     }
-
-    // Remove duplicates
-    let uniqueCourses = Array.from(
-      new Map(
-        allCourses.map((course) => [course._id.toString(), course])
-      ).values()
-    );
-
-    // Apply search filter if provided
-    if (search && search.trim()) {
-      const searchLower = search.trim().toLowerCase();
-      uniqueCourses = uniqueCourses.filter(
-        (course) =>
-          course.name?.toLowerCase().includes(searchLower) ||
-          course.description?.toLowerCase().includes(searchLower) ||
-          (course.duration !== undefined &&
-            course.duration !== null &&
-            String(course.duration).includes(searchLower))
-      );
-    }
-
-    // Apply pagination
-    const skip = (page - 1) * limit;
-    const total = uniqueCourses.length;
-    const courses = uniqueCourses.slice(skip, skip + limit);
 
     // Get user's shortlisted course IDs
-    const shortlistedCourseIds = await this.getUserShortlistedIds(userId, "course");
+    const shortlistedCourseIds = await this.getUserShortlistedIds(
+      userId,
+      "course",
+    );
 
     // Add isShortlisted field to each course
-    const coursesWithShortlist = courses.map((course) => ({
+    const coursesWithShortlist = courses.map((course: any) => ({
       ...course,
       isShortlisted: shortlistedCourseIds.includes(course._id.toString()),
     }));
@@ -256,7 +313,7 @@ class ExploreRepository {
     userId: string,
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
   ): Promise<{ webinars: any[]; total: number }> {
     const skip = (page - 1) * limit;
 
@@ -307,7 +364,7 @@ class ExploreRepository {
    */
   async getTopCoursesForCategory(
     categoryId: string,
-    parentId: string | null
+    parentId: string | null,
   ): Promise<any[]> {
     const categoryObjectId = new Types.ObjectId(categoryId);
     const courses: any[] = [];
