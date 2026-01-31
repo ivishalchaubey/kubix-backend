@@ -76,7 +76,10 @@ class ShortlistService {
         );
       }
 
-      if (itemType && !["career", "colleges", "course"].includes(itemType)) {
+      if (
+        itemType &&
+        !["career", "colleges", "course", "applications"].includes(itemType)
+      ) {
         throw new AppError(
           API_MESSAGES.SHORTLIST.INVALID_ITEM_TYPE,
           HttpStatus.BAD_REQUEST,

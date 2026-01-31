@@ -1,7 +1,7 @@
 import mongoose, { Schema, model, Document, ObjectId } from "mongoose";
 
 // Shortlist type enum
-export type ShortlistType = "career" | "colleges" | "course";
+export type ShortlistType = "career" | "colleges" | "course" | "applications";
 
 // Shortlist interface
 export interface IShortlist extends Document {
@@ -29,11 +29,11 @@ const ShortlistSchema = new Schema<IShortlist>(
     itemType: {
       type: String,
       required: true,
-      enum: ["career", "colleges", "course"],
+      enum: ["career", "colleges", "course", "applications"],
       index: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Compound index to ensure uniqueness of userId + itemId + itemType combination
@@ -41,4 +41,3 @@ ShortlistSchema.index({ userId: 1, itemId: 1, itemType: 1 }, { unique: true });
 
 // Create & Export Model
 export const Shortlist = model<IShortlist>("Shortlist", ShortlistSchema);
-

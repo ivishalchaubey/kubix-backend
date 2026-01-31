@@ -12,12 +12,12 @@ class ShortlistRepository {
   createShortlist = async (
     userId: string,
     itemId: string,
-    itemType: ShortlistType
+    itemType: ShortlistType,
   ): Promise<any> => {
     if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(itemId)) {
       throw new AppError(
         API_MESSAGES.ERROR.INVALID_INPUT,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -49,7 +49,7 @@ class ShortlistRepository {
   // Validate item exists based on type
   private validateItemExists = async (
     itemId: string,
-    itemType: ShortlistType
+    itemType: ShortlistType,
   ): Promise<void> => {
     let item;
     switch (itemType) {
@@ -58,7 +58,7 @@ class ShortlistRepository {
         if (!item) {
           throw new AppError(
             API_MESSAGES.SHORTLIST.CATEGORY_NOT_FOUND,
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
         break;
@@ -70,7 +70,7 @@ class ShortlistRepository {
         if (!item) {
           throw new AppError(
             API_MESSAGES.SHORTLIST.UNIVERSITY_NOT_FOUND,
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
         break;
@@ -79,14 +79,14 @@ class ShortlistRepository {
         if (!item) {
           throw new AppError(
             API_MESSAGES.SHORTLIST.COURSE_NOT_FOUND,
-            HttpStatus.NOT_FOUND
+            HttpStatus.NOT_FOUND,
           );
         }
         break;
       default:
         throw new AppError(
           API_MESSAGES.ERROR.INVALID_INPUT,
-          HttpStatus.BAD_REQUEST
+          HttpStatus.BAD_REQUEST,
         );
     }
   };
@@ -96,12 +96,12 @@ class ShortlistRepository {
     userId: string,
     itemType?: ShortlistType,
     page: number = 1,
-    limit: number = 10
+    limit: number = 10,
   ): Promise<any> => {
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.INVALID_INPUT,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -110,6 +110,73 @@ class ShortlistRepository {
     };
 
     if (itemType) {
+      if (itemType === "applications") {
+        const applicationForm = await ApplicationForm.findOne({
+          userId: new Types.ObjectId(userId),
+        }).select("collegeIds createdAt updatedAt");
+
+        if (
+          !applicationForm ||
+          !applicationForm.collegeIds ||
+          applicationForm.collegeIds.length === 0
+        ) {
+          return {
+            data: [],
+            pagination: {
+              page,
+              limit,
+              totalResults: 0,
+              totalPages: 0,
+              hasNextPage: false,
+              hasPrevPage: false,
+            },
+          };
+        }
+
+        const total = applicationForm.collegeIds.length;
+        const totalPages = Math.ceil(total / limit);
+        const skip = (page - 1) * limit;
+        // Slice the IDs for pagination
+        // Need to reverse to show newest first? ApplicationForm doesn't track order of addition strictly in array, depends on implementation.
+        // Assuming push, last is newest.
+        const pageIds = [...applicationForm.collegeIds]
+          .reverse()
+          .slice(skip, skip + limit);
+
+        const colleges = await User.find({
+          _id: { $in: pageIds },
+          role: "university",
+        })
+          .select(
+            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
+          )
+          .lean();
+
+        // Map colleges to result structure, preserving order of pageIds
+        const data = pageIds
+          .map((id) => colleges.find((c) => c._id.toString() === id.toString()))
+          .filter((c) => !!c)
+          .map((college) => ({
+            _id: college!._id, // Using college ID as a fallback since no shortlist ID exists
+            itemType: "colleges", // Treat as college type for UI rendering
+            item: college,
+            isApplied: true,
+            createdAt: applicationForm.createdAt, // Using form creation time as fallback
+            updatedAt: applicationForm.updatedAt,
+          }));
+
+        return {
+          data,
+          pagination: {
+            page,
+            limit,
+            totalResults: total,
+            totalPages,
+            hasNextPage: totalPages > 0 && page < totalPages,
+            hasPrevPage: page > 1 && total > 0,
+          },
+        };
+      }
       filter.itemType = itemType;
     }
 
@@ -143,7 +210,7 @@ class ShortlistRepository {
           case "colleges":
             item = await User.findById(shortlist.itemId)
               .select(
-                "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+                "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
               )
               .lean();
 
@@ -151,7 +218,7 @@ class ShortlistRepository {
             if (userApplicationForm && userApplicationForm.collegeIds) {
               const collegeIdString = shortlist.itemId.toString();
               isApplied = userApplicationForm.collegeIds.some(
-                (id: any) => id.toString() === collegeIdString
+                (id: any) => id.toString() === collegeIdString,
               );
             }
             break;
@@ -182,7 +249,7 @@ class ShortlistRepository {
         }
 
         return result;
-      })
+      }),
     );
 
     const totalPages = total > 0 ? Math.ceil(total / limit) : 0;
@@ -203,7 +270,7 @@ class ShortlistRepository {
   // Get shortlist by ID
   getShortlistById = async (
     userId: string,
-    shortlistId: string
+    shortlistId: string,
   ): Promise<any> => {
     if (
       !Types.ObjectId.isValid(userId) ||
@@ -211,7 +278,7 @@ class ShortlistRepository {
     ) {
       throw new AppError(
         API_MESSAGES.ERROR.INVALID_INPUT,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -223,7 +290,7 @@ class ShortlistRepository {
     if (!shortlist) {
       throw new AppError(
         API_MESSAGES.SHORTLIST.SHORTLIST_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -241,7 +308,7 @@ class ShortlistRepository {
       if (userApplicationForm && userApplicationForm.collegeIds) {
         const collegeIdString = shortlist.itemId.toString();
         isApplied = userApplicationForm.collegeIds.some(
-          (id: any) => id.toString() === collegeIdString
+          (id: any) => id.toString() === collegeIdString,
         );
       }
     }
@@ -255,7 +322,7 @@ class ShortlistRepository {
       case "colleges":
         item = await User.findById(shortlist.itemId)
           .select(
-            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+            "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
           )
           .lean();
         break;
@@ -292,7 +359,7 @@ class ShortlistRepository {
   isShortlisted = async (
     userId: string,
     itemId: string,
-    itemType: ShortlistType
+    itemType: ShortlistType,
   ): Promise<boolean> => {
     if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(itemId)) {
       return false;
@@ -310,7 +377,7 @@ class ShortlistRepository {
   // Delete shortlist by ID
   deleteShortlist = async (
     userId: string,
-    shortlistId: string
+    shortlistId: string,
   ): Promise<any> => {
     if (
       !Types.ObjectId.isValid(userId) ||
@@ -318,7 +385,7 @@ class ShortlistRepository {
     ) {
       throw new AppError(
         API_MESSAGES.ERROR.INVALID_INPUT,
-        HttpStatus.BAD_REQUEST
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -330,7 +397,7 @@ class ShortlistRepository {
     if (!shortlist) {
       throw new AppError(
         API_MESSAGES.SHORTLIST.SHORTLIST_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
