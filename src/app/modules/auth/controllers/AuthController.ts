@@ -56,6 +56,9 @@ class AuthController {
         bannerImage,
         state,
         city,
+        schoolName,
+        preUniversityCollegeName,
+        parentGuardianName,
         foundedYear,
         courses,
       } = req.body;
@@ -99,6 +102,17 @@ class AuthController {
       this.includeIfExists(registrationData, "bannerImage", bannerImage);
       this.includeIfExists(registrationData, "state", state);
       this.includeIfExists(registrationData, "city", city);
+      this.includeIfExists(registrationData, "schoolName", schoolName);
+      this.includeIfExists(
+        registrationData,
+        "preUniversityCollegeName",
+        preUniversityCollegeName,
+      );
+      this.includeIfExists(
+        registrationData,
+        "parentGuardianName",
+        parentGuardianName,
+      );
       this.includeIfExists(registrationData, "foundedYear", foundedYear);
       this.includeIfExists(registrationData, "courses", courses);
 
@@ -239,10 +253,6 @@ class AuthController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      console.log(
-        "req.user<><><><><><><><> checking for verifyEmail",
-        req.user,
-      );
       if (!req.user) {
         ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
         return;
@@ -468,6 +478,9 @@ class AuthController {
         bannerImage,
         state,
         city,
+        parentGuardianName,
+        schoolName,
+        preUniversityCollegeName,
         foundedYear,
         courses,
       } = req.body;
@@ -518,6 +531,17 @@ class AuthController {
       this.includeIfExists(updateData, "bannerImage", bannerImage);
       this.includeIfExists(updateData, "state", state);
       this.includeIfExists(updateData, "city", city);
+      this.includeIfExists(updateData, "schoolName", schoolName);
+      this.includeIfExists(
+        updateData,
+        "preUniversityCollegeName",
+        preUniversityCollegeName,
+      );
+      this.includeIfExists(
+        updateData,
+        "parentGuardianName",
+        parentGuardianName,
+      );
       this.includeIfExists(updateData, "foundedYear", foundedYear);
       this.includeIfExists(updateData, "courses", courses);
 
@@ -667,7 +691,6 @@ class AuthController {
       }
 
       const result = await this.authService.checkEmailAvailability(email);
-      console.log("check-email", result);
 
       ResponseUtil.success(
         res,
@@ -675,7 +698,6 @@ class AuthController {
         result.available ? "Email is available" : "Email is already taken",
       );
     } catch (error) {
-      console.log("check-email error", error);
       next(error);
     }
   };

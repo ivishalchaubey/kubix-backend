@@ -10,12 +10,11 @@ const authRepository = new AuthRepository();
 class AuthMiddleware {
   /**
    * Authenticate user using JWT token
-   * TODO: Implement actual JWT verification when jsonwebtoken is installed
    */
   static authenticate = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       // Get token from header
@@ -36,7 +35,7 @@ class AuthMiddleware {
       const user = await authRepository.findUserById(
         decoded.userId,
         false,
-        true
+        true,
       );
 
       if (!user) {
@@ -63,7 +62,7 @@ class AuthMiddleware {
   static universityauthenticate = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       // Get token from header
@@ -84,7 +83,7 @@ class AuthMiddleware {
       const user = await authRepository.findUserById(
         decoded.userId,
         false,
-        true
+        true,
       );
 
       if (!user) {
@@ -117,7 +116,7 @@ class AuthMiddleware {
   static optionalAuth = async (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): Promise<void> => {
     try {
       const authHeader = req.headers.authorization;
@@ -131,14 +130,13 @@ class AuthMiddleware {
       const user = await authRepository.findUserById(
         decoded.userId,
         false,
-        true
+        true,
       );
 
       if (!user) {
         return next();
       }
 
-      // TODO: Implement JWT verification
       req.user = {
         _id: user._id?.toString(),
         firstName: user.firstName,
@@ -179,7 +177,7 @@ class AuthMiddleware {
   static isAuthenticated = (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): void => {
     if (!req.user) {
       ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
@@ -194,7 +192,7 @@ class AuthMiddleware {
   static isAdmin = (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): void => {
     if (!req.user || req.user.role !== UserRole.ADMIN) {
       ResponseUtil.forbidden(res, API_MESSAGES.ERROR.ACCESS_DENIED);
@@ -209,7 +207,7 @@ class AuthMiddleware {
   static isCounselorOrAdmin = (
     req: AuthRequest,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ): void => {
     if (
       !req.user ||

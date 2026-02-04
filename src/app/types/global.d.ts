@@ -45,6 +45,7 @@ export interface IUser {
   pincode?: string;
   parentGuardianName?: string;
   schoolName?: string;
+  preUniversityCollegeName?: string;
   foundedYear?: string;
   courses?: Array<{
     courseName: string;

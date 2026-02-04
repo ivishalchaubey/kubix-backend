@@ -83,6 +83,10 @@ class AuthService {
       bannerImage?: string;
       state?: string;
       city?: string;
+      pincode?: string;
+      parentGuardianName?: string;
+      schoolName?: string;
+      preUniversityCollegeName?: string;
       foundedYear?: string;
       courses?: Array<{
         courseName: string;
@@ -245,10 +249,7 @@ class AuthService {
     }
   }
 
-  async sendPhoneOtp(
-    phone: string,
-    checkUser: boolean = false,
-  ): Promise<void> {
+  async sendPhoneOtp(phone: string, checkUser: boolean = false): Promise<void> {
     try {
       // Optionally check if user exists
       if (checkUser) {

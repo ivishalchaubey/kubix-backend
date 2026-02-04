@@ -12,7 +12,7 @@ const hashPassword = async (password: string): Promise<string> => {
 
 const comparePassword = async (
   password: string,
-  hashedPassword: string
+  hashedPassword: string,
 ): Promise<boolean> => {
   return await bcrypt.compare(password, hashedPassword);
 };
@@ -93,7 +93,7 @@ const userSchema = new Schema(
     stream: {
       type: String,
       trim: true,
-      enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"], // Example streams
+      enum: ["PCM", "PCB", "PCMB", "Commerce", "Arts", "Other"],
     },
     otherStreamName: {
       type: String,
@@ -103,6 +103,7 @@ const userSchema = new Schema(
     grade: {
       type: String,
       trim: true,
+      enum: ["XII_Passed_Out", "XII_Studying"],
     },
     yearOfPassing: {
       type: String,
@@ -229,6 +230,14 @@ const userSchema = new Schema(
       trim: true,
       maxlength: [200, "School name cannot exceed 200 characters"],
     },
+    preUniversityCollegeName: {
+      type: String,
+      trim: true,
+      maxlength: [
+        200,
+        "Pre-university college name cannot exceed 200 characters",
+      ],
+    },
     foundedYear: {
       type: String,
       trim: true,
@@ -280,11 +289,8 @@ const userSchema = new Schema(
         return ret;
       },
     },
-  }
+  },
 );
-
-// Only keep the unique index from the schema field definition above
-// Removed duplicate indexes that were causing the warning
 
 // Pre-save middleware to hash password
 userSchema.pre("save", async function (next) {
@@ -317,7 +323,7 @@ userSchema.pre(["updateOne", "findOneAndUpdate"], async function (next) {
 
 // Instance methods
 userSchema.methods.isPasswordMatch = async function (
-  password: string
+  password: string,
 ): Promise<boolean> {
   return comparePassword(password, this.password);
 };
@@ -325,7 +331,7 @@ userSchema.methods.isPasswordMatch = async function (
 // Static methods
 userSchema.statics.isEmailTaken = async function (
   email: string,
-  excludeUserId?: string
+  excludeUserId?: string,
 ): Promise<boolean> {
   const user = await this.findOne({
     email,

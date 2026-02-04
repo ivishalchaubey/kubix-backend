@@ -46,6 +46,10 @@ class AuthRepository {
     bannerImage?: string;
     state?: string;
     city?: string;
+    pincode?: string;
+    parentGuardianName?: string;
+    schoolName?: string;
+    preUniversityCollegeName?: string;
     foundedYear?: string;
     courses?: Array<{
       courseName: string;
@@ -57,7 +61,7 @@ class AuthRepository {
     if (isEmailTaken) {
       throw new AppError(
         API_MESSAGES.ERROR.EMAIL_ALREADY_EXISTS,
-        HttpStatus.CONFLICT
+        HttpStatus.CONFLICT,
       );
     }
 
@@ -76,7 +80,7 @@ class AuthRepository {
   async findUserByEmail(
     email: string,
     includePassword = false,
-    includeOtp = true
+    includeOtp = true,
   ): Promise<IUser | null> {
     const query = User.findOne({ email });
     if (includePassword) {
@@ -92,7 +96,7 @@ class AuthRepository {
   async findUserByEmailAndRole(
     email: string,
     role: UserRole,
-    includePassword = false
+    includePassword = false,
   ): Promise<IUser | null> {
     const query = User.findOne({ email: email, role: role });
     if (includePassword) {
@@ -133,7 +137,7 @@ class AuthRepository {
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -142,15 +146,15 @@ class AuthRepository {
     if (!user) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
     // ✅ Use Promise.all for async loops
     const coursesArrays = await Promise.all(
       user.categoryIds.map((categoryId: Types.ObjectId) =>
-        this.courseService.getCoursesByCategory(categoryId.toString())
-      )
+        this.courseService.getCoursesByCategory(categoryId.toString()),
+      ),
     );
 
     // Flatten the array of arrays
@@ -166,7 +170,7 @@ class AuthRepository {
   async findUserById(
     userId: string,
     includePassword = false,
-    includeAllFields = false
+    includeAllFields = false,
   ): Promise<any | null> {
     if (!Types.ObjectId.isValid(userId)) {
       return null;
@@ -231,19 +235,19 @@ class AuthRepository {
    */
   async updateUserById(
     userId: string,
-    updateData: Partial<IUser>
+    updateData: Partial<IUser>,
   ): Promise<IUser | null> {
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
     return await User.findByIdAndUpdate(
       userId,
       { $set: updateData },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
   }
 
@@ -254,14 +258,14 @@ class AuthRepository {
     if (!email) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
     await User.findOneAndUpdate(
       { email: email },
       { otp, otpExpires: Date.now() + 10 * 60 * 1000 }, // OTP expires in 10 minutes
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     return await User.findOne({ email: email });
   }
@@ -273,7 +277,7 @@ class AuthRepository {
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -284,14 +288,14 @@ class AuthRepository {
     if (!phone) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
     await User.findOneAndUpdate(
       { phoneNumber: phone },
       { otp, otpExpires: Date.now() + 3 * 60 * 60 * 1000 }, // OTP expires in 3 hours
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
     return await User.findOne({ phoneNumber: phone });
   }
@@ -300,7 +304,7 @@ class AuthRepository {
     let data = await User.findOneAndUpdate(
       { email: email },
       { otp: "" },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     return data;
@@ -317,7 +321,7 @@ class AuthRepository {
     let data = await User.findOneAndUpdate(
       { phoneNumber: phone },
       { otp: "" },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
 
     return data;
@@ -359,12 +363,12 @@ class AuthRepository {
    */
   async updateUserPassword(
     userId: string,
-    newPassword: string
+    newPassword: string,
   ): Promise<IUser | null> {
     if (!Types.ObjectId.isValid(userId)) {
       throw new AppError(
         API_MESSAGES.ERROR.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -375,7 +379,7 @@ class AuthRepository {
         passwordResetToken: undefined,
         passwordResetExpires: undefined,
       },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     );
   }
 
@@ -384,12 +388,12 @@ class AuthRepository {
    */
   async setEmailVerificationToken(
     userId: string,
-    token: string
+    token: string,
   ): Promise<IUser | null> {
     return await User.findByIdAndUpdate(
       userId,
       { emailVerificationToken: token },
-      { new: true }
+      { new: true },
     );
   }
 
@@ -399,7 +403,7 @@ class AuthRepository {
   async setPasswordResetToken(
     userId: string,
     token: string,
-    expires: Date
+    expires: Date,
   ): Promise<IUser | null> {
     return await User.findByIdAndUpdate(
       userId,
@@ -407,7 +411,7 @@ class AuthRepository {
         passwordResetToken: token,
         passwordResetExpires: expires,
       },
-      { new: true }
+      { new: true },
     );
   }
 
@@ -421,7 +425,7 @@ class AuthRepository {
         isEmailVerified: true,
         emailVerificationToken: undefined,
       },
-      { new: true }
+      { new: true },
     );
   }
 
@@ -430,23 +434,23 @@ class AuthRepository {
    */
   async updateRefreshToken(
     userId: string,
-    refreshToken: string
+    refreshToken: string,
   ): Promise<IUser | null> {
     return await User.findByIdAndUpdate(
       userId,
       { refreshToken },
-      { new: true }
+      { new: true },
     );
   }
 
   async updateAccessToken(
     userId: string,
-    accessToken: string
+    accessToken: string,
   ): Promise<any | null> {
     let x = await User.findByIdAndUpdate(
       userId,
       { accessToken },
-      { new: true }
+      { new: true },
     );
 
     return x;
@@ -459,7 +463,7 @@ class AuthRepository {
     return await User.findByIdAndUpdate(
       userId,
       { refreshToken: undefined },
-      { new: true }
+      { new: true },
     );
   }
 
@@ -480,7 +484,7 @@ class AuthRepository {
    */
   async findUsersByRole(role: string): Promise<IUser[]> {
     return await User.find({ role }).select(
-      "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+      "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
     );
   }
 
@@ -491,7 +495,7 @@ class AuthRepository {
     role: string,
     page: number = 1,
     limit: number = 10,
-    search?: string
+    search?: string,
   ): Promise<{
     users: IUser[];
     total: number;
@@ -517,7 +521,7 @@ class AuthRepository {
     // Get paginated results
     const users = await User.find(query)
       .select(
-        "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires"
+        "-password -otp -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires",
       )
       .skip(skip)
       .limit(limit)
