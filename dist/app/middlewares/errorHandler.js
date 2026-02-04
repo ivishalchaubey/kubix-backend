@@ -28,11 +28,13 @@ const handleValidationErrorDB = (err) => {
 const handleJWTError = () => new AppError("Invalid token. Please log in again!", HttpStatus.UNAUTHORIZED);
 const handleJWTExpiredError = () => new AppError("Your token has expired! Please log in again.", HttpStatus.UNAUTHORIZED);
 const sendErrorDev = (err, res) => {
-    logger.error("Error details:", {
-        message: err.message,
-        stack: err.stack,
-        statusCode: err.statusCode,
-    });
+    if (err.statusCode !== 404) {
+        logger.error("Error details:", {
+            message: err.message,
+            stack: err.stack,
+            statusCode: err.statusCode,
+        });
+    }
     ResponseUtil.error(res, err.message, err.statusCode || HttpStatus.INTERNAL_SERVER_ERROR, err.stack);
 };
 const sendErrorProd = (err, res) => {

@@ -82,7 +82,7 @@ const userSchema = new Schema({
     stream: {
         type: String,
         trim: true,
-        enum: ["Medical", "Non Medical", "Commerce", "Arts", "Other"],
+        enum: ["PCM", "PCB", "PCMB", "Commerce", "Arts", "Other"],
     },
     otherStreamName: {
         type: String,
@@ -92,6 +92,7 @@ const userSchema = new Schema({
     grade: {
         type: String,
         trim: true,
+        enum: ["XII_Passed_Out", "XII_Studying"],
     },
     yearOfPassing: {
         type: String,
@@ -217,6 +218,14 @@ const userSchema = new Schema({
         type: String,
         trim: true,
         maxlength: [200, "School name cannot exceed 200 characters"],
+    },
+    preUniversityCollegeName: {
+        type: String,
+        trim: true,
+        maxlength: [
+            200,
+            "Pre-university college name cannot exceed 200 characters",
+        ],
     },
     foundedYear: {
         type: String,

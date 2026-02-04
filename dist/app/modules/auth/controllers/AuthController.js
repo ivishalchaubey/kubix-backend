@@ -13,7 +13,7 @@ class AuthController {
     }
     register = async (req, res, next) => {
         try {
-            const { firstName, lastName, email, password, role, dob, countryCode, phoneNumber, board, otherBoardName, stream, otherStreamName, grade, yearOfPassing, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink, website, bannerImage, state, city, foundedYear, courses, } = req.body;
+            const { firstName, lastName, email, password, role, dob, countryCode, phoneNumber, board, otherBoardName, stream, otherStreamName, grade, yearOfPassing, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink, website, bannerImage, state, city, schoolName, preUniversityCollegeName, parentGuardianName, foundedYear, courses, } = req.body;
             const registrationData = {
                 firstName,
                 lastName,
@@ -42,9 +42,13 @@ class AuthController {
             this.includeIfExists(registrationData, "bannerImage", bannerImage);
             this.includeIfExists(registrationData, "state", state);
             this.includeIfExists(registrationData, "city", city);
+            this.includeIfExists(registrationData, "schoolName", schoolName);
+            this.includeIfExists(registrationData, "preUniversityCollegeName", preUniversityCollegeName);
+            this.includeIfExists(registrationData, "parentGuardianName", parentGuardianName);
             this.includeIfExists(registrationData, "foundedYear", foundedYear);
             this.includeIfExists(registrationData, "courses", courses);
-            const result = await this.authService.register(registrationData);
+            const platform = req.headers.platform;
+            const result = await this.authService.register(registrationData, platform);
             ResponseUtil.created(res, result, API_MESSAGES.SUCCESS.USER_CREATED);
         }
         catch (error) {
@@ -110,7 +114,6 @@ class AuthController {
     };
     verifyEmail = async (req, res, next) => {
         try {
-            console.log("req.user<><><><><><><><> checking for verifyEmail", req.user);
             if (!req.user) {
                 ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
                 return;
@@ -124,13 +127,27 @@ class AuthController {
     };
     sendOtp = async (req, res, next) => {
         try {
-            const { email, phone, type } = req.body;
-            const user = await this.authService.sendOtp(email);
-            if (!user) {
-                ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
-                return;
+            const { email, phone, type, checkUser } = req.body;
+            if (type === "phone") {
+                if (!phone) {
+                    ResponseUtil.badRequest(res, "Phone number is required");
+                    return;
+                }
+                await this.authService.sendPhoneOtp(phone, !!checkUser);
+                ResponseUtil.success(res, null, "Phone OTP sent successfully");
             }
-            ResponseUtil.success(res, null, "OTP sent successfully");
+            else {
+                if (!email) {
+                    ResponseUtil.badRequest(res, "Email is required");
+                    return;
+                }
+                const user = await this.authService.sendOtp(email);
+                if (!user) {
+                    ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+                    return;
+                }
+                ResponseUtil.success(res, null, "OTP sent successfully");
+            }
         }
         catch (error) {
             next(error);
@@ -139,21 +156,21 @@ class AuthController {
     verifyOtp = async (req, res, next) => {
         try {
             const { email, otp, type, phone } = req.body;
-            if (type == "email") {
-                const user = await this.authService.verifyOtp(email, otp);
-                if (!user) {
-                    ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
+            if (type === "phone") {
+                if (!phone || !otp) {
+                    ResponseUtil.badRequest(res, "Phone number and OTP are required");
                     return;
                 }
-                ResponseUtil.success(res, user, "OTP verified successfully");
+                const result = await this.authService.verifyPhoneOtp(phone, otp);
+                ResponseUtil.success(res, result, "Phone OTP verified successfully");
             }
-            else if (type == "phone") {
-                const user = await this.authService.verifyPhoneOtp(phone, otp);
-                if (!user) {
+            else {
+                const result = await this.authService.verifyOtp(email, otp);
+                if (!result) {
                     ResponseUtil.notFound(res, API_MESSAGES.ERROR.USER_NOT_FOUND);
                     return;
                 }
-                ResponseUtil.success(res, user, "Phone OTP verified successfully");
+                ResponseUtil.success(res, result, "OTP verified successfully");
             }
         }
         catch (error) {
@@ -188,7 +205,8 @@ class AuthController {
             if (categoryIds && Array.isArray(categoryIds) && categoryIds.length > 0) {
                 updateData.categoryIds = categoryIds;
             }
-            const updatedUser = await this.authService.updateUserProfile(req.user._id, updateData);
+            const platform = req.headers.platform;
+            const updatedUser = await this.authService.updateUserProfile(req.user._id, updateData, platform);
             ResponseUtil.success(res, { user: updatedUser }, API_MESSAGES.SUCCESS.USER_UPDATED);
         }
         catch (error) {
@@ -229,7 +247,7 @@ class AuthController {
                 ResponseUtil.unauthorized(res, API_MESSAGES.ERROR.UNAUTHORIZED);
                 return;
             }
-            const { userId, status, firstName, lastName, email, phoneNumber, countryCode, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink, website, bannerImage, state, city, foundedYear, courses, } = req.body;
+            const { userId, status, firstName, lastName, email, phoneNumber, countryCode, profileImage, collegeName, collegeCode, location, address, specialization, description, bannerYoutubeVideoLink, website, bannerImage, state, city, parentGuardianName, schoolName, preUniversityCollegeName, foundedYear, courses, } = req.body;
             if (!userId) {
                 ResponseUtil.badRequest(res, "userId is required");
                 return;
@@ -260,6 +278,9 @@ class AuthController {
             this.includeIfExists(updateData, "bannerImage", bannerImage);
             this.includeIfExists(updateData, "state", state);
             this.includeIfExists(updateData, "city", city);
+            this.includeIfExists(updateData, "schoolName", schoolName);
+            this.includeIfExists(updateData, "preUniversityCollegeName", preUniversityCollegeName);
+            this.includeIfExists(updateData, "parentGuardianName", parentGuardianName);
             this.includeIfExists(updateData, "foundedYear", foundedYear);
             this.includeIfExists(updateData, "courses", courses);
             if (Object.keys(updateData).length === 0) {

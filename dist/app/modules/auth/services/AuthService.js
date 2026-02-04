@@ -9,6 +9,8 @@ import logger from "../../../utils/logger.js";
 import { UserCourseLiked } from "../models/usercourseliked.js";
 import { Types } from "mongoose";
 import emailService, { EmailService } from "../../../utils/emailService.js";
+import smsService from "../../../utils/smsService.js";
+import { kylasCRM, ActivityType } from "../../kylas/index.js";
 class AuthService {
     authRepository;
     emailService;
@@ -28,7 +30,7 @@ class AuthService {
         const isAvailable = await this.authRepository.checkEmailAvailability(normalizedEmail);
         return { available: isAvailable };
     }
-    async register(userData) {
+    async register(userData, platform) {
         try {
             const existingUser = await this.authRepository.findUserByEmail(userData.email);
             if (existingUser) {
@@ -57,6 +59,25 @@ class AuthService {
             await this.authRepository.updateRefreshToken(user._id, refreshToken);
             await this.authRepository.updateAccessToken(user._id, accessToken);
             logger.info(`User registered: ${user.email}`);
+            if (userData.role === UserRole.USER) {
+                kylasCRM
+                    .registerLead({
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                    phoneNumber: userData.phoneNumber,
+                    countryCode: userData.countryCode,
+                    city: userData.city,
+                    state: userData.state,
+                    board: userData.board,
+                    stream: userData.stream,
+                    grade: userData.grade,
+                    platform,
+                })
+                    .catch((error) => {
+                    logger.error("Failed to register Kylas lead (non-blocking):", error);
+                });
+            }
             return {
                 user,
                 tokens: {
@@ -106,14 +127,26 @@ class AuthService {
             throw error;
         }
     }
-    async sendPhoneOtp(phone) {
+    async sendPhoneOtp(phone, checkUser = false) {
         try {
-            const user = await this.authRepository.findUserByPhone(phone);
-            if (!user) {
-                throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+            if (checkUser) {
+                const user = await this.authRepository.findUserByPhone(phone);
+                if (!user) {
+                    throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+                }
+            }
+            if (!smsService.isAvailable()) {
+                logger.error("SMS service is not configured or unavailable");
+                throw new AppError("SMS service is not configured. Please contact administrator.", HttpStatus.SERVICE_UNAVAILABLE);
             }
             const otp = crypto.randomInt(100000, 999999).toString();
-            return await this.authRepository.setPhoneOtp(phone, otp);
+            const smsSent = await smsService.sendOtp(phone, otp);
+            if (!smsSent) {
+                logger.error(`Failed to send OTP SMS to ${phone}`);
+                throw new AppError("Failed to send OTP SMS. Please try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            await this.authRepository.savePhoneOtp(phone, otp);
+            logger.info(`Phone OTP sent successfully to ${phone}`);
         }
         catch (error) {
             logger.error("Send Phone OTP failed:", error);
@@ -224,51 +257,58 @@ class AuthService {
     };
     verifyPhoneOtp = async (phone, otp) => {
         try {
-            const user = await this.authRepository.findUserByPhone(phone);
-            if (!user) {
-                throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
+            const phoneOtpRecord = await this.authRepository.findPhoneOtp(phone);
+            if (!phoneOtpRecord) {
+                throw new AppError("OTP has expired or was not requested. Please request a new OTP.", HttpStatus.BAD_REQUEST);
             }
-            if (user.otp != "123456" &&
-                user.otpExpires &&
-                user.otpExpires < new Date()) {
+            if (phoneOtpRecord.otpExpires < new Date()) {
+                await this.authRepository.deletePhoneOtp(phone);
+                throw new AppError("OTP has expired. Please request a new OTP.", HttpStatus.BAD_REQUEST);
+            }
+            if (phoneOtpRecord.otp !== otp) {
                 throw new AppError(API_MESSAGES.ERROR.INVALID_OTP, HttpStatus.BAD_REQUEST);
             }
-            await this.authRepository.clearPhoneOtp(phone);
-            logger.info(`OTP verified for user: ${phone}`);
-            const accessToken = jwt.sign({
-                userId: user._id,
-                role: "user",
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-            }, config.jwt.secret);
-            const refreshToken = jwt.sign({
-                userId: user._id,
-                role: "user",
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-            }, config.jwt.refreshSecret);
-            await this.authRepository.updateRefreshToken(user._id, refreshToken);
-            await this.authRepository.updateAccessToken(user._id, accessToken);
-            const userWithoutPassword = await this.authRepository.findUserById(user._id);
-            logger.info(`User logged in: ${user.email}`);
-            return {
-                user: userWithoutPassword,
-                tokens: {
-                    access: {
-                        token: accessToken,
-                        expires: new Date(Date.now() + 15 * 60 * 1000),
+            await this.authRepository.deletePhoneOtp(phone);
+            logger.info(`Phone OTP verified for: ${phone}`);
+            const user = await this.authRepository.findUserByPhone(phone);
+            if (user) {
+                const accessToken = jwt.sign({
+                    userId: user._id,
+                    role: "user",
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                }, config.jwt.secret);
+                const refreshToken = jwt.sign({
+                    userId: user._id,
+                    role: "user",
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                }, config.jwt.refreshSecret);
+                await this.authRepository.updateRefreshToken(user._id, refreshToken);
+                await this.authRepository.updateAccessToken(user._id, accessToken);
+                const userWithoutPassword = await this.authRepository.findUserById(user._id);
+                return {
+                    verified: true,
+                    isAvailable: true,
+                    user: userWithoutPassword,
+                    tokens: {
+                        access: {
+                            token: accessToken,
+                            expires: new Date(Date.now() + 15 * 60 * 1000),
+                        },
+                        refresh: {
+                            token: refreshToken,
+                            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+                        },
                     },
-                    refresh: {
-                        token: refreshToken,
-                        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-                    },
-                },
-            };
+                };
+            }
+            return { verified: true, isAvailable: false };
         }
         catch (error) {
-            logger.error("Verify OTP failed:", error);
+            logger.error("Verify Phone OTP failed:", error);
             throw error;
         }
     };
@@ -437,7 +477,7 @@ class AuthService {
             throw error;
         }
     }
-    async updateUserProfile(userId, updateData) {
+    async updateUserProfile(userId, updateData, platform) {
         try {
             if (updateData.email) {
                 const isEmailTaken = await this.authRepository.findUserByEmail(updateData.email);
@@ -450,6 +490,13 @@ class AuthService {
                 throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
             }
             logger.info(`User profile updated: ${userId}`);
+            if (updateData.categoryIds &&
+                Array.isArray(updateData.categoryIds) &&
+                updatedUser.email) {
+                this.trackCareerFieldsInKylas(updatedUser.email, updateData.categoryIds.map((id) => id.toString()), platform).catch((error) => {
+                    logger.error("Failed to track career field selection in Kylas (non-blocking):", error);
+                });
+            }
             return updatedUser;
         }
         catch (error) {
@@ -560,6 +607,50 @@ class AuthService {
         catch (error) {
             logger.error("Update user course payment status failed:", error);
             throw error;
+        }
+    }
+    async trackCareerFieldsInKylas(email, categoryIds, platform) {
+        try {
+            const user = await this.authRepository.findUserByEmail(email);
+            if (user) {
+                await kylasCRM.ensureLeadExists({
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    phoneNumber: user.phoneNumber,
+                    countryCode: user.countryCode,
+                    city: user.city,
+                    state: user.state,
+                    board: user.board,
+                    stream: user.stream,
+                    grade: user.grade,
+                    platform,
+                });
+            }
+            const CategoryModel = (await import("../../admin/categories/models/category.js")).default;
+            const categoryNames = [];
+            for (const categoryId of categoryIds) {
+                const category = await CategoryModel.findById(categoryId).populate("parentId");
+                if (category) {
+                    let formattedName = category.name;
+                    if (category.parentId && typeof category.parentId === "object") {
+                        const parentName = category.parentId.name || "";
+                        if (parentName) {
+                            formattedName = `${category.name} (under ${parentName})`;
+                        }
+                    }
+                    categoryNames.push(formattedName);
+                }
+            }
+            if (categoryNames.length > 0) {
+                await kylasCRM.trackActivity(email, ActivityType.CAREER_FIELD_SELECTED, categoryNames, platform);
+            }
+        }
+        catch (error) {
+            logger.error("Error tracking career fields in Kylas:", {
+                message: error.message,
+                details: error.response?.data,
+            });
         }
     }
     generateRandomToken() {

@@ -37,6 +37,11 @@ export declare const config: {
         tokenRate: number;
     };
     frontendUrl: string;
+    fast2sms: {
+        apiKey: string;
+        senderId: string;
+        messageId: string;
+    };
 };
 export default config;
 //# sourceMappingURL=env.d.ts.map

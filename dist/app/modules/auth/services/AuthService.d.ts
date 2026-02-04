@@ -34,17 +34,21 @@ declare class AuthService {
         bannerImage?: string;
         state?: string;
         city?: string;
+        pincode?: string;
+        parentGuardianName?: string;
+        schoolName?: string;
+        preUniversityCollegeName?: string;
         foundedYear?: string;
         courses?: Array<{
             courseName: string;
             courseDuration: string;
         }>;
-    }): Promise<{
+    }, platform?: string): Promise<{
         user: IUser;
         tokens: TokenResponse;
     }>;
     sendOtp(email: string): Promise<IUser>;
-    sendPhoneOtp(phone: string): Promise<IUser>;
+    sendPhoneOtp(phone: string, checkUser?: boolean): Promise<void>;
     login(credentials: {
         email: string;
         password: string;
@@ -59,8 +63,10 @@ declare class AuthService {
         tokens: TokenResponse;
     }>;
     verifyPhoneOtp: (phone: string, otp: string) => Promise<{
-        user: IUser;
-        tokens: TokenResponse;
+        verified: boolean;
+        isAvailable: boolean;
+        user?: IUser;
+        tokens?: TokenResponse;
     }>;
     logout(userId: string): Promise<void>;
     refreshTokens(refreshToken: string): Promise<TokenResponse>;
@@ -68,7 +74,7 @@ declare class AuthService {
     resetPassword(userId: string, oldPassword: string, newPassword: string): Promise<void>;
     verifyEmail(email: string): Promise<void>;
     getUserProfile(userId: string): Promise<IUser>;
-    updateUserProfile(userId: string, updateData: Partial<IUser>): Promise<IUser>;
+    updateUserProfile(userId: string, updateData: Partial<IUser>, platform?: string): Promise<IUser>;
     changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
     getUserCourses(userId: string): Promise<any>;
     changeUserStatus(userId: string, status: string): Promise<IUser>;
@@ -81,6 +87,7 @@ declare class AuthService {
         limit: number;
     }>;
     updateUserCoursePaymentStatus(userId: string, courseId: string): Promise<any>;
+    private trackCareerFieldsInKylas;
     private generateRandomToken;
 }
 export default AuthService;

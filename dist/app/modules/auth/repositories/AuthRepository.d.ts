@@ -1,3 +1,4 @@
+import { IPhoneOtp } from "../models/PhoneOtp.js";
 import { IUser, IUserToken } from "../../../types/global.js";
 import { UserRole } from "../../../constants/enums.js";
 declare class AuthRepository {
@@ -30,6 +31,10 @@ declare class AuthRepository {
         bannerImage?: string;
         state?: string;
         city?: string;
+        pincode?: string;
+        parentGuardianName?: string;
+        schoolName?: string;
+        preUniversityCollegeName?: string;
         foundedYear?: string;
         courses?: Array<{
             courseName: string;
@@ -68,6 +73,9 @@ declare class AuthRepository {
         page: number;
         totalPages: number;
     }>;
+    savePhoneOtp(phone: string, otp: string): Promise<IPhoneOtp>;
+    findPhoneOtp(phone: string): Promise<IPhoneOtp | null>;
+    deletePhoneOtp(phone: string): Promise<void>;
 }
 export default AuthRepository;
 //# sourceMappingURL=AuthRepository.d.ts.map

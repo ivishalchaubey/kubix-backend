@@ -134,21 +134,46 @@ export const authValidation = {
             { minLength: VALIDATION_RULES.NAME.MIN_LENGTH },
             { maxLength: VALIDATION_RULES.NAME.MAX_LENGTH },
         ],
-        email: [
-            { required: true, type: "email" },
-        ],
-        password: [
-            { required: true, type: "string" },
-        ],
+        email: [{ required: true, type: "email" }],
+        password: [{ required: true, type: "string" }],
         dob: [{ required: false, type: "string" }],
         countryCode: [{ required: false, type: "string" }],
         role: [{ required: true, type: "string" }],
         phoneNumber: [{ required: false, type: "string" }],
         board: [{ required: false, type: "string" }],
         otherBoardName: [{ required: false, type: "string" }, { maxLength: 100 }],
-        stream: [{ required: false, type: "string" }],
+        stream: [
+            { required: false, type: "string" },
+            {
+                custom: (value) => {
+                    const validStreams = [
+                        "PCM",
+                        "PCB",
+                        "PCMB",
+                        "Commerce",
+                        "Arts",
+                        "Other",
+                    ];
+                    if (value && !validStreams.includes(value)) {
+                        return `stream must be one of: ${validStreams.join(", ")}`;
+                    }
+                    return true;
+                },
+            },
+        ],
         otherStreamName: [{ required: false, type: "string" }, { maxLength: 100 }],
-        grade: [{ required: false, type: "string" }],
+        grade: [
+            { required: false, type: "string" },
+            {
+                custom: (value) => {
+                    const validGrades = ["XII_Passed_Out", "XII_Studying"];
+                    if (value && !validGrades.includes(value)) {
+                        return `grade must be one of: ${validGrades.join(", ")}`;
+                    }
+                    return true;
+                },
+            },
+        ],
         yearOfPassing: [
             { required: false, type: "string" },
             { pattern: /^\d{4}$/ },
@@ -171,7 +196,8 @@ export const authValidation = {
         website: [{ type: "string" }, { maxLength: 500 }],
         bannerImage: [{ type: "string" }],
         state: [{ type: "string" }, { maxLength: 100 }],
-        city: [{ type: "string" }, { maxLength: 100 }],
+        schoolName: [{ type: "string" }, { maxLength: 200 }],
+        preUniversityCollegeName: [{ type: "string" }, { maxLength: 200 }],
         foundedYear: [{ type: "string" }, { pattern: /^\d{4}$/ }],
         courses: [
             { required: false },

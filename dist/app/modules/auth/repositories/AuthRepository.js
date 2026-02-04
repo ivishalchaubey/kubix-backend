@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import User from "../models/User.js";
 import { UserToken } from "../models/usertoken.js";
+import PhoneOtp from "../models/PhoneOtp.js";
 import CourseService from "../../courses/services/course.js";
 import { HttpStatus, API_MESSAGES, } from "../../../constants/enums.js";
 import { AppError } from "../../../middlewares/errorHandler.js";
@@ -151,7 +152,7 @@ class AuthRepository {
         if (!phone) {
             throw new AppError(API_MESSAGES.ERROR.USER_NOT_FOUND, HttpStatus.NOT_FOUND);
         }
-        await User.findOneAndUpdate({ phoneNumber: phone }, { otp, otpExpires: Date.now() + 10 * 60 * 1000 }, { new: true, runValidators: true });
+        await User.findOneAndUpdate({ phoneNumber: phone }, { otp, otpExpires: Date.now() + 3 * 60 * 60 * 1000 }, { new: true, runValidators: true });
         return await User.findOne({ phoneNumber: phone });
     }
     async clearOtp(email) {
@@ -254,6 +255,15 @@ class AuthRepository {
             page,
             totalPages: Math.ceil(total / limit),
         };
+    }
+    async savePhoneOtp(phone, otp) {
+        return await PhoneOtp.findOneAndUpdate({ phone }, { otp, otpExpires: new Date(Date.now() + 10 * 60 * 1000) }, { new: true, upsert: true, runValidators: true });
+    }
+    async findPhoneOtp(phone) {
+        return await PhoneOtp.findOne({ phone });
+    }
+    async deletePhoneOtp(phone) {
+        await PhoneOtp.deleteMany({ phone });
     }
 }
 export default AuthRepository;
