@@ -178,8 +178,8 @@ class UserService {
       this.userRepository.getCategoriesByIds(user.categoryIds || [], 3),
       // Get popular universities (only 3)
       this.userRepository.getPopularUniversities(3),
-      // Get popular courses (only 3)
-      this.userRepository.getPopularCourses(3),
+      // Get popular courses (only 3) filtered by user's categories
+      this.userRepository.getPopularCourses(user.categoryIds || [], 3),
       // Get top upcoming webinars (max 10)
       this.userRepository.getUpcomingWebinars(10),
       // Get top published banners (max 10)

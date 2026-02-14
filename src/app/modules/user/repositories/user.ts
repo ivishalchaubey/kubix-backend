@@ -51,8 +51,38 @@ class UserRepository {
     .lean();
   }
 
-  async getPopularCourses(limit: number = 20): Promise<any> {
-    return await Course.aggregate([
+  async getPopularCourses(categoryIds: any[], limit: number = 20): Promise<any> {
+    const pipeline: any[] = [];
+
+    // Filter by user's selected categories if available
+    if (categoryIds && categoryIds.length > 0) {
+      pipeline.push({
+        $match: {
+          categoryId: { $in: categoryIds },
+        },
+      });
+    }
+
+    pipeline.push(
+      {
+        $lookup: {
+          from: "shortlists",
+          let: { courseId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$itemId", "$$courseId"] },
+                    { $eq: ["$itemType", "course"] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "shortlists"
+        }
+      },
       {
         $lookup: {
           from: "usercourselikeds",
@@ -63,6 +93,7 @@ class UserRepository {
       },
       {
         $addFields: {
+          shortlistCount: { $size: "$shortlists" },
           likesCount: {
             $size: {
               $filter: {
@@ -75,12 +106,7 @@ class UserRepository {
         }
       },
       {
-        $match: {
-          likesCount: { $gt: 0 }
-        }
-      },
-      {
-        $sort: { likesCount: -1 }
+        $sort: { shortlistCount: -1, likesCount: -1 }
       },
       {
         $limit: limit
@@ -115,6 +141,7 @@ class UserRepository {
           is_this_course_right_for_you: 1,
           categoryId: 1,
           parentCategoryId: 1,
+          shortlistCount: 1,
           likesCount: 1,
           University: {
             _id: "$University._id",
@@ -125,7 +152,9 @@ class UserRepository {
           }
         }
       }
-    ]);
+    );
+
+    return await Course.aggregate(pipeline);
   }
 
   async getUpcomingWebinars(limit: number = 3): Promise<any[]> {
