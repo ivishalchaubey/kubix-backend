@@ -7,6 +7,49 @@ import Category from "../../admin/categories/models/category.js";
 import { Webinar } from "../../webinar/models/webinar.model.js";
 
 class UserRepository {
+  async getAllUsers(
+    page: number,
+    limit: number,
+    search?: string,
+    role?: string,
+    status?: string,
+    sortBy?: string,
+    sortOrder?: string
+  ): Promise<{ users: any[]; total: number }> {
+    const skip = (page - 1) * limit;
+    const query: any = { role: "user" };
+
+    if (status) {
+      query.status = status;
+    }
+
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: "i" } },
+        { lastName: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { phoneNumber: { $regex: search, $options: "i" } },
+        { collegeName: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const sortField = sortBy || "createdAt";
+    const order = sortOrder === "asc" ? 1 : -1;
+    const sort: any = { [sortField]: order };
+
+    const [users, total] = await Promise.all([
+      User.find(query)
+        .select("-password -otp -otpExpires -refreshToken -accessToken -emailVerificationToken -passwordResetToken -passwordResetExpires")
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      User.countDocuments(query),
+    ]);
+
+    return { users, total };
+  }
+
   async likeCourse(userId: string, courseId: string): Promise<any> {
     return await UserCourseLiked.create({ userId: userId, courseId: courseId, isPaidByAdmin: false, status: "active" });
   }

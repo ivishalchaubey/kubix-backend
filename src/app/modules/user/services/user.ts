@@ -104,6 +104,25 @@ class UserService {
     return await User.find();
   }
 
+  async getAllUsers(
+    page: number,
+    limit: number,
+    search?: string,
+    status?: string,
+    sortBy?: string,
+    sortOrder?: string
+  ): Promise<{ users: any[]; total: number }> {
+    return await this.userRepository.getAllUsers(
+      page,
+      limit,
+      search,
+      undefined,
+      status,
+      sortBy,
+      sortOrder
+    );
+  }
+
   // function to get the Users based on categoryId
   async getUsersByCategory(categoryId: string): Promise<any[]> {
     return await User.find({ categoryId: categoryId }).lean();

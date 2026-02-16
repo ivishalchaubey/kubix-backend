@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import ResponseUtil from "../../../utils/response.js";
-import { API_MESSAGES } from "../../../constants/enums.js";
+import { API_MESSAGES, PAGINATION } from "../../../constants/enums.js";
+import { PaginationMeta } from "../../../types/global.js";
 import UserService from "../services/user.js";
 class UserController {
   public userService: UserService;
@@ -60,6 +61,47 @@ class UserController {
         );
       }
       ResponseUtil.success(res, Users, API_MESSAGES.USER.UserS_FETCHED);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAllUsers(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
+    try {
+      const page = Math.max(1, parseInt(req.query.page as string) || PAGINATION.DEFAULT_PAGE);
+      const limit = Math.min(
+        PAGINATION.MAX_LIMIT,
+        Math.max(1, parseInt(req.query.limit as string) || PAGINATION.DEFAULT_LIMIT)
+      );
+      const search = req.query.search as string | undefined;
+      const status = req.query.status as string | undefined;
+      const sortBy = req.query.sortBy as string | undefined;
+      const sortOrder = req.query.sortOrder as string | undefined;
+
+      const { users, total } = await this.userService.getAllUsers(
+        page,
+        limit,
+        search,
+        status,
+        sortBy,
+        sortOrder
+      );
+
+      const totalPages = Math.ceil(total / limit);
+      const meta: PaginationMeta = {
+        page,
+        limit,
+        totalPages,
+        totalResults: total,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
+      };
+
+      ResponseUtil.paginated(res, users, meta, API_MESSAGES.USER.UserS_FETCHED);
     } catch (error) {
       next(error);
     }
